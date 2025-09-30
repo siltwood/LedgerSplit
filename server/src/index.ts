@@ -1,0 +1,78 @@
+import express from 'express';
+import session from 'express-session';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Routes
+import authRoutes from './routes/auth';
+import groupsRoutes from './routes/groups';
+import expensesRoutes from './routes/expenses';
+import settlementsRoutes from './routes/settlements';
+import friendsRoutes from './routes/friends';
+import balancesRoutes from './routes/balances';
+import uploadRoutes from './routes/upload';
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// Security middleware
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+});
+app.use('/api/', limiter);
+
+// CORS
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true,
+  })
+);
+
+// Body parsing
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Session management
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    },
+  })
+);
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/groups', groupsRoutes);
+app.use('/api/expenses', expensesRoutes);
+app.use('/api/settlements', settlementsRoutes);
+app.use('/api/friends', friendsRoutes);
+app.use('/api/balances', balancesRoutes);
+app.use('/api/upload', uploadRoutes);
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
