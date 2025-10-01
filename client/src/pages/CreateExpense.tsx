@@ -18,7 +18,6 @@ export default function CreateExpense() {
   const [paidBy, setPaidBy] = useState(user?.id || '');
 
   const [groups, setGroups] = useState<Group[]>([]);
-  const [friends, setFriends] = useState<Friend[]>([]);
   const [availableUsers, setAvailableUsers] = useState<any[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([user?.id || '']);
 
