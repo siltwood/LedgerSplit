@@ -197,8 +197,8 @@ export const deleteGroup = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// Add member to group
-export const addMember = async (req: AuthRequest, res: Response) => {
+// Send invite to join group
+export const inviteToGroup = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { email } = req.body;
@@ -218,13 +218,13 @@ export const addMember = async (req: AuthRequest, res: Response) => {
     }
 
     // Find user by email
-    const { data: newUser, error: userError } = await db
+    const { data: invitedUser, error: userError } = await db
       .from('users')
-      .select('user_id')
+      .select('user_id, email, name')
       .eq('email', email)
       .single();
 
-    if (userError || !newUser) {
+    if (userError || !invitedUser) {
       return res.status(404).json({ error: 'User not found' });
     }
 
@@ -233,34 +233,175 @@ export const addMember = async (req: AuthRequest, res: Response) => {
       .from('group_members')
       .select('*')
       .eq('group_id', id)
-      .eq('user_id', newUser.user_id)
+      .eq('user_id', invitedUser.user_id)
+      .eq('is_active', true)
       .single();
 
     if (existingMember) {
-      if (existingMember.is_active) {
-        return res.status(400).json({ error: 'User already in group' });
-      }
-      // Reactivate inactive member
-      await db
-        .from('group_members')
-        .update({ is_active: true })
-        .eq('group_id', id)
-        .eq('user_id', newUser.user_id);
-    } else {
-      // Add new member
-      await db.from('group_members').insert({
-        group_id: id,
-        user_id: newUser.user_id,
-        is_active: true,
-      });
+      return res.status(400).json({ error: 'User already in group' });
     }
 
-    res.status(201).json({ message: 'Member added successfully' });
+    // Check for existing pending invite
+    const { data: existingInvite } = await db
+      .from('group_invites')
+      .select('*')
+      .eq('group_id', id)
+      .eq('invited_user', invitedUser.user_id)
+      .eq('status', 'pending')
+      .single();
+
+    if (existingInvite) {
+      return res.status(400).json({ error: 'Invite already sent' });
+    }
+
+    // Create invite
+    const { data: invite, error: inviteError } = await db
+      .from('group_invites')
+      .insert({
+        group_id: id,
+        invited_by: userId,
+        invited_user: invitedUser.user_id,
+        status: 'pending',
+      })
+      .select()
+      .single();
+
+    if (inviteError) {
+      console.error('Database error:', inviteError);
+      return res.status(500).json({ error: 'Failed to send invite' });
+    }
+
+    res.status(201).json({ message: 'Invite sent successfully', invite });
   } catch (error) {
-    console.error('Add member error:', error);
-    res.status(500).json({ error: 'Failed to add member' });
+    console.error('Invite error:', error);
+    res.status(500).json({ error: 'Failed to send invite' });
   }
 };
+
+// Get pending invites for current user
+export const getMyInvites = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+
+    const { data: invites, error } = await db
+      .from('group_invites')
+      .select(`
+        invite_id,
+        group_id,
+        invited_by,
+        status,
+        created_at,
+        groups (
+          group_id,
+          name,
+          description
+        ),
+        inviter:users!group_invites_invited_by_fkey (
+          user_id,
+          name,
+          email
+        )
+      `)
+      .eq('invited_user', userId)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Failed to fetch invites' });
+    }
+
+    res.json({ invites });
+  } catch (error) {
+    console.error('Get invites error:', error);
+    res.status(500).json({ error: 'Failed to fetch invites' });
+  }
+};
+
+// Accept group invite
+export const acceptInvite = async (req: AuthRequest, res: Response) => {
+  try {
+    const { inviteId } = req.params;
+    const userId = req.user?.id;
+
+    // Get invite
+    const { data: invite, error: inviteError } = await db
+      .from('group_invites')
+      .select('*')
+      .eq('invite_id', inviteId)
+      .eq('invited_user', userId)
+      .eq('status', 'pending')
+      .single();
+
+    if (inviteError || !invite) {
+      return res.status(404).json({ error: 'Invite not found' });
+    }
+
+    // Add user to group
+    const { error: memberError } = await db.from('group_members').insert({
+      group_id: invite.group_id,
+      user_id: userId,
+      is_active: true,
+    });
+
+    if (memberError) {
+      console.error('Database error:', memberError);
+      return res.status(500).json({ error: 'Failed to join group' });
+    }
+
+    // Update invite status
+    await db
+      .from('group_invites')
+      .update({
+        status: 'accepted',
+        responded_at: new Date().toISOString(),
+      })
+      .eq('invite_id', inviteId);
+
+    res.json({ message: 'Invite accepted successfully' });
+  } catch (error) {
+    console.error('Accept invite error:', error);
+    res.status(500).json({ error: 'Failed to accept invite' });
+  }
+};
+
+// Decline group invite
+export const declineInvite = async (req: AuthRequest, res: Response) => {
+  try {
+    const { inviteId } = req.params;
+    const userId = req.user?.id;
+
+    // Get invite
+    const { data: invite, error: inviteError } = await db
+      .from('group_invites')
+      .select('*')
+      .eq('invite_id', inviteId)
+      .eq('invited_user', userId)
+      .eq('status', 'pending')
+      .single();
+
+    if (inviteError || !invite) {
+      return res.status(404).json({ error: 'Invite not found' });
+    }
+
+    // Update invite status
+    await db
+      .from('group_invites')
+      .update({
+        status: 'declined',
+        responded_at: new Date().toISOString(),
+      })
+      .eq('invite_id', inviteId);
+
+    res.json({ message: 'Invite declined' });
+  } catch (error) {
+    console.error('Decline invite error:', error);
+    res.status(500).json({ error: 'Failed to decline invite' });
+  }
+};
+
+// Legacy function - kept for backwards compatibility but deprecated
+export const addMember = inviteToGroup;
 
 // Remove member from group
 export const removeMember = async (req: AuthRequest, res: Response) => {
@@ -284,6 +425,18 @@ export const removeMember = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: 'Cannot remove group creator' });
     }
 
+    // Delete all expenses in this group created by or paid by this member
+    const { error: expenseError } = await db
+      .from('expenses')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('group_id', id)
+      .or(`created_by.eq.${memberUserId},paid_by.eq.${memberUserId}`);
+
+    if (expenseError) {
+      console.error('Expense deletion error:', expenseError);
+      return res.status(500).json({ error: 'Failed to remove member expenses' });
+    }
+
     // Soft delete - set is_active to false
     const { error } = await db
       .from('group_members')
@@ -296,7 +449,7 @@ export const removeMember = async (req: AuthRequest, res: Response) => {
       return res.status(500).json({ error: 'Failed to remove member' });
     }
 
-    res.json({ message: 'Member removed successfully' });
+    res.json({ message: 'Member removed successfully (including their expenses)' });
   } catch (error) {
     console.error('Remove member error:', error);
     res.status(500).json({ error: 'Failed to remove member' });

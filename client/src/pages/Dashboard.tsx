@@ -9,6 +9,7 @@ export default function Dashboard() {
   const [balance, setBalance] = useState<Balance | null>(null);
   const [groups, setGroups] = useState<Group[]>([]);
   const [recentExpenses, setRecentExpenses] = useState<Expense[]>([]);
+  const [invites, setInvites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,6 +23,14 @@ export default function Dashboard() {
       // Load groups first
       const groupsRes = await groupsAPI.getAll();
       setGroups(groupsRes.data.groups);
+
+      // Load invites
+      try {
+        const invitesRes = await groupsAPI.getMyInvites();
+        setInvites(invitesRes.data.invites || []);
+      } catch (err) {
+        console.log('No invites');
+      }
 
       // Try to load balance and expenses, but don't fail if they error
       try {
@@ -44,6 +53,24 @@ export default function Dashboard() {
     }
   };
 
+  const handleAcceptInvite = async (inviteId: string) => {
+    try {
+      await groupsAPI.acceptInvite(inviteId);
+      loadData(); // Reload to update groups and invites
+    } catch (err) {
+      console.error('Failed to accept invite:', err);
+    }
+  };
+
+  const handleDeclineInvite = async (inviteId: string) => {
+    try {
+      await groupsAPI.declineInvite(inviteId);
+      loadData(); // Reload to update invites
+    } catch (err) {
+      console.error('Failed to decline invite:', err);
+    }
+  };
+
   if (loading) {
     return <div style={{ padding: '20px' }}>Loading...</div>;
   }
@@ -55,6 +82,65 @@ export default function Dashboard() {
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>Dashboard</h1>
       <p>Welcome, {user?.name}!</p>
+
+      {/* Group Invites */}
+      {invites.length > 0 && (
+        <div style={{
+          background: '#fff3cd',
+          border: '1px solid #ffc107',
+          padding: '15px',
+          borderRadius: '8px',
+          marginBottom: '20px'
+        }}>
+          <h3 style={{ margin: '0 0 10px 0' }}>Group Invites ({invites.length})</h3>
+          {invites.map((invite: any) => (
+            <div key={invite.invite_id} style={{
+              background: 'white',
+              padding: '12px',
+              borderRadius: '4px',
+              marginBottom: '10px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <strong>{invite.inviter?.name}</strong> invited you to join{' '}
+                <strong>{invite.groups?.name}</strong>
+              </div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  onClick={() => handleAcceptInvite(invite.invite_id)}
+                  style={{
+                    padding: '6px 12px',
+                    background: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleDeclineInvite(invite.invite_id)}
+                  style={{
+                    padding: '6px 12px',
+                    background: '#6c757d',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  Decline
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Balance Summary */}
       <div style={{

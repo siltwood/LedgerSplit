@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
   google_id TEXT UNIQUE,
   email_verified BOOLEAN DEFAULT FALSE,
   currency_preference TEXT DEFAULT 'USD',
-  created_at TIMESTAMP DEFAULT NOW()
+  created_at TIMESTAMP DEFAULT NOW(),
+  deleted_at TIMESTAMP
 );
 
 -- Password Reset Tokens Table
@@ -87,6 +88,32 @@ CREATE TABLE IF NOT EXISTS friends (
   PRIMARY KEY (user_id, friend_id)
 );
 
+-- Group Invites Table
+CREATE TABLE IF NOT EXISTS group_invites (
+  invite_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  group_id UUID NOT NULL REFERENCES groups(group_id) ON DELETE CASCADE,
+  invited_by UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  invited_user UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'declined')) DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT NOW(),
+  responded_at TIMESTAMP,
+  UNIQUE(group_id, invited_user)
+);
+
+-- Email Invites Table (for non-registered users)
+CREATE TABLE IF NOT EXISTS email_invites (
+  invite_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT NOT NULL,
+  invited_by UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  invite_type TEXT NOT NULL CHECK (invite_type IN ('friend', 'group')),
+  group_id UUID REFERENCES groups(group_id) ON DELETE CASCADE,
+  token UUID DEFAULT gen_random_uuid(),
+  status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'expired')) DEFAULT 'pending',
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(email, invite_type, group_id)
+);
+
 -- Indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_expenses_group_id ON expenses(group_id);
 CREATE INDEX IF NOT EXISTS idx_expenses_paid_by ON expenses(paid_by);
@@ -97,3 +124,8 @@ CREATE INDEX IF NOT EXISTS idx_settlements_paid_by ON settlements(paid_by);
 CREATE INDEX IF NOT EXISTS idx_settlements_paid_to ON settlements(paid_to);
 CREATE INDEX IF NOT EXISTS idx_group_members_user_id ON group_members(user_id);
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_group_invites_invited_user ON group_invites(invited_user);
+CREATE INDEX IF NOT EXISTS idx_group_invites_status ON group_invites(status);
+CREATE INDEX IF NOT EXISTS idx_email_invites_email ON email_invites(email);
+CREATE INDEX IF NOT EXISTS idx_email_invites_token ON email_invites(token);
+CREATE INDEX IF NOT EXISTS idx_users_deleted_at ON users(deleted_at);

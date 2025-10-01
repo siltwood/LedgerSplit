@@ -187,3 +187,181 @@ export const logout = (req: AuthRequest, res: Response) => {
     res.json({ message: 'Logged out successfully' });
   });
 };
+
+// Request password reset
+export const requestPasswordReset = async (req: AuthRequest, res: Response) => {
+  const { email } = req.body;
+
+  try {
+    // Find user
+    const { data: user, error } = await db
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    // Always return success to prevent email enumeration
+    if (error || !user) {
+      return res.json({ message: 'If that email exists, a reset link has been sent' });
+    }
+
+    // Don't allow password reset for Google auth users
+    if (user.google_id && !user.password_hash) {
+      return res.json({ message: 'If that email exists, a reset link has been sent' });
+    }
+
+    // Create reset token
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour expiry
+
+    const { data: token, error: tokenError } = await db
+      .from('password_reset_tokens')
+      .insert({
+        user_id: user.user_id,
+        expires_at: expiresAt.toISOString(),
+        used: false,
+      })
+      .select()
+      .single();
+
+    if (tokenError) {
+      console.error('Token error:', tokenError);
+      return res.status(500).json({ error: 'Failed to create reset token' });
+    }
+
+    // Send email
+    const { sendPasswordResetEmail } = await import('../services/email');
+    await sendPasswordResetEmail(email, token.token);
+
+    res.json({ message: 'If that email exists, a reset link has been sent' });
+  } catch (error) {
+    console.error('Password reset request error:', error);
+    res.status(500).json({ error: 'Failed to process request' });
+  }
+};
+
+// Reset password with token
+export const resetPassword = async (req: AuthRequest, res: Response) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    // Find valid token
+    const { data: resetToken, error: tokenError } = await db
+      .from('password_reset_tokens')
+      .select('*')
+      .eq('token', token)
+      .eq('used', false)
+      .gt('expires_at', new Date().toISOString())
+      .single();
+
+    if (tokenError || !resetToken) {
+      return res.status(400).json({ error: 'Invalid or expired reset token' });
+    }
+
+    // Hash new password
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    // Update user password
+    const { error: updateError } = await db
+      .from('users')
+      .update({ password_hash: passwordHash })
+      .eq('user_id', resetToken.user_id);
+
+    if (updateError) {
+      console.error('Update error:', updateError);
+      return res.status(500).json({ error: 'Failed to reset password' });
+    }
+
+    // Mark token as used
+    await db
+      .from('password_reset_tokens')
+      .update({ used: true })
+      .eq('token', token);
+
+    res.json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Password reset error:', error);
+    res.status(500).json({ error: 'Failed to reset password' });
+  }
+};
+
+// Request password change (requires email confirmation)
+export const requestPasswordChange = async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+
+  try {
+    // Get user email
+    const { data: user, error } = await db
+      .from('users')
+      .select('email, google_id')
+      .eq('user_id', userId)
+      .single();
+
+    if (error || !user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Don't allow password change for Google-only accounts
+    if (user.google_id) {
+      return res.status(400).json({ error: 'Google accounts cannot change password this way' });
+    }
+
+    // Create reset token
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour expiry
+
+    const { data: token, error: tokenError } = await db
+      .from('password_reset_tokens')
+      .insert({
+        user_id: userId,
+        expires_at: expiresAt.toISOString(),
+        used: false,
+      })
+      .select()
+      .single();
+
+    if (tokenError) {
+      console.error('Token error:', tokenError);
+      return res.status(500).json({ error: 'Failed to create reset token' });
+    }
+
+    // Send email
+    const { sendPasswordResetEmail } = await import('../services/email');
+    await sendPasswordResetEmail(user.email, token.token);
+
+    res.json({ message: 'Password change link sent to your email' });
+  } catch (error) {
+    console.error('Password change request error:', error);
+    res.status(500).json({ error: 'Failed to process request' });
+  }
+};
+
+// Delete account
+export const deleteAccount = async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+
+  try {
+    // Soft delete user
+    const { error } = await db
+      .from('users')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Delete error:', error);
+      return res.status(500).json({ error: 'Failed to delete account' });
+    }
+
+    // Destroy session
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Session destroy error:', err);
+      }
+    });
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error('Delete account error:', error);
+    res.status(500).json({ error: 'Failed to delete account' });
+  }
+};

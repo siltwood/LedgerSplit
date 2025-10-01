@@ -14,6 +14,12 @@ export const authAPI = {
   logout: () => api.post('/auth/logout'),
   getCurrentUser: () => api.get('/auth/me'),
   getGoogleAuthUrl: () => api.get('/auth/google'),
+  requestPasswordReset: (email: string) =>
+    api.post('/auth/forgot-password', { email }),
+  resetPassword: (token: string, newPassword: string) =>
+    api.post('/auth/reset-password', { token, newPassword }),
+  requestPasswordChange: () => api.post('/auth/change-password'),
+  deleteAccount: () => api.delete('/auth/account'),
 };
 
 // Groups
@@ -25,8 +31,13 @@ export const groupsAPI = {
   update: (id: string, data: { name: string; description?: string }) =>
     api.put(`/groups/${id}`, data),
   delete: (id: string) => api.delete(`/groups/${id}`),
-  addMember: (id: string, email: string) =>
-    api.post(`/groups/${id}/members`, { email }),
+  inviteUser: (id: string, email: string) =>
+    api.post(`/groups/${id}/invite`, { email }),
+  getMyInvites: () => api.get('/groups/invites'),
+  acceptInvite: (inviteId: string) =>
+    api.post(`/groups/invites/${inviteId}/accept`),
+  declineInvite: (inviteId: string) =>
+    api.post(`/groups/invites/${inviteId}/decline`),
   removeMember: (id: string, userId: string) =>
     api.delete(`/groups/${id}/members/${userId}`),
 };
@@ -71,8 +82,10 @@ export const friendsAPI = {
   getAll: () => api.get('/friends'),
   getPending: () => api.get('/friends/pending'),
   sendRequest: (email: string) => api.post('/friends/invite', { email }),
-  acceptRequest: (id: string) => api.put(`/friends/${id}/accept`),
+  accept: (id: string) => api.put(`/friends/${id}/accept`),
   remove: (id: string) => api.delete(`/friends/${id}`),
+  block: (id: string) => api.put(`/friends/${id}/block`),
+  unblock: (id: string) => api.put(`/friends/${id}/unblock`),
 };
 
 // Balances

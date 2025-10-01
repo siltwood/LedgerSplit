@@ -69,7 +69,7 @@ export default function Login() {
           />
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '10px' }}>
           <label style={{ display: 'block', marginBottom: '5px' }}>Password</label>
           <input
             type="password"
@@ -84,6 +84,12 @@ export default function Login() {
               borderRadius: '4px'
             }}
           />
+        </div>
+
+        <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+          <Link to="/forgot-password" style={{ color: '#007bff', fontSize: '14px' }}>
+            Forgot password?
+          </Link>
         </div>
 
         <button

@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { db } from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 
-// Get all friends
+// Get all friends (including blocked)
 export const getFriends = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.id;
@@ -18,8 +18,7 @@ export const getFriends = async (req: AuthRequest, res: Response) => {
           avatar_url
         )
       `)
-      .eq('user_id', userId)
-      .eq('status', 'accepted');
+      .eq('user_id', userId);
 
     if (error) {
       console.error('Database error:', error);
@@ -89,11 +88,52 @@ export const sendFriendRequest = async (req: AuthRequest, res: Response) => {
     // Find friend by email
     const { data: friend, error: friendError } = await db
       .from('users')
-      .select('user_id')
+      .select('user_id, deleted_at')
       .eq('email', email)
       .single();
 
+    // If user not found, send email invite
     if (friendError || !friend) {
+      const { data: currentUser } = await db
+        .from('users')
+        .select('name')
+        .eq('user_id', userId)
+        .single();
+
+      // Check for existing email invite
+      const { data: existingInvite } = await db
+        .from('email_invites')
+        .select('*')
+        .eq('email', email)
+        .eq('invite_type', 'friend')
+        .eq('invited_by', userId)
+        .single();
+
+      if (!existingInvite) {
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiry
+
+        const { data: invite } = await db
+          .from('email_invites')
+          .insert({
+            email,
+            invited_by: userId,
+            invite_type: 'friend',
+            expires_at: expiresAt.toISOString(),
+          })
+          .select()
+          .single();
+
+        // Send email
+        const { sendFriendInviteEmail } = await import('../services/email');
+        await sendFriendInviteEmail(email, currentUser?.name || 'Someone', invite.token);
+      }
+
+      return res.status(201).json({ message: 'Invitation sent via email' });
+    }
+
+    // Check if deleted
+    if (friend.deleted_at) {
       return res.status(404).json({ error: 'User not found' });
     }
 
@@ -186,6 +226,56 @@ export const acceptFriendRequest = async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error('Accept friend request error:', error);
     res.status(500).json({ error: 'Failed to accept friend request' });
+  }
+};
+
+// Block friend
+export const blockFriend = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params; // friend user_id
+    const userId = req.user?.id;
+
+    // Update friendship status to blocked
+    const { error } = await db
+      .from('friends')
+      .update({ status: 'blocked' })
+      .eq('user_id', userId)
+      .eq('friend_id', id);
+
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Failed to block user' });
+    }
+
+    res.json({ message: 'User blocked successfully' });
+  } catch (error) {
+    console.error('Block friend error:', error);
+    res.status(500).json({ error: 'Failed to block user' });
+  }
+};
+
+// Unblock friend
+export const unblockFriend = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params; // friend user_id
+    const userId = req.user?.id;
+
+    // Update friendship status back to accepted
+    const { error } = await db
+      .from('friends')
+      .update({ status: 'accepted' })
+      .eq('user_id', userId)
+      .eq('friend_id', id);
+
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Failed to unblock user' });
+    }
+
+    res.json({ message: 'User unblocked successfully' });
+  } catch (error) {
+    console.error('Unblock friend error:', error);
+    res.status(500).json({ error: 'Failed to unblock user' });
   }
 };
 

@@ -4,6 +4,8 @@ import {
   getPendingRequests,
   sendFriendRequest,
   acceptFriendRequest,
+  blockFriend,
+  unblockFriend,
   removeFriend,
 } from '../controllers/friendsController';
 import { requireAuth } from '../middleware/auth';
@@ -17,6 +19,8 @@ router.get('/', getFriends);
 router.get('/pending', getPendingRequests);
 router.post('/invite', sendFriendRequest);
 router.put('/:id/accept', acceptFriendRequest);
+router.put('/:id/block', blockFriend);
+router.put('/:id/unblock', unblockFriend);
 router.delete('/:id', removeFriend);
 
 export default router;
