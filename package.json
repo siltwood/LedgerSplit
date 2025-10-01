@@ -2,7 +2,8 @@
   "name": "ledgersplit",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd client && npm install && npm run build && cd ../server && npm install && npm run build",
-    "start": "cd server && npm start"
+    "build": "cd client && npm ci && npm run build && cd ../server && npm ci && npm run build",
+    "start": "cd server && npm start",
+    "heroku-postbuild": "npm run build"
   }
 }
