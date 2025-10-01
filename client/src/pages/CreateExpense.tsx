@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { expensesAPI, groupsAPI, friendsAPI } from '../services/api';
 import type { Group } from '../types/index';
+import { colors } from '../styles/colors';
 
 type SplitType = 'equal' | 'exact' | 'percentages' | 'shares';
 
@@ -134,8 +135,8 @@ export default function CreateExpense() {
       {error && (
         <div style={{
           padding: '10px',
-          background: '#fee',
-          color: '#c00',
+          background: colors.error,
+          color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -158,7 +159,7 @@ export default function CreateExpense() {
               width: '100%',
               padding: '10px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -179,7 +180,7 @@ export default function CreateExpense() {
               width: '100%',
               padding: '10px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -198,7 +199,7 @@ export default function CreateExpense() {
               width: '100%',
               padding: '10px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -215,7 +216,7 @@ export default function CreateExpense() {
               width: '100%',
               padding: '10px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           >
@@ -240,7 +241,7 @@ export default function CreateExpense() {
               width: '100%',
               padding: '10px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           >
@@ -257,7 +258,7 @@ export default function CreateExpense() {
             Split with *
           </label>
           <div style={{
-            border: '1px solid #ccc',
+            border: `1px solid ${colors.border}`,
             borderRadius: '4px',
             padding: '10px',
             maxHeight: '150px',
@@ -290,7 +291,7 @@ export default function CreateExpense() {
               width: '100%',
               padding: '10px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           >
@@ -318,7 +319,7 @@ export default function CreateExpense() {
                       width: '120px',
                       padding: '8px',
                       fontSize: '16px',
-                      border: '1px solid #ccc',
+                      border: `1px solid ${colors.border}`,
                       borderRadius: '4px'
                     }}
                   />
@@ -330,7 +331,7 @@ export default function CreateExpense() {
 
         {splitType === 'equal' && splits && (
           <div style={{
-            background: '#f8f9fa',
+            background: colors.surfaceLight,
             padding: '15px',
             borderRadius: '4px',
             marginBottom: '15px'
@@ -375,8 +376,8 @@ export default function CreateExpense() {
               flex: 1,
               padding: '12px',
               fontSize: '16px',
-              background: '#007bff',
-              color: 'white',
+              background: colors.primary,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: loading ? 'not-allowed' : 'pointer'
@@ -390,8 +391,8 @@ export default function CreateExpense() {
             style={{
               padding: '12px 20px',
               fontSize: '16px',
-              background: '#6c757d',
-              color: 'white',
+              background: colors.textSecondary,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer'

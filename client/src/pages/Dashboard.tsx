@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { balancesAPI, groupsAPI, expensesAPI } from '../services/api';
 import type { Balance, Group, Expense } from '../types/index';
+import { colors } from '../styles/colors';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -76,7 +77,7 @@ export default function Dashboard() {
   }
 
   const totalBalance = parseFloat(balance?.totalBalance || '0');
-  const balanceColor = totalBalance > 0 ? '#28a745' : totalBalance < 0 ? '#dc3545' : '#6c757d';
+  const balanceColor = totalBalance > 0 ? colors.success : totalBalance < 0 ? colors.error : colors.textSecondary;
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -86,8 +87,8 @@ export default function Dashboard() {
       {/* Group Invites */}
       {invites.length > 0 && (
         <div style={{
-          background: '#fff3cd',
-          border: '1px solid #ffc107',
+          background: colors.warning,
+          border: `1px solid ${colors.border}`,
           padding: '15px',
           borderRadius: '8px',
           marginBottom: '20px'
@@ -95,7 +96,7 @@ export default function Dashboard() {
           <h3 style={{ margin: '0 0 10px 0' }}>Group Invites ({invites.length})</h3>
           {invites.map((invite: any) => (
             <div key={invite.invite_id} style={{
-              background: 'white',
+              background: colors.surface,
               padding: '12px',
               borderRadius: '4px',
               marginBottom: '10px',
@@ -112,8 +113,8 @@ export default function Dashboard() {
                   onClick={() => handleAcceptInvite(invite.invite_id)}
                   style={{
                     padding: '6px 12px',
-                    background: '#28a745',
-                    color: 'white',
+                    background: colors.success,
+                    color: colors.text,
                     border: 'none',
                     borderRadius: '4px',
                     cursor: 'pointer',
@@ -126,8 +127,8 @@ export default function Dashboard() {
                   onClick={() => handleDeclineInvite(invite.invite_id)}
                   style={{
                     padding: '6px 12px',
-                    background: '#6c757d',
-                    color: 'white',
+                    background: colors.textSecondary,
+                    color: colors.text,
                     border: 'none',
                     borderRadius: '4px',
                     cursor: 'pointer',
@@ -144,7 +145,7 @@ export default function Dashboard() {
 
       {/* Balance Summary */}
       <div style={{
-        background: '#f8f9fa',
+        background: colors.surface,
         padding: '20px',
         borderRadius: '8px',
         marginBottom: '30px'
@@ -153,7 +154,7 @@ export default function Dashboard() {
         <div style={{ fontSize: '32px', fontWeight: 'bold', color: balanceColor }}>
           ${Math.abs(totalBalance).toFixed(2)}
         </div>
-        <div style={{ color: '#6c757d', marginTop: '5px' }}>
+        <div style={{ color: colors.textSecondary, marginTop: '5px' }}>
           {totalBalance > 0 && `You are owed`}
           {totalBalance < 0 && `You owe`}
           {totalBalance === 0 && `Settled up`}
@@ -165,7 +166,7 @@ export default function Dashboard() {
               <div style={{ marginBottom: '15px' }}>
                 <h4>Owed to you:</h4>
                 {balance.owedBy.map((item, i) => (
-                  <div key={i} style={{ color: '#28a745' }}>
+                  <div key={i} style={{ color: colors.success }}>
                     {item.user.name} owes you ${item.amount}
                   </div>
                 ))}
@@ -176,7 +177,7 @@ export default function Dashboard() {
               <div>
                 <h4>You owe:</h4>
                 {balance.owes.map((item, i) => (
-                  <div key={i} style={{ color: '#dc3545' }}>
+                  <div key={i} style={{ color: colors.error }}>
                     You owe {item.user.name} ${item.amount}
                   </div>
                 ))}
@@ -191,8 +192,8 @@ export default function Dashboard() {
         <Link to="/expenses/new">
           <button style={{
             padding: '10px 20px',
-            background: '#007bff',
-            color: 'white',
+            background: colors.primary,
+            color: colors.text,
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -204,8 +205,8 @@ export default function Dashboard() {
         <Link to="/groups/new">
           <button style={{
             padding: '10px 20px',
-            background: '#28a745',
-            color: 'white',
+            background: colors.success,
+            color: colors.text,
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -217,8 +218,8 @@ export default function Dashboard() {
         <Link to="/settlements/new">
           <button style={{
             padding: '10px 20px',
-            background: '#ffc107',
-            color: '#000',
+            background: colors.warning,
+            color: colors.background,
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -234,7 +235,7 @@ export default function Dashboard() {
         <div>
           <h3>Your Groups</h3>
           {groups.length === 0 ? (
-            <p style={{ color: '#6c757d' }}>No groups yet</p>
+            <p style={{ color: colors.textSecondary }}>No groups yet</p>
           ) : (
             <div>
               {groups.map((group: any) => (
@@ -245,15 +246,15 @@ export default function Dashboard() {
                 >
                   <div style={{
                     padding: '15px',
-                    background: 'white',
-                    border: '1px solid #dee2e6',
+                    background: colors.surface,
+                    border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
                     marginBottom: '10px',
                     cursor: 'pointer'
                   }}>
                     <strong>{group.groups?.name}</strong>
                     {group.groups?.description && (
-                      <div style={{ fontSize: '14px', color: '#6c757d', marginTop: '5px' }}>
+                      <div style={{ fontSize: '14px', color: colors.textSecondary, marginTop: '5px' }}>
                         {group.groups?.description}
                       </div>
                     )}
@@ -269,14 +270,14 @@ export default function Dashboard() {
         <div>
           <h3>Recent Expenses</h3>
           {recentExpenses.length === 0 ? (
-            <p style={{ color: '#6c757d' }}>No expenses yet</p>
+            <p style={{ color: colors.textSecondary }}>No expenses yet</p>
           ) : (
             <div>
               {recentExpenses.map((expense) => (
                 <div key={expense.expense_id} style={{
                   padding: '15px',
-                  background: 'white',
-                  border: '1px solid #dee2e6',
+                  background: colors.surface,
+                  border: `1px solid ${colors.border}`,
                   borderRadius: '4px',
                   marginBottom: '10px'
                 }}>
@@ -284,7 +285,7 @@ export default function Dashboard() {
                     <strong>{expense.description}</strong>
                     <span>${expense.amount}</span>
                   </div>
-                  <div style={{ fontSize: '14px', color: '#6c757d', marginTop: '5px' }}>
+                  <div style={{ fontSize: '14px', color: colors.textSecondary, marginTop: '5px' }}>
                     Paid by {expense.paid_by_user.name} on {new Date(expense.date).toLocaleDateString()}
                   </div>
                 </div>

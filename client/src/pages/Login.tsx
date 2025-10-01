@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
+import { colors } from '../styles/colors';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -42,8 +43,8 @@ export default function Login() {
       {error && (
         <div style={{
           padding: '10px',
-          background: '#fee',
-          color: '#c00',
+          background: colors.surface,
+          color: colors.error,
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -63,7 +64,7 @@ export default function Login() {
               width: '100%',
               padding: '8px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -80,14 +81,14 @@ export default function Login() {
               width: '100%',
               padding: '8px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
         </div>
 
         <div style={{ marginBottom: '20px', textAlign: 'right' }}>
-          <Link to="/forgot-password" style={{ color: '#007bff', fontSize: '14px' }}>
+          <Link to="/forgot-password" style={{ color: colors.primary, fontSize: '14px' }}>
             Forgot password?
           </Link>
         </div>
@@ -99,8 +100,8 @@ export default function Login() {
             width: '100%',
             padding: '10px',
             fontSize: '16px',
-            background: '#007bff',
-            color: 'white',
+            background: colors.primary,
+            color: colors.background,
             border: 'none',
             borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer'
@@ -120,9 +121,9 @@ export default function Login() {
           width: '100%',
           padding: '10px',
           fontSize: '16px',
-          background: 'white',
-          color: '#333',
-          border: '1px solid #ccc',
+          background: colors.surface,
+          color: colors.text,
+          border: `1px solid ${colors.border}`,
           borderRadius: '4px',
           cursor: 'pointer'
         }}

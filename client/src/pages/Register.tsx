@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { colors } from '../styles/colors';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -33,8 +34,8 @@ export default function Register() {
       {error && (
         <div style={{
           padding: '10px',
-          background: '#fee',
-          color: '#c00',
+          background: colors.surface,
+          color: colors.error,
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -54,7 +55,7 @@ export default function Register() {
               width: '100%',
               padding: '8px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -71,7 +72,7 @@ export default function Register() {
               width: '100%',
               padding: '8px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -89,7 +90,7 @@ export default function Register() {
               width: '100%',
               padding: '8px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -102,8 +103,8 @@ export default function Register() {
             width: '100%',
             padding: '10px',
             fontSize: '16px',
-            background: '#28a745',
-            color: 'white',
+            background: colors.success,
+            color: colors.background,
             border: 'none',
             borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer'

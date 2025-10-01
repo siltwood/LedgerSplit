@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
+import { colors } from '../styles/colors';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -28,15 +29,15 @@ export default function ForgotPassword() {
   return (
     <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px' }}>
       <h1>Forgot Password</h1>
-      <p style={{ color: '#6c757d' }}>
+      <p style={{ color: colors.textSecondary }}>
         Enter your email address and we'll send you a link to reset your password.
       </p>
 
       {error && (
         <div style={{
           padding: '10px',
-          background: '#fee',
-          color: '#c00',
+          background: colors.error,
+          color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -47,8 +48,8 @@ export default function ForgotPassword() {
       {message && (
         <div style={{
           padding: '10px',
-          background: '#d4edda',
-          color: '#155724',
+          background: colors.success,
+          color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -70,7 +71,7 @@ export default function ForgotPassword() {
               width: '100%',
               padding: '10px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -83,8 +84,8 @@ export default function ForgotPassword() {
             width: '100%',
             padding: '12px',
             fontSize: '16px',
-            background: '#007bff',
-            color: 'white',
+            background: colors.primary,
+            color: colors.text,
             border: 'none',
             borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer'
@@ -95,7 +96,7 @@ export default function ForgotPassword() {
       </form>
 
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <Link to="/login" style={{ color: '#007bff' }}>
+        <Link to="/login" style={{ color: colors.primary }}>
           Back to Login
         </Link>
       </div>

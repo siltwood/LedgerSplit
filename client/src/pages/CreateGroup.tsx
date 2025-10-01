@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { groupsAPI } from '../services/api';
+import { colors } from '../styles/colors';
 
 export default function CreateGroup() {
   const [name, setName] = useState('');
@@ -31,8 +32,8 @@ export default function CreateGroup() {
       {error && (
         <div style={{
           padding: '10px',
-          background: '#fee',
-          color: '#c00',
+          background: colors.error,
+          color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -55,7 +56,7 @@ export default function CreateGroup() {
               width: '100%',
               padding: '10px',
               fontSize: '16px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -89,8 +90,8 @@ export default function CreateGroup() {
               flex: 1,
               padding: '12px',
               fontSize: '16px',
-              background: '#28a745',
-              color: 'white',
+              background: colors.success,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: loading ? 'not-allowed' : 'pointer'
@@ -104,8 +105,8 @@ export default function CreateGroup() {
             style={{
               padding: '12px 20px',
               fontSize: '16px',
-              background: '#6c757d',
-              color: 'white',
+              background: colors.textSecondary,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer'

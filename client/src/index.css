@@ -1,16 +1,18 @@
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
+  font-family: 'VT323', monospace;
+  -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: grayscale;
-  background: #f8f9fa;
-  color: #212529;
+  background: #434a42;
+  color: #e1ca96;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
 #root {
@@ -18,10 +20,69 @@ body {
 }
 
 a {
-  color: #007bff;
+  color: #aca885;
   text-decoration: none;
+  transition: color 0.1s;
 }
 
 a:hover {
-  text-decoration: underline;
+  color: #e1ca96;
+  text-decoration: none;
+}
+
+/* Pixel-perfect buttons */
+button {
+  font-family: 'Press Start 2P', monospace;
+  border: 4px solid;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.1s;
+  image-rendering: pixelated;
+  font-size: 12px;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+button:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+/* Input styles */
+input, textarea, select {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  background: #626c66;
+  border: 4px solid #918b76;
+  color: #e1ca96;
+  padding: 12px;
+  image-rendering: pixelated;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #aca885;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #626c66;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #aca885;
+  border: 4px solid #626c66;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e1ca96;
 }

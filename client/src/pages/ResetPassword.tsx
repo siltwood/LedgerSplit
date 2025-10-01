@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
+import { colors } from '../styles/colors';
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -56,8 +57,8 @@ export default function ResetPassword() {
       {error && (
         <div style={{
           padding: '10px',
-          background: '#fee',
-          color: '#c00',
+          background: colors.error,
+          color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -81,7 +82,7 @@ export default function ResetPassword() {
                 width: '100%',
                 padding: '10px',
                 fontSize: '16px',
-                border: '1px solid #ccc',
+                border: `1px solid ${colors.border}`,
                 borderRadius: '4px'
               }}
             />
@@ -101,7 +102,7 @@ export default function ResetPassword() {
                 width: '100%',
                 padding: '10px',
                 fontSize: '16px',
-                border: '1px solid #ccc',
+                border: `1px solid ${colors.border}`,
                 borderRadius: '4px'
               }}
             />
@@ -114,8 +115,8 @@ export default function ResetPassword() {
               width: '100%',
               padding: '12px',
               fontSize: '16px',
-              background: '#007bff',
-              color: 'white',
+              background: colors.primary,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: loading ? 'not-allowed' : 'pointer'
@@ -127,14 +128,14 @@ export default function ResetPassword() {
       ) : (
         <div>
           <p>Invalid or missing reset token.</p>
-          <Link to="/forgot-password" style={{ color: '#007bff' }}>
+          <Link to="/forgot-password" style={{ color: colors.primary }}>
             Request a new reset link
           </Link>
         </div>
       )}
 
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <Link to="/login" style={{ color: '#007bff' }}>
+        <Link to="/login" style={{ color: colors.primary }}>
           Back to Login
         </Link>
       </div>

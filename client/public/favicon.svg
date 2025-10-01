@@ -1,0 +1,27 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark background -->
+  <rect width="32" height="32" fill="#1A1A1A"/>
+
+  <!-- Dollar sign in pixel art style -->
+  <!-- Vertical line of $ -->
+  <rect x="14" y="4" width="4" height="4" fill="#00E676"/>
+  <rect x="14" y="8" width="4" height="4" fill="#00E676"/>
+  <rect x="14" y="12" width="4" height="4" fill="#00E676"/>
+  <rect x="14" y="16" width="4" height="4" fill="#00E676"/>
+  <rect x="14" y="20" width="4" height="4" fill="#00E676"/>
+  <rect x="14" y="24" width="4" height="4" fill="#00E676"/>
+
+  <!-- Top curve of S -->
+  <rect x="10" y="8" width="4" height="4" fill="#00E676"/>
+  <rect x="18" y="8" width="4" height="4" fill="#00E676"/>
+  <rect x="10" y="12" width="4" height="4" fill="#00E676"/>
+
+  <!-- Middle -->
+  <rect x="10" y="16" width="4" height="4" fill="#00E676"/>
+  <rect x="18" y="16" width="4" height="4" fill="#00E676"/>
+
+  <!-- Bottom curve of S -->
+  <rect x="18" y="20" width="4" height="4" fill="#00E676"/>
+  <rect x="10" y="20" width="4" height="4" fill="#00E676"/>
+  <rect x="18" y="24" width="4" height="4" fill="#00E676"/>
+</svg>

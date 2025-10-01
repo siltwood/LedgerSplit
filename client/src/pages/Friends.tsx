@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { friendsAPI } from '../services/api';
+import { colors } from '../styles/colors';
 
 export default function Friends() {
   const [friends, setFriends] = useState<any[]>([]);
@@ -68,10 +69,10 @@ export default function Friends() {
 
       {/* Add Friend */}
       <div style={{
-        background: 'white',
+        background: colors.surface,
         padding: '20px',
         borderRadius: '8px',
-        border: '1px solid #dee2e6',
+        border: `1px solid ${colors.border}`,
         marginBottom: '30px'
       }}>
         <h3 style={{ marginTop: 0 }}>Add Friend</h3>
@@ -79,8 +80,8 @@ export default function Friends() {
           <div style={{
             padding: '10px',
             marginBottom: '15px',
-            background: status.includes('sent') ? '#d4edda' : '#f8d7da',
-            color: status.includes('sent') ? '#155724' : '#721c24',
+            background: status.includes('sent') ? colors.success : colors.error,
+            color: colors.text,
             borderRadius: '4px'
           }}>
             {status}
@@ -95,7 +96,7 @@ export default function Friends() {
             style={{
               flex: 1,
               padding: '10px',
-              border: '1px solid #ccc',
+              border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
@@ -103,8 +104,8 @@ export default function Friends() {
             type="submit"
             style={{
               padding: '10px 20px',
-              background: '#007bff',
-              color: 'white',
+              background: colors.primary,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer'
@@ -122,8 +123,8 @@ export default function Friends() {
           {pendingRequests.map((request: any) => (
             <div key={request.friend_id} style={{
               padding: '15px',
-              background: 'white',
-              border: '1px solid #dee2e6',
+              background: colors.surface,
+              border: `1px solid ${colors.border}`,
               borderRadius: '8px',
               marginBottom: '10px',
               display: 'flex',
@@ -132,7 +133,7 @@ export default function Friends() {
             }}>
               <div>
                 <strong>{request.friend?.name}</strong>
-                <div style={{ fontSize: '14px', color: '#6c757d' }}>
+                <div style={{ fontSize: '14px', color: colors.textSecondary }}>
                   {request.friend?.email}
                 </div>
               </div>
@@ -141,8 +142,8 @@ export default function Friends() {
                   onClick={() => handleAccept(request.friend_id)}
                   style={{
                     padding: '6px 12px',
-                    background: '#28a745',
-                    color: 'white',
+                    background: colors.success,
+                    color: colors.text,
                     border: 'none',
                     borderRadius: '4px',
                     cursor: 'pointer'
@@ -154,8 +155,8 @@ export default function Friends() {
                   onClick={() => handleRemove(request.friend_id)}
                   style={{
                     padding: '6px 12px',
-                    background: '#dc3545',
-                    color: 'white',
+                    background: colors.error,
+                    color: colors.text,
                     border: 'none',
                     borderRadius: '4px',
                     cursor: 'pointer'
@@ -172,14 +173,14 @@ export default function Friends() {
       {/* Friends List */}
       <h3>Your Friends ({friends.length})</h3>
       {friends.length === 0 ? (
-        <p style={{ color: '#6c757d' }}>No friends yet. Send a friend request to get started!</p>
+        <p style={{ color: colors.textSecondary }}>No friends yet. Send a friend request to get started!</p>
       ) : (
         <div>
           {friends.map((friend: any) => (
             <div key={friend.friend_id} style={{
               padding: '15px',
-              background: 'white',
-              border: '1px solid #dee2e6',
+              background: colors.surface,
+              border: `1px solid ${colors.border}`,
               borderRadius: '8px',
               marginBottom: '10px',
               display: 'flex',
@@ -188,7 +189,7 @@ export default function Friends() {
             }}>
               <div>
                 <strong>{friend.friend?.name}</strong>
-                <div style={{ fontSize: '14px', color: '#6c757d' }}>
+                <div style={{ fontSize: '14px', color: colors.textSecondary }}>
                   {friend.friend?.email}
                 </div>
               </div>
@@ -196,8 +197,8 @@ export default function Friends() {
                 onClick={() => handleRemove(friend.friend_id)}
                 style={{
                   padding: '6px 12px',
-                  background: '#6c757d',
-                  color: 'white',
+                  background: colors.textSecondary,
+                  color: colors.text,
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer'

@@ -1,4 +1,5 @@
 import type { User } from '../types/index';
+import { colors } from '../styles/colors';
 
 interface UserNameProps {
   user?: User | { name: string; deleted_at?: string };
@@ -14,7 +15,7 @@ export default function UserName({ user, fallback = 'Unknown' }: UserNameProps) 
     return (
       <span
         style={{
-          color: '#999',
+          color: colors.textDisabled,
           textDecoration: 'line-through',
           cursor: 'help',
         }}

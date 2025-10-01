@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { groupsAPI } from '../services/api';
 import type { Group } from '../types/index';
+import { colors } from '../styles/colors';
 
 export default function Groups() {
   const { user } = useAuth();
@@ -116,8 +117,8 @@ export default function Groups() {
             onClick={() => setShowPlatformInvite(!showPlatformInvite)}
             style={{
               padding: '10px 20px',
-              background: '#007bff',
-              color: 'white',
+              background: colors.primary,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer'
@@ -128,8 +129,8 @@ export default function Groups() {
           <Link to="/groups/new">
             <button style={{
               padding: '10px 20px',
-              background: '#28a745',
-              color: 'white',
+              background: colors.success,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer'
@@ -143,14 +144,14 @@ export default function Groups() {
       {/* Platform Invite Modal */}
       {showPlatformInvite && (
         <div style={{
-          background: 'white',
+          background: colors.surface,
           padding: '20px',
           borderRadius: '8px',
-          border: '1px solid #dee2e6',
+          border: `1px solid ${colors.border}`,
           marginBottom: '20px'
         }}>
           <h3 style={{ marginTop: 0 }}>Invite Someone to Join LedgerSplit</h3>
-          <p style={{ color: '#6c757d', fontSize: '14px' }}>
+          <p style={{ color: colors.textSecondary, fontSize: '14px' }}>
             They'll receive an email invitation to create an account.
           </p>
           <form onSubmit={handlePlatformInvite} style={{ display: 'flex', gap: '10px' }}>
@@ -162,7 +163,7 @@ export default function Groups() {
               style={{
                 flex: 1,
                 padding: '10px',
-                border: '1px solid #ccc',
+                border: `1px solid ${colors.border}`,
                 borderRadius: '4px'
               }}
             />
@@ -170,8 +171,8 @@ export default function Groups() {
               type="submit"
               style={{
                 padding: '10px 20px',
-                background: '#007bff',
-                color: 'white',
+                background: colors.primary,
+                color: colors.text,
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer'
@@ -184,8 +185,8 @@ export default function Groups() {
               onClick={() => setShowPlatformInvite(false)}
               style={{
                 padding: '10px 20px',
-                background: '#6c757d',
-                color: 'white',
+                background: colors.textSecondary,
+                color: colors.text,
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer'
@@ -201,8 +202,8 @@ export default function Groups() {
         <div style={{
           padding: '10px',
           marginBottom: '15px',
-          background: inviteStatus.includes('sent') ? '#d4edda' : '#f8d7da',
-          color: inviteStatus.includes('sent') ? '#155724' : '#721c24',
+          background: inviteStatus.includes('sent') ? colors.success : colors.error,
+          color: colors.text,
           borderRadius: '4px'
         }}>
           {inviteStatus}
@@ -210,7 +211,7 @@ export default function Groups() {
       )}
 
       {groups.length === 0 ? (
-        <p style={{ color: '#6c757d' }}>No groups yet. Create one to get started!</p>
+        <p style={{ color: colors.textSecondary }}>No groups yet. Create one to get started!</p>
       ) : (
         <div>
           {groups.map((group) => {
@@ -221,8 +222,8 @@ export default function Groups() {
             return (
               <div key={group.group_id} style={{
                 padding: '20px',
-                background: 'white',
-                border: '1px solid #dee2e6',
+                background: colors.surface,
+                border: `1px solid ${colors.border}`,
                 borderRadius: '8px',
                 marginBottom: '15px'
               }}>
@@ -232,17 +233,17 @@ export default function Groups() {
                     <span style={{ fontSize: '20px' }}>{isExpanded ? '▼' : '▶'}</span>
                   </div>
                   {group.description && (
-                    <p style={{ margin: 0, color: '#6c757d' }}>{group.description}</p>
+                    <p style={{ margin: 0, color: colors.textSecondary }}>{group.description}</p>
                   )}
-                  <div style={{ fontSize: '14px', color: '#6c757d', marginTop: '10px' }}>
+                  <div style={{ fontSize: '14px', color: colors.textSecondary, marginTop: '10px' }}>
                     Created {new Date(group.created_at).toLocaleDateString()}
-                    {isCreator && <span style={{ marginLeft: '10px', color: '#28a745' }}>• You're the creator</span>}
+                    {isCreator && <span style={{ marginLeft: '10px', color: colors.success }}>• You're the creator</span>}
                   </div>
                 </div>
 
                 {/* Members section (only when expanded) */}
                 {isExpanded && details && (
-                  <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #dee2e6' }}>
+                  <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: `1px solid ${colors.border}` }}>
                     <h4 style={{ margin: '0 0 10px 0' }}>Members ({details.members?.length || 0})</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       {details.members?.map((member: any) => (
@@ -251,13 +252,13 @@ export default function Groups() {
                           justifyContent: 'space-between',
                           alignItems: 'center',
                           padding: '8px',
-                          background: '#f8f9fa',
+                          background: colors.surfaceLight,
                           borderRadius: '4px'
                         }}>
                           <span>
                             {member.users?.name}
                             {member.user_id === group.created_by && (
-                              <span style={{ marginLeft: '8px', fontSize: '12px', color: '#6c757d' }}>(Creator)</span>
+                              <span style={{ marginLeft: '8px', fontSize: '12px', color: colors.textSecondary }}>(Creator)</span>
                             )}
                           </span>
                           {isCreator && member.user_id !== group.created_by && (
@@ -265,8 +266,8 @@ export default function Groups() {
                               onClick={(e) => handleRemoveMember(group.group_id, member.user_id, e)}
                               style={{
                                 padding: '4px 8px',
-                                background: '#dc3545',
-                                color: 'white',
+                                background: colors.error,
+                                color: colors.text,
                                 border: 'none',
                                 borderRadius: '4px',
                                 cursor: 'pointer',
@@ -283,7 +284,7 @@ export default function Groups() {
                 )}
 
                 {/* Invite section */}
-                <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #dee2e6' }} onClick={(e) => e.stopPropagation()}>
+                <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: `1px solid ${colors.border}` }} onClick={(e) => e.stopPropagation()}>
                 {selectedGroupId === group.group_id ? (
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     <input
@@ -294,7 +295,7 @@ export default function Groups() {
                       style={{
                         flex: 1,
                         padding: '8px',
-                        border: '1px solid #ccc',
+                        border: `1px solid ${colors.border}`,
                         borderRadius: '4px'
                       }}
                     />
@@ -302,8 +303,8 @@ export default function Groups() {
                       onClick={(e) => handleInvite(group.group_id, e)}
                       style={{
                         padding: '8px 16px',
-                        background: '#007bff',
-                        color: 'white',
+                        background: colors.primary,
+                        color: colors.text,
                         border: 'none',
                         borderRadius: '4px',
                         cursor: 'pointer'
@@ -319,8 +320,8 @@ export default function Groups() {
                       }}
                       style={{
                         padding: '8px 16px',
-                        background: '#6c757d',
-                        color: 'white',
+                        background: colors.textSecondary,
+                        color: colors.text,
                         border: 'none',
                         borderRadius: '4px',
                         cursor: 'pointer'
@@ -337,9 +338,9 @@ export default function Groups() {
                     }}
                     style={{
                       padding: '6px 12px',
-                      background: '#f8f9fa',
-                      color: '#007bff',
-                      border: '1px solid #007bff',
+                      background: colors.surfaceLight,
+                      color: colors.primary,
+                      border: `1px solid ${colors.primary}`,
                       borderRadius: '4px',
                       cursor: 'pointer',
                       fontSize: '14px'

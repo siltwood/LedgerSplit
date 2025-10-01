@@ -164,9 +164,17 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
       name: user.name,
     };
 
-    // Redirect to client with success
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-    res.redirect(`${clientUrl}/dashboard`);
+    // Save session before redirect
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).json({ error: 'Session error' });
+      }
+
+      // Redirect to client with success
+      const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+      res.redirect(`${clientUrl}/dashboard`);
+    });
   } catch (error) {
     console.error('Google auth error:', error);
     res.status(500).json({ error: 'Authentication failed' });

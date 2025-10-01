@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { friendsAPI, authAPI } from '../services/api';
+import { colors } from '../styles/colors';
 
 export default function Settings() {
   const { user } = useAuth();
@@ -70,21 +71,21 @@ export default function Settings() {
 
       {/* Profile Section */}
       <div style={{
-        background: 'white',
+        background: colors.surface,
         padding: '20px',
         borderRadius: '8px',
-        border: '1px solid #dee2e6',
+        border: `1px solid ${colors.border}`,
         marginBottom: '30px'
       }}>
         <h2 style={{ marginTop: 0 }}>Profile</h2>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#6c757d' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.textSecondary }}>
             Name
           </label>
           <div style={{ fontSize: '18px' }}>{user?.name}</div>
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#6c757d' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.textSecondary }}>
             Email
           </label>
           <div style={{ fontSize: '18px' }}>{user?.email}</div>
@@ -102,8 +103,8 @@ export default function Settings() {
             }}
             style={{
               padding: '8px 16px',
-              background: '#007bff',
-              color: 'white',
+              background: colors.primary,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -112,7 +113,7 @@ export default function Settings() {
           >
             Change Password
           </button>
-          <p style={{ fontSize: '12px', color: '#6c757d', marginTop: '5px' }}>
+          <p style={{ fontSize: '12px', color: colors.textSecondary, marginTop: '5px' }}>
             We'll send you an email with a secure link to change your password
           </p>
         </div>
@@ -120,10 +121,10 @@ export default function Settings() {
 
       {/* Privacy Section */}
       <div style={{
-        background: 'white',
+        background: colors.surface,
         padding: '20px',
         borderRadius: '8px',
-        border: '1px solid #dee2e6',
+        border: `1px solid ${colors.border}`,
         marginBottom: '30px'
       }}>
         <h2 style={{ marginTop: 0 }}>Privacy & Blocking</h2>
@@ -132,8 +133,8 @@ export default function Settings() {
           <div style={{
             padding: '10px',
             marginBottom: '15px',
-            background: '#d4edda',
-            color: '#155724',
+            background: colors.success,
+            color: colors.text,
             borderRadius: '4px'
           }}>
             {status}
@@ -143,19 +144,19 @@ export default function Settings() {
         {/* Block Users */}
         <div style={{ marginBottom: '30px' }}>
           <h3 style={{ fontSize: '18px' }}>Block Users</h3>
-          <p style={{ color: '#6c757d', fontSize: '14px', marginBottom: '15px' }}>
+          <p style={{ color: colors.textSecondary, fontSize: '14px', marginBottom: '15px' }}>
             Blocked users won't be able to invite you to groups or add you to expenses.
           </p>
 
           {allFriends.length === 0 ? (
-            <p style={{ color: '#6c757d', fontSize: '14px' }}>No friends to block</p>
+            <p style={{ color: colors.textSecondary, fontSize: '14px' }}>No friends to block</p>
           ) : (
             <div>
               {allFriends.map((friend: any) => (
                 <div key={friend.friend_id} style={{
                   padding: '12px',
-                  background: '#f8f9fa',
-                  border: '1px solid #dee2e6',
+                  background: colors.surfaceLight,
+                  border: `1px solid ${colors.border}`,
                   borderRadius: '4px',
                   marginBottom: '10px',
                   display: 'flex',
@@ -164,7 +165,7 @@ export default function Settings() {
                 }}>
                   <div>
                     <strong>{friend.friend?.name}</strong>
-                    <div style={{ fontSize: '12px', color: '#6c757d' }}>
+                    <div style={{ fontSize: '12px', color: colors.textSecondary }}>
                       {friend.friend?.email}
                     </div>
                   </div>
@@ -172,8 +173,8 @@ export default function Settings() {
                     onClick={() => handleBlock(friend.friend_id)}
                     style={{
                       padding: '6px 12px',
-                      background: '#dc3545',
-                      color: 'white',
+                      background: colors.error,
+                      color: colors.text,
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
@@ -196,8 +197,8 @@ export default function Settings() {
               {blockedUsers.map((blocked: any) => (
                 <div key={blocked.friend_id} style={{
                   padding: '12px',
-                  background: '#fff3cd',
-                  border: '1px solid #ffc107',
+                  background: colors.warning,
+                  border: `1px solid ${colors.border}`,
                   borderRadius: '4px',
                   marginBottom: '10px',
                   display: 'flex',
@@ -206,7 +207,7 @@ export default function Settings() {
                 }}>
                   <div>
                     <strong>{blocked.friend?.name}</strong>
-                    <div style={{ fontSize: '12px', color: '#856404' }}>
+                    <div style={{ fontSize: '12px', color: colors.textSecondary }}>
                       {blocked.friend?.email}
                     </div>
                   </div>
@@ -214,8 +215,8 @@ export default function Settings() {
                     onClick={() => handleUnblock(blocked.friend_id)}
                     style={{
                       padding: '6px 12px',
-                      background: '#28a745',
-                      color: 'white',
+                      background: colors.success,
+                      color: colors.text,
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
@@ -233,14 +234,14 @@ export default function Settings() {
 
       {/* Data & Privacy */}
       <div style={{
-        background: 'white',
+        background: colors.surface,
         padding: '20px',
         borderRadius: '8px',
-        border: '1px solid #dee2e6',
+        border: `1px solid ${colors.border}`,
         marginBottom: '30px'
       }}>
         <h2 style={{ marginTop: 0 }}>Data & Privacy</h2>
-        <div style={{ color: '#6c757d', fontSize: '14px', lineHeight: '1.6' }}>
+        <div style={{ color: colors.textSecondary, fontSize: '14px', lineHeight: '1.6' }}>
           <p>• Your expense data is private and only visible to group members</p>
           <p>• You control who can invite you to groups</p>
           <p>• Blocked users cannot see your activity or add you to new expenses</p>
@@ -250,13 +251,13 @@ export default function Settings() {
 
       {/* Danger Zone */}
       <div style={{
-        background: '#fff5f5',
+        background: colors.error,
         padding: '20px',
         borderRadius: '8px',
-        border: '1px solid #ffc9c9'
+        border: `1px solid ${colors.border}`
       }}>
-        <h2 style={{ marginTop: 0, color: '#c92a2a' }}>Danger Zone</h2>
-        <p style={{ color: '#6c757d', fontSize: '14px', marginBottom: '15px' }}>
+        <h2 style={{ marginTop: 0, color: colors.text }}>Danger Zone</h2>
+        <p style={{ color: colors.text, fontSize: '14px', marginBottom: '15px' }}>
           Once you delete your account, there is no going back. Your name will be grayed out in
           expenses, but your data will remain for other users' records.
         </p>
@@ -266,8 +267,8 @@ export default function Settings() {
             onClick={() => setShowDeleteConfirm(true)}
             style={{
               padding: '10px 20px',
-              background: '#dc3545',
-              color: 'white',
+              background: colors.background,
+              color: colors.text,
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -286,8 +287,8 @@ export default function Settings() {
                 onClick={handleDeleteAccount}
                 style={{
                   padding: '10px 20px',
-                  background: '#dc3545',
-                  color: 'white',
+                  background: colors.background,
+                  color: colors.text,
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
@@ -301,8 +302,8 @@ export default function Settings() {
                 onClick={() => setShowDeleteConfirm(false)}
                 style={{
                   padding: '10px 20px',
-                  background: '#6c757d',
-                  color: 'white',
+                  background: colors.textSecondary,
+                  color: colors.text,
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
