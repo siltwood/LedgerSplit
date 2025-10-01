@@ -31,7 +31,7 @@ describe('Security Tests', () => {
       ];
 
       for (const route of routes) {
-        const res = await request(app)[route.method](route.path);
+        const res = await (request(app) as any)[route.method](route.path);
         expect(res.status).toBe(401);
       }
     });
