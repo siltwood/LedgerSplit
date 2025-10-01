@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { expensesAPI, groupsAPI, friendsAPI } from '../services/api';
-import type { Group, Friend } from '../types/index';
+import type { Group } from '../types/index';
 
 type SplitType = 'equal' | 'exact' | 'percentages' | 'shares';
 
@@ -51,7 +51,6 @@ export default function CreateExpense() {
 
       const loadedGroups = groupsRes.data.groups.map((g: any) => g.groups);
       setGroups(loadedGroups);
-      setFriends(friendsRes.data.friends);
 
       // Build available users list
       const users = [
