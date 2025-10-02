@@ -96,16 +96,25 @@ CREATE TABLE friends (
   PRIMARY KEY (user_id, friend_id)
 );
 
--- Event Invites Table (invite friends to join an event)
+-- Event Invites Table (invite people to join an event - supports both existing users and email invites)
 CREATE TABLE event_invites (
   invite_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id UUID NOT NULL REFERENCES events(event_id) ON DELETE CASCADE,
   invited_by UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-  invited_user UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  invited_user UUID REFERENCES users(user_id) ON DELETE CASCADE, -- Nullable for email invites
+  invited_email TEXT, -- For inviting non-users
+  invite_token UUID UNIQUE DEFAULT gen_random_uuid(), -- For shareable invite links
   status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'declined')) DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT NOW(),
   responded_at TIMESTAMP,
-  UNIQUE(event_id, invited_user)
+  -- Ensure one of invited_user or invited_email is set
+  CHECK (
+    (invited_user IS NOT NULL AND invited_email IS NULL) OR
+    (invited_user IS NULL AND invited_email IS NOT NULL)
+  ),
+  -- Prevent duplicate invites
+  UNIQUE(event_id, invited_user),
+  UNIQUE(event_id, invited_email)
 );
 
 -- Indexes for better query performance
@@ -120,6 +129,8 @@ CREATE INDEX idx_splits_deleted_at ON splits(deleted_at);
 CREATE INDEX idx_split_participants_user_id ON split_participants(user_id);
 CREATE INDEX idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
 CREATE INDEX idx_event_invites_invited_user ON event_invites(invited_user);
+CREATE INDEX idx_event_invites_invited_email ON event_invites(invited_email);
+CREATE INDEX idx_event_invites_invite_token ON event_invites(invite_token);
 CREATE INDEX idx_event_invites_status ON event_invites(status);
 CREATE INDEX idx_users_deleted_at ON users(deleted_at);
 

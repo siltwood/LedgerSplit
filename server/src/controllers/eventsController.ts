@@ -219,11 +219,12 @@ export const deleteEvent = async (req: AuthRequest, res: Response) => {
 export const inviteToEvent = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { user_id } = req.body;
+    const { user_id, email } = req.body;
     const userId = req.user?.id;
 
-    if (!user_id) {
-      return res.status(400).json({ error: 'User ID is required' });
+    // Must provide either user_id or email
+    if (!user_id && !email) {
+      return res.status(400).json({ error: 'User ID or email is required' });
     }
 
     // Check if current user is participant
@@ -238,57 +239,132 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ error: 'Not a participant of this event' });
     }
 
-    // Verify invited user exists
-    const { data: invitedUser, error: userError } = await db
+    // Get event details for email
+    const { data: event } = await db
+      .from('events')
+      .select('name')
+      .eq('event_id', id)
+      .single();
+
+    // Get inviter name for email
+    const { data: inviter } = await db
       .from('users')
-      .select('user_id, email, name')
-      .eq('user_id', user_id)
+      .select('name')
+      .eq('user_id', userId)
       .single();
 
-    if (userError || !invitedUser) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    let inviteData: any;
+    let shouldSendEmail = false;
+    let inviteEmail = '';
 
-    // Check if already a participant
-    const { data: existingParticipant } = await db
-      .from('event_participants')
-      .select('*')
-      .eq('event_id', id)
-      .eq('user_id', user_id)
-      .single();
+    if (user_id) {
+      // Inviting existing user
+      const { data: invitedUser, error: userError } = await db
+        .from('users')
+        .select('user_id, email, name')
+        .eq('user_id', user_id)
+        .single();
 
-    if (existingParticipant) {
-      return res.status(400).json({ error: 'User already in event' });
-    }
+      if (userError || !invitedUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
 
-    // Check for existing pending invite
-    const { data: existingInvite } = await db
-      .from('event_invites')
-      .select('*')
-      .eq('event_id', id)
-      .eq('invited_user', user_id)
-      .eq('status', 'pending')
-      .single();
+      // Check if already a participant
+      const { data: existingParticipant } = await db
+        .from('event_participants')
+        .select('*')
+        .eq('event_id', id)
+        .eq('user_id', user_id)
+        .single();
 
-    if (existingInvite) {
-      return res.status(400).json({ error: 'Invite already sent' });
+      if (existingParticipant) {
+        return res.status(400).json({ error: 'User already in event' });
+      }
+
+      // Check for existing pending invite
+      const { data: existingInvite } = await db
+        .from('event_invites')
+        .select('*')
+        .eq('event_id', id)
+        .eq('invited_user', user_id)
+        .eq('status', 'pending')
+        .single();
+
+      if (existingInvite) {
+        return res.status(400).json({ error: 'Invite already sent' });
+      }
+
+      inviteData = {
+        event_id: id,
+        invited_by: userId,
+        invited_user: user_id,
+        status: 'pending',
+      };
+    } else if (email) {
+      // Inviting by email (non-user or existing user)
+      // Check if user with this email already exists
+      const { data: existingUser } = await db
+        .from('users')
+        .select('user_id')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      if (existingUser) {
+        return res.status(400).json({
+          error: 'User with this email already exists. Use user_id to invite them.'
+        });
+      }
+
+      // Check for existing email invite
+      const { data: existingInvite } = await db
+        .from('event_invites')
+        .select('*')
+        .eq('event_id', id)
+        .eq('invited_email', email.toLowerCase())
+        .eq('status', 'pending')
+        .single();
+
+      if (existingInvite) {
+        return res.status(400).json({ error: 'Invite already sent to this email' });
+      }
+
+      inviteData = {
+        event_id: id,
+        invited_by: userId,
+        invited_email: email.toLowerCase(),
+        status: 'pending',
+      };
+
+      shouldSendEmail = true;
+      inviteEmail = email;
     }
 
     // Create invite
     const { data: invite, error: inviteError } = await db
       .from('event_invites')
-      .insert({
-        event_id: id,
-        invited_by: userId,
-        invited_user: user_id,
-        status: 'pending',
-      })
+      .insert(inviteData)
       .select()
       .single();
 
     if (inviteError) {
       console.error('Database error:', inviteError);
       return res.status(500).json({ error: 'Failed to send invite' });
+    }
+
+    // Send email for email invites
+    if (shouldSendEmail && invite?.invite_token) {
+      const { sendEventInviteEmail } = require('../services/email');
+      try {
+        await sendEventInviteEmail(
+          inviteEmail,
+          inviter?.name || 'Someone',
+          event?.name || 'an event',
+          invite.invite_token
+        );
+      } catch (emailError) {
+        console.error('Failed to send invite email:', emailError);
+        // Don't fail the request if email fails
+      }
     }
 
     res.status(201).json({ message: 'Invite sent successfully', invite });
@@ -459,6 +535,143 @@ export const declineInvite = async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error('Decline invite error:', error);
     res.status(500).json({ error: 'Failed to decline invite' });
+  }
+};
+
+// Accept event invite by token (for email invites)
+export const acceptInviteByToken = async (req: AuthRequest, res: Response) => {
+  try {
+    const { token } = req.params;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    // Get invite by token
+    const { data: invite, error: inviteError } = await db
+      .from('event_invites')
+      .select('*')
+      .eq('invite_token', token)
+      .eq('status', 'pending')
+      .single();
+
+    if (inviteError || !invite) {
+      return res.status(404).json({ error: 'Invite not found or already used' });
+    }
+
+    // Check if this is an email invite and matches current user
+    if (invite.invited_email) {
+      const { data: user } = await db
+        .from('users')
+        .select('email')
+        .eq('user_id', userId)
+        .single();
+
+      if (!user || user.email.toLowerCase() !== invite.invited_email.toLowerCase()) {
+        return res.status(403).json({
+          error: 'This invite was sent to a different email address'
+        });
+      }
+
+      // Update invite to link to this user
+      await db
+        .from('event_invites')
+        .update({ invited_user: userId })
+        .eq('invite_id', invite.invite_id);
+    } else if (invite.invited_user && invite.invited_user !== userId) {
+      // User-based invite for different user
+      return res.status(403).json({ error: 'This invite is for a different user' });
+    }
+
+    // Check if already a participant
+    const { data: existingParticipant } = await db
+      .from('event_participants')
+      .select('*')
+      .eq('event_id', invite.event_id)
+      .eq('user_id', userId)
+      .single();
+
+    if (existingParticipant) {
+      // Already in event, just mark invite as accepted
+      await db
+        .from('event_invites')
+        .update({
+          status: 'accepted',
+          responded_at: new Date().toISOString(),
+        })
+        .eq('invite_id', invite.invite_id);
+
+      return res.json({ message: 'Already a member of this event', event_id: invite.event_id });
+    }
+
+    // Add user to event
+    const { error: participantError } = await db
+      .from('event_participants')
+      .insert({
+        event_id: invite.event_id,
+        user_id: userId,
+      });
+
+    if (participantError) {
+      console.error('Database error:', participantError);
+      return res.status(500).json({ error: 'Failed to join event' });
+    }
+
+    // Get all existing splits in this event
+    const { data: splits } = await db
+      .from('splits')
+      .select('split_id, amount')
+      .eq('event_id', invite.event_id)
+      .is('deleted_at', null);
+
+    // Add new user to all existing splits
+    if (splits && splits.length > 0) {
+      for (const split of splits) {
+        // Get current split participants to recalculate amount_owed
+        const { data: currentParticipants } = await db
+          .from('split_participants')
+          .select('user_id')
+          .eq('split_id', split.split_id);
+
+        const totalParticipants = (currentParticipants?.length || 0) + 1;
+        const newAmountOwed = split.amount / totalParticipants;
+
+        // Update existing participants' amount_owed
+        if (currentParticipants && currentParticipants.length > 0) {
+          for (const participant of currentParticipants) {
+            await db
+              .from('split_participants')
+              .update({ amount_owed: newAmountOwed })
+              .eq('split_id', split.split_id)
+              .eq('user_id', participant.user_id);
+          }
+        }
+
+        // Add new participant
+        await db
+          .from('split_participants')
+          .insert({
+            split_id: split.split_id,
+            user_id: userId,
+            amount_owed: newAmountOwed,
+          });
+      }
+    }
+
+    // Update invite status
+    await db
+      .from('event_invites')
+      .update({
+        status: 'accepted',
+        responded_at: new Date().toISOString(),
+      })
+      .eq('invite_id', invite.invite_id);
+
+    res.json({ message: 'Invite accepted successfully', event_id: invite.event_id });
+  } catch (error) {
+    console.error('Accept invite by token error:', error);
+    res.status(500).json({ error: 'Failed to accept invite' });
   }
 };
 

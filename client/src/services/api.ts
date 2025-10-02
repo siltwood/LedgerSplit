@@ -38,6 +38,8 @@ export const eventsAPI = {
   getMyInvites: () => api.get('/events/invites'),
   acceptInvite: (inviteId: string) =>
     api.post(`/events/invites/${inviteId}/accept`),
+  acceptInviteByToken: (token: string) =>
+    api.post(`/events/invites/token/${token}/accept`),
   declineInvite: (inviteId: string) =>
     api.post(`/events/invites/${inviteId}/decline`),
   removeParticipant: (id: string, userId: string) =>

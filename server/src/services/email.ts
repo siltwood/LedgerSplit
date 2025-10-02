@@ -51,10 +51,10 @@ export const sendFriendInviteEmail = async (
   });
 };
 
-export const sendGroupInviteEmail = async (
+export const sendEventInviteEmail = async (
   to: string,
   inviterName: string,
-  groupName: string,
+  eventName: string,
   inviteToken: string
 ) => {
   const inviteUrl = `${process.env.CLIENT_URL}/accept-invite?token=${inviteToken}`;
@@ -62,12 +62,12 @@ export const sendGroupInviteEmail = async (
   await transporter.sendMail({
     from: process.env.SMTP_FROM || '"LedgerSplit" <noreply@ledgersplit.com>',
     to,
-    subject: `${inviterName} invited you to join ${groupName}`,
+    subject: `${inviterName} invited you to join ${eventName}`,
     html: `
-      <h2>You've been invited to join a group!</h2>
-      <p><strong>${inviterName}</strong> invited you to join the group <strong>${groupName}</strong> on LedgerSplit.</p>
+      <h2>You've been invited to join an event!</h2>
+      <p><strong>${inviterName}</strong> invited you to join the event <strong>${eventName}</strong> on LedgerSplit.</p>
       <p><a href="${inviteUrl}">Accept Invitation</a></p>
-      <p>If you already have an account, log in to accept the invite.</p>
+      <p>If you don't have an account, you'll be able to sign up and automatically join this event.</p>
     `,
   });
 };

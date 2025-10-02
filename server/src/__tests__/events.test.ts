@@ -128,6 +128,7 @@ describe('Events API', () => {
 
       let eventParticipantsCallCount = 0;
       let eventInvitesCallCount = 0;
+      let usersCallCount = 0;
 
       db.from.mockImplementation((table: string) => {
         if (table === 'event_participants') {
@@ -161,17 +162,45 @@ describe('Events API', () => {
               }),
             };
           }
-        } else if (table === 'users') {
+        } else if (table === 'events') {
+          // Get event details
           return {
             select: jest.fn().mockReturnValue({
               eq: jest.fn().mockReturnValue({
                 single: jest.fn().mockResolvedValue({
-                  data: { user_id: 'friend-123', email: 'friend@example.com', name: 'Friend' },
+                  data: { event_id: 'event-123', name: 'Test Event' },
                   error: null,
                 }),
               }),
             }),
           };
+        } else if (table === 'users') {
+          usersCallCount++;
+          if (usersCallCount === 1) {
+            // First call: get inviter name
+            return {
+              select: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: { user_id: 'test-user-id', name: 'Test User' },
+                    error: null,
+                  }),
+                }),
+              }),
+            };
+          } else {
+            // Second call: verify invited user exists
+            return {
+              select: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: { user_id: 'friend-123', email: 'friend@example.com', name: 'Friend' },
+                    error: null,
+                  }),
+                }),
+              }),
+            };
+          }
         } else if (table === 'event_invites') {
           eventInvitesCallCount++;
           if (eventInvitesCallCount === 1) {
