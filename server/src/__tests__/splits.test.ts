@@ -1,26 +1,28 @@
 import request from 'supertest';
 import express from 'express';
-import session from 'express-session';
-import splitsRoutes from '../routes/splits';
 
 jest.mock('../config/database');
 
+// Mock requireAuth middleware to pass through with test user
+jest.mock('../middleware/auth', () => ({
+  requireAuth: (req: any, res: any, next: any) => {
+    req.user = { id: 'test-user-id', email: 'test@example.com', name: 'Test User' };
+    req.session = {
+      user: { id: 'test-user-id', email: 'test@example.com', name: 'Test User' },
+      touch: jest.fn(),
+      save: jest.fn((cb: any) => cb && cb()),
+      regenerate: jest.fn((cb: any) => cb && cb()),
+      destroy: jest.fn((cb: any) => cb && cb()),
+      reload: jest.fn((cb: any) => cb && cb()),
+    };
+    next();
+  },
+}));
+
+import splitsRoutes from '../routes/splits';
+
 const app = express();
 app.use(express.json());
-app.use(
-  session({
-    secret: 'test-secret',
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
-// Mock auth middleware
-app.use((req: any, res, next) => {
-  req.user = { id: 'test-user-id', email: 'test@example.com', name: 'Test User' };
-  req.session = { user: { id: 'test-user-id', email: 'test@example.com', name: 'Test User' } };
-  next();
-});
 
 app.use('/splits', splitsRoutes);
 

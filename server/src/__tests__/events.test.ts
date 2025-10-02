@@ -1,26 +1,28 @@
 import request from 'supertest';
 import express from 'express';
-import session from 'express-session';
-import eventsRoutes from '../routes/events';
 
 jest.mock('../config/database');
 
+// Mock requireAuth middleware to pass through with test user
+jest.mock('../middleware/auth', () => ({
+  requireAuth: (req: any, res: any, next: any) => {
+    req.user = { id: 'test-user-id', email: 'test@example.com', name: 'Test User' };
+    req.session = {
+      user: { id: 'test-user-id', email: 'test@example.com', name: 'Test User' },
+      touch: jest.fn(),
+      save: jest.fn((cb: any) => cb && cb()),
+      regenerate: jest.fn((cb: any) => cb && cb()),
+      destroy: jest.fn((cb: any) => cb && cb()),
+      reload: jest.fn((cb: any) => cb && cb()),
+    };
+    next();
+  },
+}));
+
+import eventsRoutes from '../routes/events';
+
 const app = express();
 app.use(express.json());
-app.use(
-  session({
-    secret: 'test-secret',
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
-// Mock auth middleware
-app.use((req: any, res, next) => {
-  req.user = { id: 'test-user-id', email: 'test@example.com', name: 'Test User' };
-  req.session = { user: { id: 'test-user-id', email: 'test@example.com', name: 'Test User' } };
-  next();
-});
 
 app.use('/events', eventsRoutes);
 
@@ -99,35 +101,18 @@ describe('Events API', () => {
     it('should return only events user is part of', async () => {
       const { db } = require('../config/database');
 
-      db.from.mockImplementation((table: string) => {
-        if (table === 'event_participants') {
-          return {
-            select: jest.fn(() => ({
-              eq: jest.fn(() => ({
-                mockResolvedValue: jest.fn().mockResolvedValue({
-                  data: [{ event_id: 'event-123' }, { event_id: 'event-456' }],
-                  error: null,
-                }),
-              })),
-            })),
-          };
-        } else if (table === 'events') {
-          return {
-            select: jest.fn(() => ({
-              in: jest.fn(() => ({
-                is: jest.fn(() => ({
-                  order: jest.fn().mockResolvedValue({
-                    data: [
-                      { event_id: 'event-123', name: 'Vegas Trip' },
-                      { event_id: 'event-456', name: 'Concert' },
-                    ],
-                    error: null,
-                  }),
-                })),
-              })),
-            })),
-          };
-        }
+      db.from.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            is: jest.fn().mockResolvedValue({
+              data: [
+                { events: { event_id: 'event-123', name: 'Vegas Trip' } },
+                { events: { event_id: 'event-456', name: 'Concert' } },
+              ],
+              error: null,
+            }),
+          }),
+        }),
       });
 
       const response = await request(app).get('/events');
@@ -141,42 +126,83 @@ describe('Events API', () => {
     it('should invite user to event', async () => {
       const { db } = require('../config/database');
 
+      let eventParticipantsCallCount = 0;
+      let eventInvitesCallCount = 0;
+
       db.from.mockImplementation((table: string) => {
         if (table === 'event_participants') {
-          return {
-            select: jest.fn(() => ({
-              eq: jest.fn(() => ({
-                eq: jest.fn(() => ({
-                  single: jest.fn().mockResolvedValue({
-                    data: { event_id: 'event-123', user_id: 'test-user-id' },
-                    error: null,
+          eventParticipantsCallCount++;
+          if (eventParticipantsCallCount === 1) {
+            // First call: check if current user is participant - should return data
+            return {
+              select: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  eq: jest.fn().mockReturnValue({
+                    single: jest.fn().mockResolvedValue({
+                      data: { event_id: 'event-123', user_id: 'test-user-id' },
+                      error: null,
+                    }),
                   }),
-                })),
-              })),
-            })),
-          };
+                }),
+              }),
+            };
+          } else {
+            // Second call: check if invited user already participant - should return null
+            return {
+              select: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  eq: jest.fn().mockReturnValue({
+                    single: jest.fn().mockResolvedValue({
+                      data: null,
+                      error: null,
+                    }),
+                  }),
+                }),
+              }),
+            };
+          }
         } else if (table === 'users') {
           return {
-            select: jest.fn(() => ({
-              eq: jest.fn(() => ({
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
                 single: jest.fn().mockResolvedValue({
                   data: { user_id: 'friend-123', email: 'friend@example.com', name: 'Friend' },
                   error: null,
                 }),
-              })),
-            })),
+              }),
+            }),
           };
         } else if (table === 'event_invites') {
-          return {
-            insert: jest.fn(() => ({
-              select: jest.fn(() => ({
-                single: jest.fn().mockResolvedValue({
-                  data: { invite_id: 'invite-123', status: 'pending' },
-                  error: null,
+          eventInvitesCallCount++;
+          if (eventInvitesCallCount === 1) {
+            // First call: check for existing invite - should return null
+            return {
+              select: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  eq: jest.fn().mockReturnValue({
+                    eq: jest.fn().mockReturnValue({
+                      single: jest.fn().mockResolvedValue({
+                        data: null,
+                        error: null,
+                      }),
+                    }),
+                  }),
                 }),
-              })),
-            })),
-          };
+              }),
+            };
+          } else {
+            // Second call: insert new invite - should return data
+            return {
+              insert: jest.fn().mockReturnValue({
+                select: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: { invite_id: 'invite-123', status: 'pending' },
+                    error: null,
+                  }),
+                }),
+              }),
+            };
+          }
         }
       });
 
