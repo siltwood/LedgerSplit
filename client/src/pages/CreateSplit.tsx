@@ -33,7 +33,7 @@ export default function CreateSplit() {
 
       // Auto-select all participants by default
       if (loadedEvent.participants) {
-        setSelectedParticipants(loadedEvent.participants.map(p => p.user_id));
+        setSelectedParticipants(loadedEvent.participants.map((p: any) => p.user_id));
       }
     } catch (error) {
       console.error('Failed to load event:', error);

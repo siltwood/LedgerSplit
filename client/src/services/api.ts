@@ -33,6 +33,8 @@ export const eventsAPI = {
   delete: (id: string) => api.delete(`/events/${id}`),
   inviteUser: (id: string, email: string) =>
     api.post(`/events/${id}/invite`, { email }),
+  inviteToEvent: (id: string, userId: string) =>
+    api.post(`/events/${id}/invite`, { user_id: userId }),
   getMyInvites: () => api.get('/events/invites'),
   acceptInvite: (inviteId: string) =>
     api.post(`/events/invites/${inviteId}/accept`),
