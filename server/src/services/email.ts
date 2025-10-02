@@ -22,11 +22,44 @@ export const sendPasswordResetEmail = async (
     to,
     subject: 'Reset Your Password - LedgerSplit',
     html: `
-      <h2>Reset Your Password</h2>
-      <p>You requested to reset your password. Click the link below to proceed:</p>
-      <p><a href="${resetUrl}">Reset Password</a></p>
-      <p>This link will expire in 1 hour.</p>
-      <p>If you didn't request this, please ignore this email.</p>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reset Your Password</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+          .header { background: #bcd4de; padding: 30px 20px; text-align: center; }
+          .header h1 { margin: 0; color: #000000; font-size: 24px; }
+          .content { padding: 30px 20px; }
+          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
+          .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; background: #f9f9f9; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>LedgerSplit</h1>
+          </div>
+          <div class="content">
+            <h2>Reset Your Password</h2>
+            <p>You requested to reset your password. Click the button below to create a new password:</p>
+            <p style="text-align: center;">
+              <a href="${resetUrl}" class="button">Reset Password</a>
+            </p>
+            <p><strong>This link will expire in 1 hour.</strong></p>
+            <p>If you didn't request this password reset, please ignore this email. Your password will remain unchanged.</p>
+            <p>For security reasons, this link can only be used once.</p>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} LedgerSplit. All rights reserved.</p>
+            <p>This is an automated email. Please do not reply.</p>
+          </div>
+        </div>
+      </body>
+      </html>
     `,
   });
 };
@@ -43,10 +76,49 @@ export const sendFriendInviteEmail = async (
     to,
     subject: `${inviterName} invited you to LedgerSplit`,
     html: `
-      <h2>You've been invited to LedgerSplit!</h2>
-      <p><strong>${inviterName}</strong> invited you to join LedgerSplit to split expenses together.</p>
-      <p><a href="${inviteUrl}">Accept Invitation</a></p>
-      <p>If you already have an account, log in and accept the friend request.</p>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Friend Invitation</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+          .header { background: #bcd4de; padding: 30px 20px; text-align: center; }
+          .header h1 { margin: 0; color: #000000; font-size: 24px; }
+          .content { padding: 30px 20px; }
+          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
+          .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; background: #f9f9f9; }
+          .highlight { color: #a5ccd1; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>LedgerSplit</h1>
+          </div>
+          <div class="content">
+            <h2>You've been invited to LedgerSplit!</h2>
+            <p><strong>${inviterName}</strong> wants to connect with you on LedgerSplit to split expenses and keep track of shared costs.</p>
+            <p>LedgerSplit makes it easy to:</p>
+            <ul>
+              <li>Split bills with friends and groups</li>
+              <li>Track who owes what</li>
+              <li>Settle up seamlessly</li>
+            </ul>
+            <p style="text-align: center;">
+              <a href="${inviteUrl}" class="button">Accept Invitation</a>
+            </p>
+            <p style="font-size: 14px; color: #666;">Already have an account? Simply log in and you'll see the friend request.</p>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} LedgerSplit. All rights reserved.</p>
+            <p>This is an automated email. Please do not reply.</p>
+          </div>
+        </div>
+      </body>
+      </html>
     `,
   });
 };
@@ -64,10 +136,56 @@ export const sendEventInviteEmail = async (
     to,
     subject: `${inviterName} invited you to join ${eventName}`,
     html: `
-      <h2>You've been invited to join an event!</h2>
-      <p><strong>${inviterName}</strong> invited you to join the event <strong>${eventName}</strong> on LedgerSplit.</p>
-      <p><a href="${inviteUrl}">Accept Invitation</a></p>
-      <p>If you don't have an account, you'll be able to sign up and automatically join this event.</p>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Event Invitation</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+          .header { background: #bcd4de; padding: 30px 20px; text-align: center; }
+          .header h1 { margin: 0; color: #000000; font-size: 24px; }
+          .content { padding: 30px 20px; }
+          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
+          .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; background: #f9f9f9; }
+          .event-name { background: #f0f8fa; padding: 15px; border-left: 4px solid #a5ccd1; margin: 20px 0; }
+          .info-box { background: #f9f9f9; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>LedgerSplit</h1>
+          </div>
+          <div class="content">
+            <h2>You've been invited to an event!</h2>
+            <p><strong>${inviterName}</strong> invited you to join:</p>
+            <div class="event-name">
+              <h3 style="margin: 0; color: #000;">${eventName}</h3>
+            </div>
+            <p>Join this event to:</p>
+            <ul>
+              <li>Track shared expenses with the group</li>
+              <li>See who owes what in real-time</li>
+              <li>Split costs fairly and easily</li>
+            </ul>
+            <p style="text-align: center;">
+              <a href="${inviteUrl}" class="button">Accept Invitation</a>
+            </p>
+            <div class="info-box">
+              <p style="margin: 0; font-size: 14px;"><strong>New to LedgerSplit?</strong></p>
+              <p style="margin: 5px 0 0 0; font-size: 14px;">No problem! When you click the link above, you can sign up with your email or Google account. You'll automatically be added to this event once you create your account.</p>
+            </div>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} LedgerSplit. All rights reserved.</p>
+            <p>This is an automated email. Please do not reply.</p>
+          </div>
+        </div>
+      </body>
+      </html>
     `,
   });
 };
