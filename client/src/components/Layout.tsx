@@ -1,10 +1,13 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../styles/colors';
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -19,42 +22,152 @@ export default function Layout() {
         color: colors.text,
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        position: 'relative'
       }}>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <Link to="/dashboard" style={{ color: colors.text, textDecoration: 'none', fontSize: '20px', fontWeight: 'bold' }}>
-            BillSplit
+            LedgerSplit
           </Link>
+
           {user && (
             <>
-              <Link to="/dashboard" style={{ color: colors.text, textDecoration: 'none' }}>
-                Dashboard
-              </Link>
-              <Link to="/groups" style={{ color: 'white', textDecoration: 'none' }}>
-                Groups
-              </Link>
-              <Link to="/expenses" style={{ color: 'white', textDecoration: 'none' }}>
-                Expenses
-              </Link>
-              <Link to="/friends" style={{ color: 'white', textDecoration: 'none' }}>
-                Friends
-              </Link>
+              {/* Hamburger menu for mobile */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                style={{
+                  display: 'none',
+                  background: 'transparent',
+                  border: 'none',
+                  color: colors.text,
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  padding: '5px',
+                }}
+                className="mobile-menu-button"
+              >
+                ☰
+              </button>
+
+              {/* Desktop navigation */}
+              <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }} className="desktop-nav">
+                <Link to="/dashboard" style={{
+                  color: colors.text,
+                  textDecoration: 'none',
+                  fontWeight: location.pathname === '/dashboard' ? 'bold' : 'normal',
+                  fontSize: '16px'
+                }}>
+                  Dashboard
+                </Link>
+                <Link to="/events" style={{
+                  color: colors.text,
+                  textDecoration: 'none',
+                  fontWeight: location.pathname.startsWith('/events') ? 'bold' : 'normal',
+                  fontSize: '16px'
+                }}>
+                  Events
+                </Link>
+                <Link to="/friends" style={{
+                  color: colors.text,
+                  textDecoration: 'none',
+                  fontWeight: location.pathname === '/friends' ? 'bold' : 'normal',
+                  fontSize: '16px'
+                }}>
+                  Friends
+                </Link>
+                <Link to="/settings" style={{
+                  color: colors.text,
+                  textDecoration: 'none',
+                  fontWeight: location.pathname === '/settings' ? 'bold' : 'normal',
+                  fontSize: '16px'
+                }}>
+                  Settings
+                </Link>
+                <span style={{ color: colors.text, fontSize: '16px' }}>{user.name}</span>
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    padding: '8px 16px',
+                    background: colors.background,
+                    color: colors.text,
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '16px'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
             </>
           )}
         </div>
 
-        {user && (
-          <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-            <span>{user.name}</span>
+        {/* Mobile navigation menu */}
+        {user && mobileMenuOpen && (
+          <div style={{
+            display: 'none',
+            width: '100%',
+            flexDirection: 'column',
+            gap: '10px',
+            marginTop: '15px',
+            paddingTop: '15px',
+            borderTop: `1px solid ${colors.border}`,
+          }} className="mobile-nav">
+            <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{
+              color: colors.text,
+              textDecoration: 'none',
+              padding: '10px',
+              fontWeight: location.pathname === '/dashboard' ? 'bold' : 'normal',
+              fontSize: '16px'
+            }}>
+              Dashboard
+            </Link>
+            <Link to="/events" onClick={() => setMobileMenuOpen(false)} style={{
+              color: colors.text,
+              textDecoration: 'none',
+              padding: '10px',
+              fontWeight: location.pathname.startsWith('/events') ? 'bold' : 'normal',
+              fontSize: '16px'
+            }}>
+              Events
+            </Link>
+            <Link to="/friends" onClick={() => setMobileMenuOpen(false)} style={{
+              color: colors.text,
+              textDecoration: 'none',
+              padding: '10px',
+              fontWeight: location.pathname === '/friends' ? 'bold' : 'normal',
+              fontSize: '16px'
+            }}>
+              Friends
+            </Link>
+            <Link to="/settings" onClick={() => setMobileMenuOpen(false)} style={{
+              color: colors.text,
+              textDecoration: 'none',
+              padding: '10px',
+              fontWeight: location.pathname === '/settings' ? 'bold' : 'normal',
+              fontSize: '16px'
+            }}>
+              Settings
+            </Link>
+            <div style={{ padding: '10px', color: colors.text, fontSize: '16px', fontWeight: 'bold' }}>
+              {user.name}
+            </div>
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                handleLogout();
+                setMobileMenuOpen(false);
+              }}
               style={{
-                padding: '8px 16px',
+                padding: '10px 16px',
                 background: colors.background,
                 color: colors.text,
                 border: 'none',
                 borderRadius: '4px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                fontSize: '16px',
+                textAlign: 'left'
               }}
             >
               Logout
@@ -62,6 +175,20 @@ export default function Layout() {
           </div>
         )}
       </nav>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .desktop-nav {
+            display: none !important;
+          }
+          .mobile-menu-button {
+            display: block !important;
+          }
+          .mobile-nav {
+            display: flex !important;
+          }
+        }
+      `}</style>
 
       <main>
         <Outlet />

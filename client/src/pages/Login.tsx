@@ -38,13 +38,13 @@ export default function Login() {
 
   return (
     <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-      <h1>Login</h1>
+      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Login</h1>
 
       {error && (
         <div style={{
           padding: '10px',
           background: colors.surface,
-          color: colors.error,
+          color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -54,7 +54,7 @@ export default function Login() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+          <label style={{ display: 'block', marginBottom: '5px', color: colors.text }}>Email</label>
           <input
             type="email"
             value={email}
@@ -71,7 +71,7 @@ export default function Login() {
         </div>
 
         <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Password</label>
+          <label style={{ display: 'block', marginBottom: '5px', color: colors.text }}>Password</label>
           <input
             type="password"
             value={password}
@@ -88,7 +88,7 @@ export default function Login() {
         </div>
 
         <div style={{ marginBottom: '20px', textAlign: 'right' }}>
-          <Link to="/forgot-password" style={{ color: colors.primary, fontSize: '14px' }}>
+          <Link to="/forgot-password" style={{ color: colors.text, fontSize: '16px' }}>
             Forgot password?
           </Link>
         </div>
@@ -99,9 +99,9 @@ export default function Login() {
           style={{
             width: '100%',
             padding: '10px',
-            fontSize: '16px',
+            fontSize: '18px',
             background: colors.primary,
-            color: colors.background,
+            color: colors.text,
             border: 'none',
             borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer'
@@ -111,7 +111,7 @@ export default function Login() {
         </button>
       </form>
 
-      <div style={{ margin: '20px 0', textAlign: 'center' }}>
+      <div style={{ margin: '20px 0', textAlign: 'center', color: colors.text }}>
         <span>or</span>
       </div>
 
@@ -120,7 +120,7 @@ export default function Login() {
         style={{
           width: '100%',
           padding: '10px',
-          fontSize: '16px',
+          fontSize: '18px',
           background: colors.surface,
           color: colors.text,
           border: `1px solid ${colors.border}`,
@@ -131,8 +131,8 @@ export default function Login() {
         Continue with Google
       </button>
 
-      <p style={{ marginTop: '20px', textAlign: 'center' }}>
-        Don't have an account? <Link to="/register">Register</Link>
+      <p style={{ marginTop: '20px', textAlign: 'center', color: colors.text }}>
+        Don't have an account? <Link to="/register" style={{ color: colors.text }}>Register</Link>
       </p>
     </div>
   );

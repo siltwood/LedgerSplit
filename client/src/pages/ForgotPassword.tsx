@@ -27,9 +27,9 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px' }}>
-      <h1>Forgot Password</h1>
-      <p style={{ color: colors.textSecondary }}>
+    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
+      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Forgot Password</h1>
+      <p style={{ color: colors.text, fontSize: '16px' }}>
         Enter your email address and we'll send you a link to reset your password.
       </p>
 
@@ -39,7 +39,8 @@ export default function ForgotPassword() {
           background: colors.error,
           color: colors.text,
           borderRadius: '4px',
-          marginBottom: '20px'
+          marginBottom: '20px',
+          fontSize: '16px'
         }}>
           {error}
         </div>
@@ -51,7 +52,8 @@ export default function ForgotPassword() {
           background: colors.success,
           color: colors.text,
           borderRadius: '4px',
-          marginBottom: '20px'
+          marginBottom: '20px',
+          fontSize: '16px'
         }}>
           {message}
         </div>
@@ -59,7 +61,7 @@ export default function ForgotPassword() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Email
           </label>
           <input
@@ -72,7 +74,8 @@ export default function ForgotPassword() {
               padding: '10px',
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
-              borderRadius: '4px'
+              borderRadius: '4px',
+              color: colors.text
             }}
           />
         </div>
@@ -96,7 +99,7 @@ export default function ForgotPassword() {
       </form>
 
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <Link to="/login" style={{ color: colors.primary }}>
+        <Link to="/login" style={{ color: colors.text, fontSize: '16px' }}>
           Back to Login
         </Link>
       </div>

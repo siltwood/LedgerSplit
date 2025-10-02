@@ -162,6 +162,7 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
       id: user.user_id,
       email: user.email,
       name: user.name,
+      google_id: user.google_id,
     };
 
     // Save session before redirect

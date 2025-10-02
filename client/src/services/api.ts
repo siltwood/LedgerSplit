@@ -22,59 +22,43 @@ export const authAPI = {
   deleteAccount: () => api.delete('/auth/account'),
 };
 
-// Groups
-export const groupsAPI = {
-  getAll: () => api.get('/groups'),
-  getById: (id: string) => api.get(`/groups/${id}`),
-  create: (data: { name: string; description?: string }) =>
-    api.post('/groups', data),
+// Events
+export const eventsAPI = {
+  getAll: () => api.get('/events'),
+  getById: (id: string) => api.get(`/events/${id}`),
+  create: (data: { name: string; description?: string; participant_ids?: string[] }) =>
+    api.post('/events', data),
   update: (id: string, data: { name: string; description?: string }) =>
-    api.put(`/groups/${id}`, data),
-  delete: (id: string) => api.delete(`/groups/${id}`),
+    api.put(`/events/${id}`, data),
+  delete: (id: string) => api.delete(`/events/${id}`),
   inviteUser: (id: string, email: string) =>
-    api.post(`/groups/${id}/invite`, { email }),
-  getMyInvites: () => api.get('/groups/invites'),
+    api.post(`/events/${id}/invite`, { email }),
+  getMyInvites: () => api.get('/events/invites'),
   acceptInvite: (inviteId: string) =>
-    api.post(`/groups/invites/${inviteId}/accept`),
+    api.post(`/events/invites/${inviteId}/accept`),
   declineInvite: (inviteId: string) =>
-    api.post(`/groups/invites/${inviteId}/decline`),
-  removeMember: (id: string, userId: string) =>
-    api.delete(`/groups/${id}/members/${userId}`),
+    api.post(`/events/invites/${inviteId}/decline`),
+  removeParticipant: (id: string, userId: string) =>
+    api.delete(`/events/${id}/participants/${userId}`),
 };
 
-// Expenses
-export const expensesAPI = {
-  getAll: (params?: { group_id?: string; user_id?: string }) =>
-    api.get('/expenses', { params }),
-  getById: (id: string) => api.get(`/expenses/${id}`),
+// Splits
+export const splitsAPI = {
+  getAll: (params?: { event_id?: string }) =>
+    api.get('/splits', { params }),
+  getById: (id: string) => api.get(`/splits/${id}`),
   create: (data: {
-    group_id?: string;
-    description: string;
+    event_id: string;
+    title: string;
     amount: number;
     currency?: string;
     paid_by: string;
     date: string;
     notes?: string;
-    splits: Array<{ user_id: string; amount_owed: number }>;
-  }) => api.post('/expenses', data),
-  update: (id: string, data: any) => api.put(`/expenses/${id}`, data),
-  delete: (id: string) => api.delete(`/expenses/${id}`),
-  restore: (id: string) => api.post(`/expenses/${id}/restore`),
-};
-
-// Settlements
-export const settlementsAPI = {
-  getAll: (params?: { group_id?: string; user_id?: string }) =>
-    api.get('/settlements', { params }),
-  create: (data: {
-    group_id?: string;
-    paid_by: string;
-    paid_to: string;
-    amount: number;
-    currency?: string;
-    date?: string;
-    notes?: string;
-  }) => api.post('/settlements', data),
+    participant_ids: string[];
+  }) => api.post('/splits', data),
+  update: (id: string, data: any) => api.put(`/splits/${id}`, data),
+  delete: (id: string) => api.delete(`/splits/${id}`),
 };
 
 // Friends

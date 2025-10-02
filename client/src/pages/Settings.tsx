@@ -63,11 +63,11 @@ export default function Settings() {
     }
   };
 
-  if (loading) return <div style={{ padding: '20px' }}>Loading...</div>;
+  if (loading) return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Loading...</div>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Settings</h1>
+    <div style={{ padding: '20px', maxWidth: '1200px' }}>
+      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Settings</h1>
 
       {/* Profile Section */}
       <div style={{
@@ -77,46 +77,60 @@ export default function Settings() {
         border: `1px solid ${colors.border}`,
         marginBottom: '30px'
       }}>
-        <h2 style={{ marginTop: 0 }}>Profile</h2>
+        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text }}>Profile</h2>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.textSecondary }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Name
           </label>
-          <div style={{ fontSize: '18px' }}>{user?.name}</div>
+          <div style={{ fontSize: '18px', color: colors.text }}>{user?.name}</div>
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.textSecondary }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Email
           </label>
-          <div style={{ fontSize: '18px' }}>{user?.email}</div>
+          <div style={{ fontSize: '18px', color: colors.text }}>{user?.email}</div>
         </div>
-        <div style={{ marginTop: '20px' }}>
-          <button
-            onClick={async () => {
-              try {
-                await authAPI.requestPasswordChange();
-                setStatus('Password change link sent to your email');
-                setTimeout(() => setStatus(''), 5000);
-              } catch (err: any) {
-                setStatus(err.response?.data?.error || 'Failed to send email');
-              }
-            }}
-            style={{
-              padding: '8px 16px',
-              background: colors.primary,
-              color: colors.text,
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-          >
-            Change Password
-          </button>
-          <p style={{ fontSize: '12px', color: colors.textSecondary, marginTop: '5px' }}>
-            We'll send you an email with a secure link to change your password
-          </p>
-        </div>
+        {user?.google_id && (
+          <div style={{
+            padding: '10px',
+            background: colors.surfaceLight,
+            borderRadius: '4px',
+            marginTop: '15px',
+            fontSize: '16px',
+            color: colors.text
+          }}>
+            Connected with Google Account
+          </div>
+        )}
+        {!user?.google_id && (
+          <div style={{ marginTop: '20px' }}>
+            <button
+              onClick={async () => {
+                try {
+                  await authAPI.requestPasswordChange();
+                  setStatus('Password change link sent to your email');
+                  setTimeout(() => setStatus(''), 5000);
+                } catch (err: any) {
+                  setStatus(err.response?.data?.error || 'Failed to send email');
+                }
+              }}
+              style={{
+                padding: '8px 16px',
+                background: colors.primary,
+                color: colors.text,
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '16px'
+              }}
+            >
+              Change Password
+            </button>
+            <p style={{ fontSize: '16px', color: colors.text, marginTop: '5px' }}>
+              We'll send you an email with a secure link to change your password
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Privacy Section */}
@@ -127,7 +141,7 @@ export default function Settings() {
         border: `1px solid ${colors.border}`,
         marginBottom: '30px'
       }}>
-        <h2 style={{ marginTop: 0 }}>Privacy & Blocking</h2>
+        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text }}>Privacy & Blocking</h2>
 
         {status && (
           <div style={{
@@ -135,7 +149,8 @@ export default function Settings() {
             marginBottom: '15px',
             background: colors.success,
             color: colors.text,
-            borderRadius: '4px'
+            borderRadius: '4px',
+            fontSize: '16px'
           }}>
             {status}
           </div>
@@ -143,13 +158,13 @@ export default function Settings() {
 
         {/* Block Users */}
         <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ fontSize: '18px' }}>Block Users</h3>
-          <p style={{ color: colors.textSecondary, fontSize: '14px', marginBottom: '15px' }}>
+          <h3 style={{ fontSize: '18px', color: colors.text }}>Block Users</h3>
+          <p style={{ color: colors.text, fontSize: '16px', marginBottom: '15px' }}>
             Blocked users won't be able to invite you to groups or add you to expenses.
           </p>
 
           {allFriends.length === 0 ? (
-            <p style={{ color: colors.textSecondary, fontSize: '14px' }}>No friends to block</p>
+            <p style={{ color: colors.text, fontSize: '16px' }}>No friends to block</p>
           ) : (
             <div>
               {allFriends.map((friend: any) => (
@@ -161,11 +176,13 @@ export default function Settings() {
                   marginBottom: '10px',
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '10px'
                 }}>
                   <div>
-                    <strong>{friend.friend?.name}</strong>
-                    <div style={{ fontSize: '12px', color: colors.textSecondary }}>
+                    <strong style={{ color: colors.text }}>{friend.friend?.name}</strong>
+                    <div style={{ fontSize: '16px', color: colors.text }}>
                       {friend.friend?.email}
                     </div>
                   </div>
@@ -178,7 +195,7 @@ export default function Settings() {
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
-                      fontSize: '14px'
+                      fontSize: '16px'
                     }}
                   >
                     Block
@@ -192,7 +209,7 @@ export default function Settings() {
         {/* Blocked Users */}
         {blockedUsers.length > 0 && (
           <div>
-            <h3 style={{ fontSize: '18px' }}>Blocked Users ({blockedUsers.length})</h3>
+            <h3 style={{ fontSize: '18px', color: colors.text }}>Blocked Users ({blockedUsers.length})</h3>
             <div>
               {blockedUsers.map((blocked: any) => (
                 <div key={blocked.friend_id} style={{
@@ -203,11 +220,13 @@ export default function Settings() {
                   marginBottom: '10px',
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '10px'
                 }}>
                   <div>
-                    <strong>{blocked.friend?.name}</strong>
-                    <div style={{ fontSize: '12px', color: colors.textSecondary }}>
+                    <strong style={{ color: colors.text }}>{blocked.friend?.name}</strong>
+                    <div style={{ fontSize: '16px', color: colors.text }}>
                       {blocked.friend?.email}
                     </div>
                   </div>
@@ -220,7 +239,7 @@ export default function Settings() {
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
-                      fontSize: '14px'
+                      fontSize: '16px'
                     }}
                   >
                     Unblock
@@ -240,8 +259,8 @@ export default function Settings() {
         border: `1px solid ${colors.border}`,
         marginBottom: '30px'
       }}>
-        <h2 style={{ marginTop: 0 }}>Data & Privacy</h2>
-        <div style={{ color: colors.textSecondary, fontSize: '14px', lineHeight: '1.6' }}>
+        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text }}>Data & Privacy</h2>
+        <div style={{ color: colors.text, fontSize: '16px', lineHeight: '1.6' }}>
           <p>• Your expense data is private and only visible to group members</p>
           <p>• You control who can invite you to groups</p>
           <p>• Blocked users cannot see your activity or add you to new expenses</p>
@@ -256,8 +275,8 @@ export default function Settings() {
         borderRadius: '8px',
         border: `1px solid ${colors.border}`
       }}>
-        <h2 style={{ marginTop: 0, color: colors.text }}>Danger Zone</h2>
-        <p style={{ color: colors.text, fontSize: '14px', marginBottom: '15px' }}>
+        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text }}>Danger Zone</h2>
+        <p style={{ color: colors.text, fontSize: '16px', marginBottom: '15px' }}>
           Once you delete your account, there is no going back. Your name will be grayed out in
           expenses, but your data will remain for other users' records.
         </p>
@@ -272,17 +291,17 @@ export default function Settings() {
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '14px'
+              fontSize: '16px'
             }}
           >
             Delete Account
           </button>
         ) : (
           <div>
-            <p style={{ fontWeight: 'bold', marginBottom: '10px' }}>
+            <p style={{ fontWeight: 'bold', marginBottom: '10px', color: colors.text, fontSize: '16px' }}>
               Are you absolutely sure? This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               <button
                 onClick={handleDeleteAccount}
                 style={{
@@ -292,7 +311,7 @@ export default function Settings() {
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '14px',
+                  fontSize: '16px',
                   fontWeight: 'bold'
                 }}
               >
@@ -307,7 +326,7 @@ export default function Settings() {
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '14px'
+                  fontSize: '16px'
                 }}
               >
                 Cancel

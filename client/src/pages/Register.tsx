@@ -29,13 +29,13 @@ export default function Register() {
 
   return (
     <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-      <h1>Register</h1>
+      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Register</h1>
 
       {error && (
         <div style={{
           padding: '10px',
           background: colors.surface,
-          color: colors.error,
+          color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -45,7 +45,7 @@ export default function Register() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Name</label>
+          <label style={{ display: 'block', marginBottom: '5px', color: colors.text, fontSize: '16px' }}>Name</label>
           <input
             type="text"
             value={name}
@@ -56,13 +56,14 @@ export default function Register() {
               padding: '8px',
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
-              borderRadius: '4px'
+              borderRadius: '4px',
+              color: colors.text
             }}
           />
         </div>
 
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+          <label style={{ display: 'block', marginBottom: '5px', color: colors.text, fontSize: '16px' }}>Email</label>
           <input
             type="email"
             value={email}
@@ -73,13 +74,14 @@ export default function Register() {
               padding: '8px',
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
-              borderRadius: '4px'
+              borderRadius: '4px',
+              color: colors.text
             }}
           />
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Password</label>
+          <label style={{ display: 'block', marginBottom: '5px', color: colors.text, fontSize: '16px' }}>Password</label>
           <input
             type="password"
             value={password}
@@ -91,7 +93,8 @@ export default function Register() {
               padding: '8px',
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
-              borderRadius: '4px'
+              borderRadius: '4px',
+              color: colors.text
             }}
           />
         </div>
@@ -104,7 +107,7 @@ export default function Register() {
             padding: '10px',
             fontSize: '16px',
             background: colors.success,
-            color: colors.background,
+            color: colors.text,
             border: 'none',
             borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer'
@@ -114,8 +117,8 @@ export default function Register() {
         </button>
       </form>
 
-      <p style={{ marginTop: '20px', textAlign: 'center' }}>
-        Already have an account? <Link to="/login">Login</Link>
+      <p style={{ marginTop: '20px', textAlign: 'center', color: colors.text, fontSize: '16px' }}>
+        Already have an account? <Link to="/login" style={{ color: colors.text }}>Login</Link>
       </p>
     </div>
   );

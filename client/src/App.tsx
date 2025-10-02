@@ -6,10 +6,10 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
-import Groups from './pages/Groups';
-import CreateGroup from './pages/CreateGroup';
-import Expenses from './pages/Expenses';
-import CreateExpense from './pages/CreateExpense';
+import CreateSplit from './pages/CreateSplit';
+import CreateEvent from './pages/CreateEvent';
+import EventDetail from './pages/EventDetail';
+import Events from './pages/Events';
 import Friends from './pages/Friends';
 import Settings from './pages/Settings';
 
@@ -21,6 +21,16 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   }
 
   return user ? <>{children}</> : <Navigate to="/login" />;
+}
+
+function RootRedirect() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div style={{ padding: '20px' }}>Loading...</div>;
+  }
+
+  return user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />;
 }
 
 function App() {
@@ -43,34 +53,42 @@ function App() {
               }
             />
             <Route
-              path="/groups"
+              path="/splits/new"
               element={
                 <PrivateRoute>
-                  <Groups />
+                  <CreateSplit />
                 </PrivateRoute>
               }
             />
             <Route
-              path="/groups/new"
+              path="/events"
               element={
                 <PrivateRoute>
-                  <CreateGroup />
+                  <Events />
                 </PrivateRoute>
               }
             />
             <Route
-              path="/expenses"
+              path="/events/new"
               element={
                 <PrivateRoute>
-                  <Expenses />
+                  <CreateEvent />
                 </PrivateRoute>
               }
             />
             <Route
-              path="/expenses/new"
+              path="/events/:id"
               element={
                 <PrivateRoute>
-                  <CreateExpense />
+                  <EventDetail />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/events/:id/splits/new"
+              element={
+                <PrivateRoute>
+                  <CreateSplit />
                 </PrivateRoute>
               }
             />
@@ -90,7 +108,7 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/" element={<RootRedirect />} />
           </Route>
         </Routes>
       </AuthProvider>

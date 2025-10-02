@@ -6,27 +6,36 @@
 
 body {
   margin: 0;
-  font-family: 'VT323', monospace;
+  font-family: 'Press Start 2P', monospace;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: grayscale;
-  background: #434a42;
-  color: #e1ca96;
+  background: #bcd4de;
+  color: #000000;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 #root {
   min-height: 100vh;
 }
 
+/* Mobile responsive utilities */
+@media (max-width: 768px) {
+  body {
+    font-size: 12px;
+  }
+}
+
 a {
-  color: #aca885;
+  color: #000000;
   text-decoration: none;
   transition: color 0.1s;
 }
 
 a:hover {
-  color: #e1ca96;
+  color: #949ba0;
   text-decoration: none;
 }
 
@@ -55,18 +64,19 @@ button:active {
 
 /* Input styles */
 input, textarea, select {
-  font-family: 'VT323', monospace;
-  font-size: 20px;
-  background: #626c66;
-  border: 4px solid #918b76;
-  color: #e1ca96;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  background: #a5ccd1;
+  border: 4px solid #9dacb2;
+  color: #000000;
   padding: 12px;
   image-rendering: pixelated;
+  line-height: 1.6;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: #aca885;
+  border-color: #a0b9bf;
 }
 
 /* Scrollbar */
@@ -75,14 +85,14 @@ input:focus, textarea:focus, select:focus {
 }
 
 ::-webkit-scrollbar-track {
-  background: #626c66;
+  background: #a5ccd1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #aca885;
-  border: 4px solid #626c66;
+  background: #949ba0;
+  border: 4px solid #a5ccd1;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #e1ca96;
+  background: #9dacb2;
 }

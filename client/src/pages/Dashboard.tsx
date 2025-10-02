@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { balancesAPI, groupsAPI, expensesAPI } from '../services/api';
-import type { Balance, Group, Expense } from '../types/index';
+import { eventsAPI } from '../services/api';
+import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [balance, setBalance] = useState<Balance | null>(null);
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [recentExpenses, setRecentExpenses] = useState<Expense[]>([]);
-  const [invites, setInvites] = useState<any[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,32 +18,8 @@ export default function Dashboard() {
     if (!user) return;
 
     try {
-      // Load groups first
-      const groupsRes = await groupsAPI.getAll();
-      setGroups(groupsRes.data.groups);
-
-      // Load invites
-      try {
-        const invitesRes = await groupsAPI.getMyInvites();
-        setInvites(invitesRes.data.invites || []);
-      } catch (err) {
-        console.log('No invites');
-      }
-
-      // Try to load balance and expenses, but don't fail if they error
-      try {
-        const balanceRes = await balancesAPI.getUserBalance(user.id);
-        setBalance(balanceRes.data);
-      } catch (err) {
-        console.log('No balance data yet');
-      }
-
-      try {
-        const expensesRes = await expensesAPI.getAll();
-        setRecentExpenses(expensesRes.data.expenses.slice(0, 5));
-      } catch (err) {
-        console.log('No expenses yet');
-      }
+      const eventsRes = await eventsAPI.getAll();
+      setEvents(eventsRes.data.events || []);
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
@@ -54,246 +27,90 @@ export default function Dashboard() {
     }
   };
 
-  const handleAcceptInvite = async (inviteId: string) => {
-    try {
-      await groupsAPI.acceptInvite(inviteId);
-      loadData(); // Reload to update groups and invites
-    } catch (err) {
-      console.error('Failed to accept invite:', err);
-    }
-  };
-
-  const handleDeclineInvite = async (inviteId: string) => {
-    try {
-      await groupsAPI.declineInvite(inviteId);
-      loadData(); // Reload to update invites
-    } catch (err) {
-      console.error('Failed to decline invite:', err);
-    }
-  };
-
   if (loading) {
-    return <div style={{ padding: '20px' }}>Loading...</div>;
+    return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Loading...</div>;
   }
 
-  const totalBalance = parseFloat(balance?.totalBalance || '0');
-  const balanceColor = totalBalance > 0 ? colors.success : totalBalance < 0 ? colors.error : colors.textSecondary;
-
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>Dashboard</h1>
-      <p>Welcome, {user?.name}!</p>
-
-      {/* Group Invites */}
-      {invites.length > 0 && (
-        <div style={{
-          background: colors.warning,
-          border: `1px solid ${colors.border}`,
-          padding: '15px',
-          borderRadius: '8px',
-          marginBottom: '20px'
-        }}>
-          <h3 style={{ margin: '0 0 10px 0' }}>Group Invites ({invites.length})</h3>
-          {invites.map((invite: any) => (
-            <div key={invite.invite_id} style={{
-              background: colors.surface,
-              padding: '12px',
-              borderRadius: '4px',
-              marginBottom: '10px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div>
-                <strong>{invite.inviter?.name}</strong> invited you to join{' '}
-                <strong>{invite.groups?.name}</strong>
-              </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  onClick={() => handleAcceptInvite(invite.invite_id)}
-                  style={{
-                    padding: '6px 12px',
-                    background: colors.success,
-                    color: colors.text,
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '14px'
-                  }}
-                >
-                  Accept
-                </button>
-                <button
-                  onClick={() => handleDeclineInvite(invite.invite_id)}
-                  style={{
-                    padding: '6px 12px',
-                    background: colors.textSecondary,
-                    color: colors.text,
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '14px'
-                  }}
-                >
-                  Decline
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Balance Summary */}
-      <div style={{
-        background: colors.surface,
-        padding: '20px',
-        borderRadius: '8px',
-        marginBottom: '30px'
-      }}>
-        <h2>Your Balance</h2>
-        <div style={{ fontSize: '32px', fontWeight: 'bold', color: balanceColor }}>
-          ${Math.abs(totalBalance).toFixed(2)}
-        </div>
-        <div style={{ color: colors.textSecondary, marginTop: '5px' }}>
-          {totalBalance > 0 && `You are owed`}
-          {totalBalance < 0 && `You owe`}
-          {totalBalance === 0 && `Settled up`}
-        </div>
-
-        {balance && (
-          <div style={{ marginTop: '20px' }}>
-            {balance.owedBy.length > 0 && (
-              <div style={{ marginBottom: '15px' }}>
-                <h4>Owed to you:</h4>
-                {balance.owedBy.map((item, i) => (
-                  <div key={i} style={{ color: colors.success }}>
-                    {item.user.name} owes you ${item.amount}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {balance.owes.length > 0 && (
-              <div>
-                <h4>You owe:</h4>
-                {balance.owes.map((item, i) => (
-                  <div key={i} style={{ color: colors.error }}>
-                    You owe {item.user.name} ${item.amount}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+    <div style={{ padding: '20px', maxWidth: '1200px' }}>
+      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Dashboard</h1>
+      <p style={{ color: colors.text, fontSize: '16px' }}>Welcome, {user?.name}!</p>
 
       {/* Quick Actions */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
-        <Link to="/expenses/new">
+      <div style={{ marginBottom: '30px' }}>
+        <Link to="/events/new">
           <button style={{
-            padding: '10px 20px',
+            padding: '12px 24px',
             background: colors.primary,
             color: colors.text,
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '18px',
+            fontWeight: 'bold'
           }}>
-            Add Expense
-          </button>
-        </Link>
-        <Link to="/groups/new">
-          <button style={{
-            padding: '10px 20px',
-            background: colors.success,
-            color: colors.text,
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}>
-            Create Group
-          </button>
-        </Link>
-        <Link to="/settlements/new">
-          <button style={{
-            padding: '10px 20px',
-            background: colors.warning,
-            color: colors.background,
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}>
-            Record Payment
+            + New Event
           </button>
         </Link>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        {/* Groups */}
-        <div>
-          <h3>Your Groups</h3>
-          {groups.length === 0 ? (
-            <p style={{ color: colors.textSecondary }}>No groups yet</p>
-          ) : (
-            <div>
-              {groups.map((group: any) => (
-                <Link
-                  key={group.groups?.group_id}
-                  to={`/groups/${group.groups?.group_id}`}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <div style={{
-                    padding: '15px',
+      {/* Events */}
+      <div>
+        <h2 style={{ color: colors.text, marginBottom: '20px' }}>Your Events</h2>
+        {events.length === 0 ? (
+          <div style={{
+            padding: '40px',
+            background: colors.surface,
+            border: `1px solid ${colors.border}`,
+            borderRadius: '8px',
+            textAlign: 'center',
+            color: colors.text,
+            fontSize: '16px'
+          }}>
+            No events yet. Create one to get started!
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
+            {events.map((event) => (
+              <Link
+                key={event.event_id}
+                to={`/events/${event.event_id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <div
+                  style={{
+                    padding: '20px',
                     background: colors.surface,
                     border: `1px solid ${colors.border}`,
-                    borderRadius: '4px',
-                    marginBottom: '10px',
-                    cursor: 'pointer'
-                  }}>
-                    <strong>{group.groups?.name}</strong>
-                    {group.groups?.description && (
-                      <div style={{ fontSize: '14px', color: colors.textSecondary, marginTop: '5px' }}>
-                        {group.groups?.description}
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-          <Link to="/groups">View all groups →</Link>
-        </div>
-
-        {/* Recent Expenses */}
-        <div>
-          <h3>Recent Expenses</h3>
-          {recentExpenses.length === 0 ? (
-            <p style={{ color: colors.textSecondary }}>No expenses yet</p>
-          ) : (
-            <div>
-              {recentExpenses.map((expense) => (
-                <div key={expense.expense_id} style={{
-                  padding: '15px',
-                  background: colors.surface,
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: '4px',
-                  marginBottom: '10px'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <strong>{expense.description}</strong>
-                    <span>${expense.amount}</span>
-                  </div>
-                  <div style={{ fontSize: '14px', color: colors.textSecondary, marginTop: '5px' }}>
-                    Paid by {expense.paid_by_user.name} on {new Date(expense.date).toLocaleDateString()}
-                  </div>
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.borderColor = colors.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.borderColor = colors.border;
+                  }}
+                >
+                  <h3 style={{ margin: '0 0 8px 0', color: colors.text }}>{event.name}</h3>
+                  {event.description && (
+                    <div style={{ fontSize: '16px', color: colors.text, marginBottom: '10px' }}>
+                      {event.description}
+                    </div>
+                  )}
+                  {event.participants && (
+                    <div style={{ fontSize: '16px', color: colors.text }}>
+                      {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
-          <Link to="/expenses">View all expenses →</Link>
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

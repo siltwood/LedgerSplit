@@ -14,6 +14,8 @@ import settlementsRoutes from './routes/settlements';
 import friendsRoutes from './routes/friends';
 import balancesRoutes from './routes/balances';
 import uploadRoutes from './routes/upload';
+import eventsRoutes from './routes/events';
+import splitsRoutes from './routes/splits';
 
 dotenv.config();
 
@@ -68,6 +70,8 @@ app.use('/api/settlements', settlementsRoutes);
 app.use('/api/friends', friendsRoutes);
 app.use('/api/balances', balancesRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/splits', splitsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

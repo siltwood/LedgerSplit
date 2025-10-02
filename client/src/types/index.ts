@@ -4,58 +4,50 @@ export interface User {
   name: string;
   avatar_url?: string;
   deleted_at?: string;
+  google_id?: string;
 }
 
-export interface Group {
-  group_id: string;
+export interface Event {
+  event_id: string;
   name: string;
   description?: string;
   created_by: string;
   created_at: string;
+  deleted_at?: string;
+  participants?: EventParticipant[];
+  creator?: User;
 }
 
-export interface GroupMember {
+export interface EventParticipant {
+  event_id: string;
   user_id: string;
   joined_at: string;
-  users: User;
+  user?: User;
 }
 
-export interface Expense {
-  expense_id: string;
-  group_id?: string;
-  description: string;
+export interface Split {
+  split_id: string;
+  event_id: string;
+  title: string;
   amount: number;
   currency: string;
   paid_by: string;
   created_by: string;
   date: string;
   notes?: string;
-  receipt_url?: string;
   created_at: string;
   updated_at: string;
-  expense_splits: ExpenseSplit[];
+  deleted_at?: string;
+  split_participants: SplitParticipant[];
   paid_by_user: User;
+  event?: Event;
 }
 
-export interface ExpenseSplit {
-  expense_id: string;
+export interface SplitParticipant {
+  split_id: string;
   user_id: string;
   amount_owed: number;
-  users?: User;
-}
-
-export interface Settlement {
-  settlement_id: string;
-  group_id?: string;
-  paid_by: string;
-  paid_to: string;
-  amount: number;
-  currency: string;
-  date: string;
-  notes?: string;
-  created_at: string;
-  paid_by_user: User;
-  paid_to_user: User;
+  user?: User;
 }
 
 export interface Friend {
