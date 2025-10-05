@@ -65,35 +65,4 @@ export const splitsAPI = {
   delete: (id: string) => api.delete(`/splits/${id}`),
 };
 
-// Friends
-export const friendsAPI = {
-  getAll: () => api.get('/friends'),
-  getPending: () => api.get('/friends/pending'),
-  sendRequest: (email: string) => api.post('/friends/invite', { email }),
-  accept: (id: string) => api.put(`/friends/${id}/accept`),
-  remove: (id: string) => api.delete(`/friends/${id}`),
-  block: (id: string) => api.put(`/friends/${id}/block`),
-  unblock: (id: string) => api.put(`/friends/${id}/unblock`),
-};
-
-// Balances
-export const balancesAPI = {
-  getUserBalance: (userId: string) => api.get(`/balances/user/${userId}`),
-  getBalanceBetween: (userId1: string, userId2: string) =>
-    api.get(`/balances/between/${userId1}/${userId2}`),
-  getGroupBalances: (groupId: string) =>
-    api.get(`/balances/group/${groupId}`),
-};
-
-// Upload
-export const uploadAPI = {
-  uploadReceipt: (file: File) => {
-    const formData = new FormData();
-    formData.append('receipt', file);
-    return api.post('/upload/receipt', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-  },
-};
-
 export default api;

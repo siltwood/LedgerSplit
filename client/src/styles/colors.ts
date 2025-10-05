@@ -1,11 +1,19 @@
-// Blue/gray color palette - ONLY these 5 colors allowed
+// Blue/gray color palette
 export const colors = {
-  // Base palette (ONLY these colors)
+  // Base palette
   columbiaBlue: '#bcd4de',     // hsla(198, 34%, 80%, 1)
   lightBlue: '#a5ccd1',        // hsla(187, 32%, 73%, 1)
   cadetGray: '#a0b9bf',        // hsla(192, 19%, 69%, 1)
   cadetGray2: '#9dacb2',       // hsla(197, 12%, 66%, 1)
   cadetGray3: '#949ba0',       // hsla(205, 6%, 60%, 1)
+
+  // Extended palette (more blue/gray variations)
+  powderBlue: '#d4e4ec',       // lighter blue
+  skyBlue: '#87b5c4',          // deeper blue
+  slateGray: '#6b8894',        // darker blue-gray
+  steelBlue: '#7a9ca8',        // medium steel blue
+  dustyBlue: '#b8c9d1',        // dusty blue
+  stormGray: '#8a9ba3',        // storm gray
 
   // Semantic mappings (using only the 5 colors above)
   primary: '#a5ccd1',          // Light blue

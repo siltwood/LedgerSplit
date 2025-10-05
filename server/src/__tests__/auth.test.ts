@@ -30,7 +30,14 @@ jest.mock('../config/database', () => ({
 }));
 
 // Mock Google client
-jest.mock('../config/google');
+jest.mock('../config/google', () => ({
+  googleClient: {
+    generateAuthUrl: jest.fn(),
+    getToken: jest.fn(),
+    setCredentials: jest.fn(),
+    verifyIdToken: jest.fn(),
+  },
+}));
 
 // Mock email service
 jest.mock('../services/email', () => ({
@@ -51,6 +58,10 @@ app.use(
 app.use('/auth', authRoutes);
 
 describe('Auth Routes', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('POST /auth/register', () => {
     it('should register a new user', async () => {
       const { db } = require('../config/database');
@@ -173,6 +184,37 @@ describe('Auth Routes', () => {
 
       expect(response.status).toBe(401);
       expect(response.body.error).toBe('Invalid credentials');
+    });
+
+    it('should return 400 if user registered with Google', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            single: jest.fn().mockResolvedValue({
+              data: {
+                user_id: '123',
+                email: 'google@example.com',
+                name: 'Google User',
+                google_id: 'google-123',
+                password_hash: null,
+              },
+              error: null,
+            }),
+          })),
+        })),
+      }));
+
+      const response = await request(app)
+        .post('/auth/login')
+        .send({
+          email: 'google@example.com',
+          password: 'password123',
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Please login with Google');
     });
   });
 
@@ -298,6 +340,206 @@ describe('Auth Routes', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('url');
       expect(response.body.url).toContain('google.com');
+    });
+  });
+
+  describe('GET /auth/google/callback', () => {
+    it('should create new user and redirect on successful Google auth', async () => {
+      const { googleClient } = require('../config/google');
+      const { db } = require('../config/database');
+
+      googleClient.getToken = jest.fn().mockResolvedValue({
+        tokens: { id_token: 'mock-token' },
+      });
+
+      googleClient.verifyIdToken = jest.fn().mockResolvedValue({
+        getPayload: () => ({
+          sub: 'google-123',
+          email: 'newuser@gmail.com',
+          name: 'Google User',
+        }),
+      });
+
+      let dbCallCount = 0;
+      db.from.mockImplementation((table: string) => {
+        if (table === 'users') {
+          dbCallCount++;
+          if (dbCallCount === 1) {
+            // Check by email
+            return {
+              select: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({ data: null, error: null }),
+                })),
+              })),
+            };
+          } else if (dbCallCount === 2) {
+            // Check by google_id
+            return {
+              select: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({ data: null, error: null }),
+                })),
+              })),
+            };
+          } else {
+            // Insert new user
+            return {
+              insert: jest.fn(() => ({
+                select: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: {
+                      user_id: '123',
+                      email: 'newuser@gmail.com',
+                      name: 'Google User',
+                      google_id: 'google-123',
+                    },
+                    error: null,
+                  }),
+                })),
+              })),
+            };
+          }
+        } else if (table === 'event_invites') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  mockResolvedValue: jest.fn().mockResolvedValue({ data: [], error: null }),
+                })),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app)
+        .get('/auth/google/callback')
+        .query({ code: 'auth-code' });
+
+      expect(response.status).toBe(302); // Redirect
+      expect(response.header.location).toContain('/dashboard');
+    });
+
+    it('should login existing Google user', async () => {
+      const { googleClient } = require('../config/google');
+      const { db } = require('../config/database');
+
+      googleClient.getToken = jest.fn().mockResolvedValue({
+        tokens: { id_token: 'mock-token' },
+      });
+
+      googleClient.verifyIdToken = jest.fn().mockResolvedValue({
+        getPayload: () => ({
+          sub: 'google-123',
+          email: 'existing@gmail.com',
+          name: 'Existing User',
+        }),
+      });
+
+      let dbCallCount = 0;
+      db.from.mockImplementation((table: string) => {
+        if (table === 'users') {
+          dbCallCount++;
+          if (dbCallCount === 1) {
+            // Check by email
+            return {
+              select: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: {
+                      user_id: '123',
+                      email: 'existing@gmail.com',
+                      google_id: 'google-123',
+                    },
+                    error: null,
+                  }),
+                })),
+              })),
+            };
+          } else {
+            // Check by google_id
+            return {
+              select: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: {
+                      user_id: '123',
+                      email: 'existing@gmail.com',
+                      google_id: 'google-123',
+                    },
+                    error: null,
+                  }),
+                })),
+              })),
+            };
+          }
+        } else if (table === 'event_invites') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  mockResolvedValue: jest.fn().mockResolvedValue({ data: [], error: null }),
+                })),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app)
+        .get('/auth/google/callback')
+        .query({ code: 'auth-code' });
+
+      expect(response.status).toBe(302);
+      expect(response.header.location).toContain('/dashboard');
+    });
+
+    it('should redirect with error if email already registered with password', async () => {
+      const { googleClient } = require('../config/google');
+      const { db } = require('../config/database');
+
+      googleClient.getToken = jest.fn().mockResolvedValue({
+        tokens: { id_token: 'mock-token' },
+      });
+
+      googleClient.verifyIdToken = jest.fn().mockResolvedValue({
+        getPayload: () => ({
+          sub: 'google-123',
+          email: 'existing@example.com',
+          name: 'Password User',
+        }),
+      });
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            single: jest.fn().mockResolvedValue({
+              data: {
+                user_id: '123',
+                email: 'existing@example.com',
+                password_hash: 'hashed-password',
+                google_id: null,
+              },
+              error: null,
+            }),
+          })),
+        })),
+      }));
+
+      const response = await request(app)
+        .get('/auth/google/callback')
+        .query({ code: 'auth-code' });
+
+      expect(response.status).toBe(302);
+      expect(response.header.location).toContain('error=email_exists');
+    });
+
+    it('should return 400 if authorization code is missing', async () => {
+      const response = await request(app).get('/auth/google/callback');
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Authorization code missing');
     });
   });
 

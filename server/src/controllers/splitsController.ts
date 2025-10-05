@@ -198,7 +198,7 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       }
     }
 
-    // Calculate amount owed per participant (only if there are participants)
+    // Calculate amount owed per participant (equal split)
     const amountOwed = participant_ids && participant_ids.length > 0
       ? parseFloat(amount) / participant_ids.length
       : 0;

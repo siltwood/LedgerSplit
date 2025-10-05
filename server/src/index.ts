@@ -8,12 +8,6 @@ import path from 'path';
 
 // Routes
 import authRoutes from './routes/auth';
-import groupsRoutes from './routes/groups';
-import expensesRoutes from './routes/expenses';
-import settlementsRoutes from './routes/settlements';
-import friendsRoutes from './routes/friends';
-import balancesRoutes from './routes/balances';
-import uploadRoutes from './routes/upload';
 import eventsRoutes from './routes/events';
 import splitsRoutes from './routes/splits';
 
@@ -28,7 +22,7 @@ app.use(helmet());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: process.env.NODE_ENV === 'production' ? 100 : 1000, // Higher limit for development
 });
 app.use('/api/', limiter);
 
@@ -59,17 +53,8 @@ app.use(
   })
 );
 
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/groups', groupsRoutes);
-app.use('/api/expenses', expensesRoutes);
-app.use('/api/settlements', settlementsRoutes);
-app.use('/api/friends', friendsRoutes);
-app.use('/api/balances', balancesRoutes);
-app.use('/api/upload', uploadRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/splits', splitsRoutes);
 

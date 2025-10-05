@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { eventsAPI, friendsAPI } from '../services/api';
+import { eventsAPI } from '../services/api';
 import { colors } from '../styles/colors';
 
 export default function CreateEvent() {
@@ -8,24 +8,8 @@ export default function CreateEvent() {
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [friends, setFriends] = useState<any[]>([]);
-  const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    loadFriends();
-  }, []);
-
-  const loadFriends = async () => {
-    try {
-      const friendsRes = await friendsAPI.getAll();
-      setFriends(friendsRes.data.friends || []);
-    } catch (error) {
-      console.error('Failed to load friends:', error);
-      setError('Failed to load friends. Please try again.');
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +20,6 @@ export default function CreateEvent() {
       const response = await eventsAPI.create({
         name,
         description: description || undefined,
-        participant_ids: selectedFriends,
       });
 
       console.log('Event created:', response);
@@ -45,14 +28,6 @@ export default function CreateEvent() {
       setError(err.response?.data?.error || 'Failed to create event');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const toggleFriend = (friendId: string) => {
-    if (selectedFriends.includes(friendId)) {
-      setSelectedFriends(selectedFriends.filter(id => id !== friendId));
-    } else {
-      setSelectedFriends([...selectedFriends, friendId]);
     }
   };
 
@@ -116,86 +91,6 @@ export default function CreateEvent() {
               resize: 'vertical'
             }}
           />
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
-            Participants
-          </label>
-          {friends.length === 0 ? (
-            <div style={{
-              padding: '15px',
-              background: colors.warning,
-              borderRadius: '4px',
-              marginBottom: '10px'
-            }}>
-              <p style={{ margin: 0, color: colors.text, fontSize: '16px' }}>You don't have any friends yet.</p>
-              <button
-                type="button"
-                onClick={() => navigate('/friends')}
-                style={{
-                  marginTop: '10px',
-                  padding: '8px 16px',
-                  background: colors.primary,
-                  color: colors.text,
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '16px'
-                }}
-              >
-                Add Friends
-              </button>
-            </div>
-          ) : (
-            <>
-              <div style={{
-                border: `1px solid ${colors.border}`,
-                borderRadius: '4px',
-                padding: '10px',
-                maxHeight: '200px',
-                overflowY: 'auto',
-                background: colors.surface
-              }}>
-                {friends.map((friend: any) => (
-                  <div key={friend.friend_id} style={{ marginBottom: '8px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                      <input
-                        type="checkbox"
-                        checked={selectedFriends.includes(friend.friend_id)}
-                        onChange={() => toggleFriend(friend.friend_id)}
-                        style={{ marginRight: '8px' }}
-                      />
-                      <span style={{ color: colors.text, fontSize: '16px' }}>{friend.friend?.name}</span>
-                      <span style={{ fontSize: '16px', color: colors.text, marginLeft: '8px' }}>
-                        ({friend.friend?.email})
-                      </span>
-                    </label>
-                  </div>
-                ))}
-              </div>
-              <div style={{ fontSize: '16px', color: colors.text, marginTop: '5px' }}>
-                {selectedFriends.length} participant{selectedFriends.length !== 1 ? 's' : ''} selected
-                {selectedFriends.length === 0 && ' (you will be the only participant)'}
-              </div>
-            </>
-          )}
-        </div>
-
-        <div style={{
-          background: colors.surfaceLight,
-          padding: '15px',
-          borderRadius: '4px',
-          marginBottom: '20px'
-        }}>
-          <div style={{ fontSize: '16px', color: colors.text }}>
-            <strong>Note:</strong>
-            <ul style={{ marginTop: '8px', marginBottom: 0 }}>
-              <li>You will automatically be added as a participant</li>
-              <li>You can add more participants later</li>
-              <li>All participants can add splits to this event</li>
-            </ul>
-          </div>
         </div>
 
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
@@ -9,8 +9,19 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam === 'email_exists') {
+      setShowModal(true);
+      // Clear the error from URL
+      window.history.replaceState({}, '', '/login');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,10 +48,58 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Login</h1>
+    <>
+      {/* Modal for email already exists */}
+      {showModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: colors.background,
+            padding: '30px',
+            borderRadius: '8px',
+            maxWidth: '400px',
+            textAlign: 'center',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+          }}>
+            <h2 style={{ color: colors.text, marginBottom: '15px', fontSize: '24px' }}>
+              Email Already Registered
+            </h2>
+            <p style={{ color: colors.text, marginBottom: '20px', fontSize: '16px', lineHeight: '1.5' }}>
+              This email is already registered with a password. Please log in with your email and password instead.
+            </p>
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                padding: '12px 24px',
+                background: colors.primary,
+                color: colors.text,
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: 'bold'
+              }}
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
 
-      {error && (
+      <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
+        <h1 style={{ color: colors.text, marginBottom: '20px' }}>Login</h1>
+
+        {error && (
         <div style={{
           padding: '10px',
           background: colors.surface,
@@ -131,9 +190,10 @@ export default function Login() {
         Continue with Google
       </button>
 
-      <p style={{ marginTop: '20px', textAlign: 'center', color: colors.text }}>
-        Don't have an account? <Link to="/register" style={{ color: colors.text }}>Register</Link>
-      </p>
-    </div>
+        <p style={{ marginTop: '20px', textAlign: 'center', color: colors.text }}>
+          Don't have an account? <Link to="/register" style={{ color: colors.text }}>Register</Link>
+        </p>
+      </div>
+    </>
   );
 }

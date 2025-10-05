@@ -68,14 +68,6 @@ export default function Layout() {
                 }}>
                   Events
                 </Link>
-                <Link to="/friends" style={{
-                  color: colors.text,
-                  textDecoration: 'none',
-                  fontWeight: location.pathname === '/friends' ? 'bold' : 'normal',
-                  fontSize: '16px'
-                }}>
-                  Friends
-                </Link>
                 <Link to="/settings" style={{
                   color: colors.text,
                   textDecoration: 'none',
@@ -132,15 +124,6 @@ export default function Layout() {
               fontSize: '16px'
             }}>
               Events
-            </Link>
-            <Link to="/friends" onClick={() => setMobileMenuOpen(false)} style={{
-              color: colors.text,
-              textDecoration: 'none',
-              padding: '10px',
-              fontWeight: location.pathname === '/friends' ? 'bold' : 'normal',
-              fontSize: '16px'
-            }}>
-              Friends
             </Link>
             <Link to="/settings" onClick={() => setMobileMenuOpen(false)} style={{
               color: colors.text,

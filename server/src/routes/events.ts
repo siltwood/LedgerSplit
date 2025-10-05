@@ -5,30 +5,26 @@ import {
   createEvent,
   updateEvent,
   deleteEvent,
-  inviteToEvent,
-  getMyInvites,
-  acceptInvite,
-  acceptInviteByToken,
-  declineInvite,
+  getEventByShareToken,
+  joinEventByShareToken,
   removeParticipant,
 } from '../controllers/eventsController';
 import { requireAuth } from '../middleware/auth';
 
 const router = Router();
 
-// All routes require authentication
+// Public route to get event details by share token
+router.get('/join/:token', getEventByShareToken);
+
+// All routes below require authentication
 router.use(requireAuth);
 
 router.get('/', getEvents);
 router.post('/', createEvent);
-router.get('/invites', getMyInvites);
-router.post('/invites/token/:token/accept', acceptInviteByToken);
-router.post('/invites/:id/accept', acceptInvite);
-router.post('/invites/:id/decline', declineInvite);
+router.post('/join/:token', joinEventByShareToken);
 router.get('/:id', getEventById);
 router.put('/:id', updateEvent);
 router.delete('/:id', deleteEvent);
-router.post('/:id/invite', inviteToEvent);
 router.delete('/:id/participants/:userId', removeParticipant);
 
 export default router;

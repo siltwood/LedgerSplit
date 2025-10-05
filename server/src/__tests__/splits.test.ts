@@ -32,7 +32,7 @@ describe('Splits API', () => {
   });
 
   describe('POST /splits', () => {
-    it('should create split with participants and calculate amounts', async () => {
+    it('should create split with equal amounts', async () => {
       const { db } = require('../config/database');
 
       db.from.mockImplementation((table: string) => {

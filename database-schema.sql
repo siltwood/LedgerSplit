@@ -6,19 +6,10 @@ DROP VIEW IF EXISTS user_balances CASCADE;
 DROP VIEW IF EXISTS split_details CASCADE;
 
 -- Drop all tables
-DROP TABLE IF EXISTS event_invites CASCADE;
 DROP TABLE IF EXISTS split_participants CASCADE;
 DROP TABLE IF EXISTS splits CASCADE;
 DROP TABLE IF EXISTS event_participants CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
-DROP TABLE IF EXISTS group_invites CASCADE;
-DROP TABLE IF EXISTS email_invites CASCADE;
-DROP TABLE IF EXISTS settlements CASCADE;
-DROP TABLE IF EXISTS expense_splits CASCADE;
-DROP TABLE IF EXISTS expenses CASCADE;
-DROP TABLE IF EXISTS group_members CASCADE;
-DROP TABLE IF EXISTS groups CASCADE;
-DROP TABLE IF EXISTS friends CASCADE;
 DROP TABLE IF EXISTS password_reset_tokens CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
@@ -50,6 +41,7 @@ CREATE TABLE events (
   event_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   description TEXT,
+  share_token UUID UNIQUE DEFAULT gen_random_uuid(), -- For shareable event links
   created_by UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT NOW(),
   deleted_at TIMESTAMP
@@ -87,39 +79,10 @@ CREATE TABLE split_participants (
   PRIMARY KEY (split_id, user_id)
 );
 
--- Friends Table
-CREATE TABLE friends (
-  user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-  friend_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-  status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'blocked')),
-  created_at TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY (user_id, friend_id)
-);
-
--- Event Invites Table (invite people to join an event - supports both existing users and email invites)
-CREATE TABLE event_invites (
-  invite_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  event_id UUID NOT NULL REFERENCES events(event_id) ON DELETE CASCADE,
-  invited_by UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-  invited_user UUID REFERENCES users(user_id) ON DELETE CASCADE, -- Nullable for email invites
-  invited_email TEXT, -- For inviting non-users
-  invite_token UUID UNIQUE DEFAULT gen_random_uuid(), -- For shareable invite links
-  status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'declined')) DEFAULT 'pending',
-  created_at TIMESTAMP DEFAULT NOW(),
-  responded_at TIMESTAMP,
-  -- Ensure one of invited_user or invited_email is set
-  CHECK (
-    (invited_user IS NOT NULL AND invited_email IS NULL) OR
-    (invited_user IS NULL AND invited_email IS NOT NULL)
-  ),
-  -- Prevent duplicate invites
-  UNIQUE(event_id, invited_user),
-  UNIQUE(event_id, invited_email)
-);
-
 -- Indexes for better query performance
 CREATE INDEX idx_events_created_by ON events(created_by);
 CREATE INDEX idx_events_deleted_at ON events(deleted_at);
+CREATE INDEX idx_events_share_token ON events(share_token);
 CREATE INDEX idx_event_participants_user_id ON event_participants(user_id);
 CREATE INDEX idx_splits_event_id ON splits(event_id);
 CREATE INDEX idx_splits_paid_by ON splits(paid_by);
@@ -128,10 +91,6 @@ CREATE INDEX idx_splits_date ON splits(date);
 CREATE INDEX idx_splits_deleted_at ON splits(deleted_at);
 CREATE INDEX idx_split_participants_user_id ON split_participants(user_id);
 CREATE INDEX idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
-CREATE INDEX idx_event_invites_invited_user ON event_invites(invited_user);
-CREATE INDEX idx_event_invites_invited_email ON event_invites(invited_email);
-CREATE INDEX idx_event_invites_invite_token ON event_invites(invite_token);
-CREATE INDEX idx_event_invites_status ON event_invites(status);
 CREATE INDEX idx_users_deleted_at ON users(deleted_at);
 
 -- Helper views for calculating balances

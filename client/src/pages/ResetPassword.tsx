@@ -10,6 +10,7 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const token = searchParams.get('token');
 
   useEffect(() => {
@@ -41,8 +42,8 @@ export default function ResetPassword() {
 
     try {
       await authAPI.resetPassword(token, password);
-      alert('Password reset successful! You can now log in.');
-      navigate('/login');
+      setSuccess(true);
+      setTimeout(() => navigate('/login'), 2000);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to reset password');
     } finally {
@@ -53,6 +54,20 @@ export default function ResetPassword() {
   return (
     <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
       <h1 style={{ color: colors.text, marginBottom: '20px' }}>Reset Password</h1>
+
+      {success && (
+        <div style={{
+          padding: '15px',
+          background: colors.success,
+          color: colors.text,
+          borderRadius: '4px',
+          marginBottom: '20px',
+          fontSize: '16px',
+          textAlign: 'center'
+        }}>
+          Password reset successful! Redirecting to login...
+        </div>
+      )}
 
       {error && (
         <div style={{

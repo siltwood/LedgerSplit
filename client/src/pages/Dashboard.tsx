@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { eventsAPI } from '../services/api';
 import type { Event } from '../types/index';
@@ -7,10 +7,19 @@ import { colors } from '../styles/colors';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check for pending invite token (from Google OAuth redirect)
+    const inviteToken = sessionStorage.getItem('invite_token');
+    if (inviteToken) {
+      sessionStorage.removeItem('invite_token');
+      navigate(`/accept-invite?token=${inviteToken}`);
+      return;
+    }
+
     loadData();
   }, [user]);
 
@@ -32,7 +41,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px' }}>
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ color: colors.text, marginBottom: '20px' }}>Dashboard</h1>
       <p style={{ color: colors.text, fontSize: '16px' }}>Welcome, {user?.name}!</p>
 

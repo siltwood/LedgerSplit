@@ -5,47 +5,62 @@ import { splitsAPI, eventsAPI } from '../services/api';
 import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 
-export default function CreateSplit() {
+export default function EditSplit() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { id: eventIdFromParams } = useParams<{ id: string }>();
+  const { id: eventIdFromParams, splitId } = useParams<{ id: string; splitId: string }>();
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [event, setEvent] = useState<Event | null>(null);
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (eventIdFromParams) {
-      loadEvent();
+    if (eventIdFromParams && splitId) {
+      loadData();
     }
-  }, [eventIdFromParams]);
+  }, [eventIdFromParams, splitId]);
 
-  const loadEvent = async () => {
-    if (!eventIdFromParams) return;
+  const loadData = async () => {
+    if (!eventIdFromParams || !splitId) return;
 
     try {
-      const eventRes = await eventsAPI.getById(eventIdFromParams);
+      const [eventRes, splitRes] = await Promise.all([
+        eventsAPI.getById(eventIdFromParams),
+        splitsAPI.getAll({ event_id: eventIdFromParams })
+      ]);
 
-      // Attach participants to event object (backend returns them separately)
+      // Attach participants to event object
       const loadedEvent = {
         ...eventRes.data.event,
         participants: eventRes.data.participants || []
       };
       setEvent(loadedEvent);
 
-      // Auto-select all participants by default (always including current user)
-      if (loadedEvent.participants && loadedEvent.participants.length > 0) {
-        setSelectedParticipants(loadedEvent.participants.map((p: any) => p.user_id));
-      } else if (user) {
-        // If no participants loaded yet, at least select current user
-        setSelectedParticipants([user.id]);
+      // Find the split we're editing
+      const splitToEdit = (splitRes.data.splits || []).find((s: any) => s.split_id === splitId);
+
+      if (splitToEdit) {
+        setTitle(splitToEdit.title);
+        setAmount(splitToEdit.amount.toString());
+
+        // Set selected participants from split_participants
+        if (splitToEdit.split_participants && splitToEdit.split_participants.length > 0) {
+          setSelectedParticipants(splitToEdit.split_participants.map((p: any) => p.user_id));
+        } else if (user) {
+          setSelectedParticipants([user.id]);
+        }
+      } else {
+        setError('Bill not found');
       }
     } catch (error) {
-      console.error('Failed to load event:', error);
-      setError('Failed to load event. Please try again.');
+      console.error('Failed to load data:', error);
+      setError('Failed to load bill. Please try again.');
+    } finally {
+      setLoadingData(false);
     }
   };
 
@@ -53,8 +68,8 @@ export default function CreateSplit() {
     e.preventDefault();
     setError('');
 
-    if (!eventIdFromParams) {
-      setError('Event ID not found');
+    if (!eventIdFromParams || !splitId) {
+      setError('Missing required information');
       return;
     }
 
@@ -66,18 +81,15 @@ export default function CreateSplit() {
     setLoading(true);
 
     try {
-      await splitsAPI.create({
-        event_id: eventIdFromParams,
+      await splitsAPI.update(splitId, {
         title,
         amount: parseFloat(amount),
-        paid_by: user.id,
-        date: new Date().toISOString().split('T')[0],
         participant_ids: selectedParticipants,
       });
 
       navigate(`/events/${eventIdFromParams}`);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to create bill');
+      setError(err.response?.data?.error || 'Failed to update bill');
     } finally {
       setLoading(false);
     }
@@ -91,14 +103,14 @@ export default function CreateSplit() {
     );
   };
 
-  if (!event && !error) {
+  if (loadingData) {
     return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Loading...</div>;
   }
 
   if (!event) {
     return (
       <div style={{ maxWidth: '700px', margin: '50px auto', padding: '20px' }}>
-        <h1 style={{ color: colors.text }}>New Bill</h1>
+        <h1 style={{ color: colors.text }}>Edit Bill</h1>
         <div style={{
           padding: '20px',
           background: colors.error,
@@ -129,7 +141,7 @@ export default function CreateSplit() {
 
   return (
     <div style={{ maxWidth: '700px', padding: '20px' }}>
-      <h1 style={{ color: colors.text, marginBottom: '20px' }}>New Bill for {event.name}</h1>
+      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Edit Bill for {event.name}</h1>
 
       {error && (
         <div style={{
@@ -209,7 +221,7 @@ export default function CreateSplit() {
               opacity: loading ? 0.7 : 1
             }}
           >
-            {loading ? 'Adding...' : 'Add Bill'}
+            {loading ? 'Saving...' : 'Save Changes'}
           </button>
           <button
             type="button"

@@ -133,7 +133,22 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
       return res.status(500).json({ error: 'Failed to add participants' });
     }
 
-    res.status(201).json({ event });
+    // Get participants with user details
+    const { data: participants } = await db
+      .from('event_participants')
+      .select(`
+        user_id,
+        joined_at,
+        users (
+          user_id,
+          name,
+          email,
+          avatar_url
+        )
+      `)
+      .eq('event_id', event.event_id);
+
+    res.status(201).json({ event, participants });
   } catch (error) {
     console.error('Create event error:', error);
     res.status(500).json({ error: 'Failed to create event' });
@@ -310,33 +325,64 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
         .single();
 
       if (existingUser) {
-        return res.status(400).json({
-          error: 'User with this email already exists. Use user_id to invite them.'
-        });
+        // User exists - invite them by user_id instead
+        // Check if already a participant
+        const { data: existingParticipant } = await db
+          .from('event_participants')
+          .select('*')
+          .eq('event_id', id)
+          .eq('user_id', existingUser.user_id)
+          .single();
+
+        if (existingParticipant) {
+          return res.status(400).json({ error: 'User already in event' });
+        }
+
+        // Check for existing pending invite
+        const { data: existingInvite } = await db
+          .from('event_invites')
+          .select('*')
+          .eq('event_id', id)
+          .eq('invited_user', existingUser.user_id)
+          .eq('status', 'pending')
+          .single();
+
+        if (existingInvite) {
+          return res.status(400).json({ error: 'Invite already sent' });
+        }
+
+        // Invite by user_id
+        inviteData = {
+          event_id: id,
+          invited_by: userId,
+          invited_user: existingUser.user_id,
+          status: 'pending',
+        };
+      } else {
+        // User doesn't exist - send email invite
+        // Check for existing email invite
+        const { data: existingInvite } = await db
+          .from('event_invites')
+          .select('*')
+          .eq('event_id', id)
+          .eq('invited_email', email.toLowerCase())
+          .eq('status', 'pending')
+          .single();
+
+        if (existingInvite) {
+          return res.status(400).json({ error: 'Invite already sent to this email' });
+        }
+
+        inviteData = {
+          event_id: id,
+          invited_by: userId,
+          invited_email: email.toLowerCase(),
+          status: 'pending',
+        };
+
+        shouldSendEmail = true;
+        inviteEmail = email;
       }
-
-      // Check for existing email invite
-      const { data: existingInvite } = await db
-        .from('event_invites')
-        .select('*')
-        .eq('event_id', id)
-        .eq('invited_email', email.toLowerCase())
-        .eq('status', 'pending')
-        .single();
-
-      if (existingInvite) {
-        return res.status(400).json({ error: 'Invite already sent to this email' });
-      }
-
-      inviteData = {
-        event_id: id,
-        invited_by: userId,
-        invited_email: email.toLowerCase(),
-        status: 'pending',
-      };
-
-      shouldSendEmail = true;
-      inviteEmail = email;
     }
 
     // Create invite
@@ -726,5 +772,88 @@ export const removeParticipant = async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error('Remove participant error:', error);
     res.status(500).json({ error: 'Failed to remove participant' });
+  }
+};
+
+// Get event details by share token (public endpoint - no auth required)
+export const getEventByShareToken = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+
+    const { data: event, error } = await db
+      .from('events')
+      .select('event_id, name, description, created_by')
+      .eq('share_token', token)
+      .is('deleted_at', null)
+      .single();
+
+    if (error || !event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Get creator name
+    const { data: creator } = await db
+      .from('users')
+      .select('name')
+      .eq('user_id', event.created_by)
+      .single();
+
+    res.json({ event: { ...event, creator_name: creator?.name } });
+  } catch (error) {
+    console.error('Get event by share token error:', error);
+    res.status(500).json({ error: 'Failed to fetch event' });
+  }
+};
+
+// Join event by share token
+export const joinEventByShareToken = async (req: AuthRequest, res: Response) => {
+  try {
+    const { token } = req.params;
+    const userId = req.user?.id;
+
+    // Get event by share token
+    const { data: event, error: eventError } = await db
+      .from('events')
+      .select('event_id, name')
+      .eq('share_token', token)
+      .is('deleted_at', null)
+      .single();
+
+    if (eventError || !event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Check if already a participant
+    const { data: existingParticipant } = await db
+      .from('event_participants')
+      .select('*')
+      .eq('event_id', event.event_id)
+      .eq('user_id', userId)
+      .single();
+
+    if (existingParticipant) {
+      return res.status(400).json({ error: 'Already a participant of this event' });
+    }
+
+    // Add user as participant
+    const { error: participantError } = await db
+      .from('event_participants')
+      .insert({
+        event_id: event.event_id,
+        user_id: userId,
+      });
+
+    if (participantError) {
+      console.error('Database error:', participantError);
+      return res.status(500).json({ error: 'Failed to join event' });
+    }
+
+    res.status(201).json({
+      message: 'Successfully joined event',
+      event_id: event.event_id
+    });
+  } catch (error) {
+    console.error('Join event error:', error);
+    res.status(500).json({ error: 'Failed to join event' });
   }
 };

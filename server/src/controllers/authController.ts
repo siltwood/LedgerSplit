@@ -225,25 +225,48 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: 'Failed to get user info' });
     }
 
-    // Upsert user in database
-    const { data: user, error } = await db
+    // Check if user exists by email
+    const { data: existingUserByEmail } = await db
       .from('users')
-      .upsert(
-        {
+      .select('*')
+      .eq('email', payload.email)
+      .single();
+
+    if (existingUserByEmail && !existingUserByEmail.google_id) {
+      // Email already registered with password - redirect to login
+      const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+      return res.redirect(`${clientUrl}/login?error=email_exists`);
+    }
+
+    // Check if user exists by google_id
+    const { data: existingUserByGoogle } = await db
+      .from('users')
+      .select('*')
+      .eq('google_id', payload.sub)
+      .single();
+
+    let user;
+    if (existingUserByGoogle) {
+      // User already exists with this Google account
+      user = existingUserByGoogle;
+    } else {
+      // Create new user
+      const { data: newUser, error: insertError } = await db
+        .from('users')
+        .insert({
           email: payload.email,
           name: payload.name,
           google_id: payload.sub,
           email_verified: true,
-          avatar_url: payload.picture,
-        },
-        { onConflict: 'google_id' }
-      )
-      .select()
-      .single();
+        })
+        .select()
+        .single();
 
-    if (error) {
-      console.error('Supabase error:', error);
-      return res.status(500).json({ error: 'Failed to create user' });
+      if (insertError) {
+        console.error('Supabase error:', insertError);
+        return res.status(500).json({ error: 'Failed to create user' });
+      }
+      user = newUser;
     }
 
     // Set session

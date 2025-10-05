@@ -5,12 +5,13 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import AcceptInvite from './pages/AcceptInvite';
 import Dashboard from './pages/Dashboard';
 import CreateSplit from './pages/CreateSplit';
+import EditSplit from './pages/EditSplit';
 import CreateEvent from './pages/CreateEvent';
 import EventDetail from './pages/EventDetail';
 import Events from './pages/Events';
-import Friends from './pages/Friends';
 import Settings from './pages/Settings';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -42,6 +43,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/accept-invite" element={<AcceptInvite />} />
 
           <Route element={<Layout />}>
             <Route
@@ -93,10 +95,10 @@ function App() {
               }
             />
             <Route
-              path="/friends"
+              path="/events/:id/splits/:splitId/edit"
               element={
                 <PrivateRoute>
-                  <Friends />
+                  <EditSplit />
                 </PrivateRoute>
               }
             />

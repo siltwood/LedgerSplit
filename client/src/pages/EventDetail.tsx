@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { eventsAPI, splitsAPI, friendsAPI } from '../services/api';
+import { eventsAPI, splitsAPI } from '../services/api';
 import type { Event, Split } from '../types/index';
 import { colors } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
@@ -11,11 +11,9 @@ export default function EventDetail() {
   const { user } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [splits, setSplits] = useState<Split[]>([]);
-  const [friends, setFriends] = useState<any[]>([]);
-  const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
-  const [showInviteModal, setShowInviteModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [inviteStatus, setInviteStatus] = useState('');
+  const [copyStatus, setCopyStatus] = useState('');
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; splitId: string | null }>({ show: false, splitId: null });
 
   useEffect(() => {
     loadData();
@@ -25,15 +23,28 @@ export default function EventDetail() {
     if (!id) return;
 
     try {
-      const [eventRes, splitsRes, friendsRes] = await Promise.all([
+      const [eventRes, splitsRes] = await Promise.all([
         eventsAPI.getById(id),
         splitsAPI.getAll({ event_id: id }),
-        friendsAPI.getAll(),
       ]);
 
-      setEvent(eventRes.data.event);
-      setSplits(splitsRes.data.splits || []);
-      setFriends(friendsRes.data.friends || []);
+      // Attach participants to event object
+      // Map users -> user for consistency
+      const participantsWithUser = (eventRes.data.participants || []).map((p: any) => ({
+        ...p,
+        user: p.users || p.user
+      }));
+      const eventWithParticipants = {
+        ...eventRes.data.event,
+        participants: participantsWithUser
+      };
+      setEvent(eventWithParticipants);
+      // Map API response to expected format (payer -> paid_by_user)
+      const transformedSplits = (splitsRes.data.splits || []).map((split: any) => ({
+        ...split,
+        paid_by_user: split.payer || split.paid_by_user
+      }));
+      setSplits(transformedSplits);
     } catch (error) {
       console.error('Failed to load event:', error);
     } finally {
@@ -41,39 +52,29 @@ export default function EventDetail() {
     }
   };
 
-  const handleInviteFriends = async () => {
-    if (!id || selectedFriends.length === 0) return;
+  const handleDeleteSplit = async () => {
+    if (!deleteModal.splitId) return;
 
     try {
-      for (const friendId of selectedFriends) {
-        await eventsAPI.inviteToEvent(id, friendId);
-      }
-      setInviteStatus(`Invited ${selectedFriends.length} friend${selectedFriends.length > 1 ? 's' : ''}!`);
-      setSelectedFriends([]);
-      setShowInviteModal(false);
-      setTimeout(() => setInviteStatus(''), 3000);
+      await splitsAPI.delete(deleteModal.splitId);
+      setDeleteModal({ show: false, splitId: null });
       loadData();
-    } catch (error: any) {
-      setInviteStatus(error.response?.data?.error || 'Failed to invite friends');
+    } catch (error) {
+      console.error('Failed to delete bill:', error);
     }
   };
 
-  const toggleFriend = (friendId: string) => {
-    setSelectedFriends(prev =>
-      prev.includes(friendId)
-        ? prev.filter(id => id !== friendId)
-        : [...prev, friendId]
-    );
-  };
+  const handleCopyShareLink = async () => {
+    if (!event?.share_token) return;
 
-  const handleDeleteSplit = async (splitId: string) => {
-    if (!window.confirm('Delete this split?')) return;
-
+    const shareUrl = `${window.location.origin}/join/${event.share_token}`;
     try {
-      await splitsAPI.delete(splitId);
-      loadData();
+      await navigator.clipboard.writeText(shareUrl);
+      setCopyStatus('Link copied!');
+      setTimeout(() => setCopyStatus(''), 3000);
     } catch (error) {
-      console.error('Failed to delete split:', error);
+      setCopyStatus('Failed to copy');
+      setTimeout(() => setCopyStatus(''), 3000);
     }
   };
 
@@ -83,66 +84,88 @@ export default function EventDetail() {
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
   const isCreator = event.created_by === user?.id;
 
-  return (
-    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '20px' }}>
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            padding: '8px 16px',
-            background: colors.surface,
-            color: colors.text,
-            border: `1px solid ${colors.border}`,
-            borderRadius: '4px',
-            cursor: 'pointer',
-            marginBottom: '10px',
-            fontSize: '16px'
-          }}
-        >
-          ← Back
-        </button>
-      </div>
+  // Assign colors to participants (using approved palette)
+  const participantColors = [
+    colors.powderBlue,    // lightest
+    colors.columbiaBlue,
+    colors.dustyBlue,
+    colors.lightBlue,
+    colors.skyBlue,
+    colors.steelBlue,
+    colors.cadetGray,
+    colors.stormGray,
+    colors.cadetGray2,
+    colors.cadetGray3,
+    colors.slateGray,     // darkest
+  ];
 
-      {/* Event Info */}
+  const getParticipantColor = (userId: string) => {
+    if (!event?.participants) return colors.surface;
+    const index = event.participants.findIndex(p => p.user_id === userId);
+    return index !== -1 ? participantColors[index % participantColors.length] : colors.surface;
+  };
+
+  return (
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          padding: '8px 16px',
+          background: colors.surface,
+          color: colors.text,
+          border: `1px solid ${colors.border}`,
+          borderRadius: '4px',
+          cursor: 'pointer',
+          marginBottom: '20px',
+          fontSize: '16px'
+        }}
+      >
+        ← Back
+      </button>
+
+      {/* Event Header */}
       <div style={{
         background: colors.surface,
-        padding: '20px',
+        padding: '24px',
         borderRadius: '8px',
         border: `1px solid ${colors.border}`,
-        marginBottom: '30px'
+        marginBottom: '24px'
       }}>
-        <h1 style={{ margin: '0 0 10px 0', color: colors.text }}>{event.name}</h1>
-        {event.description && (
-          <p style={{ color: colors.text, margin: '0 0 15px 0', fontSize: '16px' }}>
-            {event.description}
-          </p>
-        )}
-
-        <div style={{ display: 'flex', gap: '20px', fontSize: '16px', color: colors.text, flexWrap: 'wrap' }}>
-          <div>
-            {event.participants?.length || 0} participant{event.participants?.length !== 1 ? 's' : ''}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
+          <div style={{ flex: 1, minWidth: '250px' }}>
+            <h1 style={{ margin: '0 0 8px 0', color: colors.text, fontSize: '28px' }}>{event.name}</h1>
+            {event.description && (
+              <p style={{ color: colors.text, margin: '0', fontSize: '16px', opacity: 0.9 }}>
+                {event.description}
+              </p>
+            )}
           </div>
-          <div>
-            Total: ${totalAmount.toFixed(2)}
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: colors.primary }}>
+            ${totalAmount.toFixed(2)}
           </div>
         </div>
 
+        {/* Participants */}
         {event.participants && event.participants.length > 0 && (
-          <div style={{ marginTop: '15px' }}>
-            <strong style={{ fontSize: '16px', color: colors.text }}>Participants:</strong>
-            <div style={{ marginTop: '5px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${colors.border}` }}>
+            <div style={{ fontSize: '14px', color: colors.text, opacity: 0.8, marginBottom: '8px' }}>
+              {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {event.participants.map((p) => (
                 <span
                   key={p.user_id}
                   style={{
-                    padding: '4px 8px',
-                    background: colors.surfaceLight,
-                    borderRadius: '4px',
+                    padding: '6px 12px',
+                    background: getParticipantColor(p.user_id),
+                    borderRadius: '6px',
                     fontSize: '16px',
-                    color: colors.text
+                    color: '#000',
+                    fontWeight: '500'
                   }}
                 >
-                  {p.user?.name}
+                  {p.user?.name}{p.user_id === user?.id ? ' (you)' : ''}
                 </span>
               ))}
             </div>
@@ -150,69 +173,144 @@ export default function EventDetail() {
         )}
       </div>
 
-      {/* Status Messages */}
-      {inviteStatus && (
-        <div style={{
-          padding: '10px',
-          background: inviteStatus.includes('Failed') ? colors.error : colors.success,
-          color: colors.text,
-          borderRadius: '4px',
-          marginBottom: '20px',
-          fontSize: '16px'
-        }}>
-          {inviteStatus}
-        </div>
-      )}
-
       {/* Action Buttons */}
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-        <Link to={`/events/${id}/splits/new`}>
+      <div style={{ marginBottom: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none' }}>
           <button style={{
             padding: '12px 24px',
             background: colors.primary,
             color: colors.text,
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '6px',
             cursor: 'pointer',
             fontSize: '16px',
-            fontWeight: 'bold'
+            fontWeight: '500'
           }}>
-            + New Split
+            Add Bill
           </button>
         </Link>
         <button
-          onClick={() => setShowInviteModal(true)}
+          onClick={handleCopyShareLink}
           style={{
             padding: '12px 24px',
-            background: colors.secondary,
+            background: colors.surface,
             color: colors.text,
-            border: 'none',
-            borderRadius: '4px',
+            border: `1px solid ${colors.border}`,
+            borderRadius: '6px',
             cursor: 'pointer',
             fontSize: '16px',
-            fontWeight: 'bold'
+            fontWeight: '500'
           }}
         >
-          Invite Friends
+          Share Invite Link
         </button>
-        <Link to="/friends">
-          <button style={{
-            padding: '12px 24px',
-            background: colors.secondaryLight,
-            color: colors.text,
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold'
-          }}>
-            Add Friends
-          </button>
-        </Link>
       </div>
 
-      {/* Invite Friends Modal */}
-      {showInviteModal && (
+      {/* Copy Status Message */}
+      {copyStatus && (
+        <div style={{
+          padding: '12px 16px',
+          background: copyStatus.includes('Failed') ? colors.error : colors.success,
+          color: colors.text,
+          borderRadius: '6px',
+          marginBottom: '20px',
+          fontSize: '16px',
+          textAlign: 'center'
+        }}>
+          {copyStatus}
+        </div>
+      )}
+
+      {/* Bills Section */}
+      <div>
+        <h2 style={{ marginBottom: '16px', color: colors.text, fontSize: '20px' }}>Bills</h2>
+        {splits.length === 0 ? (
+          <div style={{
+            padding: '48px',
+            background: colors.surface,
+            border: `1px dashed ${colors.border}`,
+            borderRadius: '8px',
+            textAlign: 'center',
+            color: colors.text,
+            fontSize: '16px',
+            opacity: 0.8
+          }}>
+            No bills yet. Add one to get started!
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {splits.map((split) => (
+              <div
+                key={split.split_id}
+                style={{
+                  padding: '16px',
+                  background: getParticipantColor(split.paid_by),
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: '8px'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: '250px' }}>
+                    <div style={{ marginBottom: '8px' }}>
+                      <strong style={{ fontSize: '18px', color: '#000' }}>{split.title}</strong>
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#000', opacity: 0.9, marginBottom: '8px' }}>
+                      <div>Total: ${split.amount.toFixed(2)}</div>
+                      <div>Paid by {split.paid_by_user.name}</div>
+                      {split.split_participants && split.split_participants.length > 0 && (
+                        <div style={{ marginTop: '4px' }}>
+                          Your share: ${(split.amount / split.split_participants.length).toFixed(2)}
+                        </div>
+                      )}
+                    </div>
+                    {split.notes && (
+                      <div style={{ fontSize: '14px', color: '#000', marginTop: '8px', padding: '8px', background: 'rgba(255, 255, 255, 0.3)', borderRadius: '4px', fontStyle: 'italic' }}>
+                        {split.notes}
+                      </div>
+                    )}
+                  </div>
+                  {(isCreator || split.created_by === user?.id) && (
+                    <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start' }}>
+                      <Link to={`/events/${id}/splits/${split.split_id}/edit`} style={{ textDecoration: 'none' }}>
+                        <button
+                          style={{
+                            padding: '8px 16px',
+                            background: colors.surface,
+                            color: colors.text,
+                            border: `1px solid ${colors.border}`,
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '14px'
+                          }}
+                        >
+                          Edit
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => setDeleteModal({ show: true, splitId: split.split_id })}
+                        style={{
+                          padding: '8px 16px',
+                          background: colors.error,
+                          color: colors.text,
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '14px'
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.show && (
         <div style={{
           position: 'fixed',
           top: 0,
@@ -226,166 +324,51 @@ export default function EventDetail() {
           zIndex: 1000
         }}>
           <div style={{
-            background: colors.background,
-            padding: '30px',
+            background: colors.surface,
+            padding: '24px',
             borderRadius: '8px',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto'
+            border: `1px solid ${colors.border}`,
+            maxWidth: '400px',
+            width: '90%'
           }}>
-            <h2 style={{ color: colors.text, marginBottom: '20px' }}>Invite Friends to Event</h2>
-
-            {friends.length === 0 ? (
-              <div style={{ color: colors.text, marginBottom: '20px', fontSize: '16px' }}>
-                You don't have any friends yet. Add friends first!
-              </div>
-            ) : (
-              <div style={{ marginBottom: '20px' }}>
-                {friends
-                  .filter(f => !event.participants?.some(p => p.user_id === f.friend.user_id))
-                  .map((friend) => (
-                    <label
-                      key={friend.friend.user_id}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        padding: '10px',
-                        background: colors.surface,
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        marginBottom: '10px',
-                        border: `2px solid ${selectedFriends.includes(friend.friend.user_id) ? colors.primary : colors.border}`
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedFriends.includes(friend.friend.user_id)}
-                        onChange={() => toggleFriend(friend.friend.user_id)}
-                        style={{ cursor: 'pointer', width: '20px', height: '20px' }}
-                      />
-                      <span style={{ color: colors.text, fontSize: '14px' }}>
-                        {friend.friend.name}
-                      </span>
-                    </label>
-                  ))}
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>Delete Bill?</h3>
+            <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '16px', opacity: 0.9 }}>
+              This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
               <button
-                onClick={handleInviteFriends}
-                disabled={selectedFriends.length === 0}
+                onClick={() => setDeleteModal({ show: false, splitId: null })}
                 style={{
-                  flex: 1,
-                  padding: '12px',
-                  background: colors.primary,
+                  padding: '10px 20px',
+                  background: colors.surface,
                   color: colors.text,
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: selectedFriends.length === 0 ? 'not-allowed' : 'pointer',
-                  opacity: selectedFriends.length === 0 ? 0.5 : 1,
-                  fontSize: '16px'
-                }}
-              >
-                Invite Selected
-              </button>
-              <button
-                onClick={() => {
-                  setShowInviteModal(false);
-                  setSelectedFriends([]);
-                }}
-                style={{
-                  padding: '12px 20px',
-                  background: colors.textSecondary,
-                  color: colors.text,
-                  border: 'none',
-                  borderRadius: '4px',
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: '6px',
                   cursor: 'pointer',
                   fontSize: '16px'
                 }}
               >
                 Cancel
               </button>
+              <button
+                onClick={handleDeleteSplit}
+                style={{
+                  padding: '10px 20px',
+                  background: colors.error,
+                  color: colors.text,
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  fontWeight: '500'
+                }}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Splits List */}
-      <div>
-        <h2 style={{ marginBottom: '20px', color: colors.text }}>Splits</h2>
-        {splits.length === 0 ? (
-          <div style={{
-            padding: '40px',
-            background: colors.surface,
-            border: `1px solid ${colors.border}`,
-            borderRadius: '8px',
-            textAlign: 'center',
-            color: colors.text,
-            fontSize: '16px'
-          }}>
-            No splits yet. Create one to get started!
-          </div>
-        ) : (
-          <div>
-            {splits.map((split) => (
-              <div
-                key={split.split_id}
-                style={{
-                  padding: '15px',
-                  background: colors.surface,
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: '8px',
-                  marginBottom: '10px'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '10px' }}>
-                  <div style={{ flex: 1, minWidth: '200px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', flexWrap: 'wrap', gap: '10px' }}>
-                      <strong style={{ fontSize: '18px', color: colors.text }}>{split.title}</strong>
-                      <span style={{ fontSize: '18px', fontWeight: 'bold', color: colors.text }}>
-                        ${split.amount.toFixed(2)}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '16px', color: colors.text }}>
-                      Paid by {split.paid_by_user.name} on {new Date(split.date).toLocaleDateString()}
-                    </div>
-                    {split.split_participants && split.split_participants.length > 0 && (
-                      <div style={{ fontSize: '16px', color: colors.text, marginTop: '8px' }}>
-                        Split between: {split.split_participants.map(p => p.user?.name).join(', ')}
-                      </div>
-                    )}
-                    {split.notes && (
-                      <div style={{ fontSize: '16px', color: colors.text, marginTop: '5px', fontStyle: 'italic' }}>
-                        {split.notes}
-                      </div>
-                    )}
-                  </div>
-                  {(isCreator || split.created_by === user?.id) && (
-                    <button
-                      onClick={() => handleDeleteSplit(split.split_id)}
-                      style={{
-                        padding: '6px 12px',
-                        background: colors.error,
-                        color: colors.text,
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '16px',
-                        marginLeft: '10px'
-                      }}
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
