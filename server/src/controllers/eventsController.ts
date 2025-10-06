@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { db } from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 
@@ -778,7 +778,7 @@ export const removeParticipant = async (req: AuthRequest, res: Response) => {
 // Get event details by share token (public endpoint - no auth required)
 export const getEventByShareToken = async (req: Request, res: Response) => {
   try {
-    const { token } = req.params;
+    const { token } = req.params as { token: string };
 
     const { data: event, error } = await db
       .from('events')
