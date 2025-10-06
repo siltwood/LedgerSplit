@@ -43,7 +43,6 @@ export default function Dashboard() {
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ color: colors.text, marginBottom: '20px' }}>Dashboard</h1>
-      <p style={{ color: colors.text, fontSize: '16px' }}>Welcome, {user?.name}!</p>
 
       {/* Quick Actions */}
       <div style={{ marginBottom: '30px' }}>

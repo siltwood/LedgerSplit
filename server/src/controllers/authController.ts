@@ -465,10 +465,10 @@ export const deleteAccount = async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
 
   try {
-    // Soft delete user
+    // Hard delete user
     const { error } = await db
       .from('users')
-      .update({ deleted_at: new Date().toISOString() })
+      .delete()
       .eq('user_id', userId);
 
     if (error) {

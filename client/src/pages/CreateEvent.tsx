@@ -32,7 +32,7 @@ export default function CreateEvent() {
   };
 
   return (
-    <div style={{ maxWidth: '700px', padding: '20px' }}>
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ color: colors.text, marginBottom: '20px' }}>New Event</h1>
 
       {error && (
@@ -71,7 +71,7 @@ export default function CreateEvent() {
           />
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Description (Optional)
           </label>
@@ -98,9 +98,7 @@ export default function CreateEvent() {
             type="submit"
             disabled={loading}
             style={{
-              flex: 1,
-              minWidth: '150px',
-              padding: '12px',
+              padding: '12px 24px',
               fontSize: '16px',
               background: colors.primary,
               color: colors.text,

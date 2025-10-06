@@ -128,7 +128,7 @@ export default function CreateSplit() {
   }
 
   return (
-    <div style={{ maxWidth: '700px', padding: '20px' }}>
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ color: colors.text, marginBottom: '20px' }}>New Bill for {event.name}</h1>
 
       {error && (
@@ -197,9 +197,7 @@ export default function CreateSplit() {
             type="submit"
             disabled={loading}
             style={{
-              flex: 1,
-              minWidth: '150px',
-              padding: '12px',
+              padding: '12px 24px',
               fontSize: '16px',
               background: colors.primary,
               color: colors.text,

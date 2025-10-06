@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { eventsAPI, splitsAPI } from '../services/api';
 import type { Event, Split } from '../types/index';
 import { colors } from '../styles/colors';
@@ -7,7 +7,6 @@ import { useAuth } from '../context/AuthContext';
 
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [splits, setSplits] = useState<Split[]>([]);
@@ -107,23 +106,6 @@ export default function EventDetail() {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          padding: '8px 16px',
-          background: colors.surface,
-          color: colors.text,
-          border: `1px solid ${colors.border}`,
-          borderRadius: '4px',
-          cursor: 'pointer',
-          marginBottom: '20px',
-          fontSize: '16px'
-        }}
-      >
-        ← Back
-      </button>
-
       {/* Event Header */}
       <div style={{
         background: colors.surface,
@@ -256,11 +238,22 @@ export default function EventDetail() {
                     </div>
                     <div style={{ fontSize: '14px', color: '#000', opacity: 0.9, marginBottom: '8px' }}>
                       <div>Total: ${split.amount.toFixed(2)}</div>
-                      <div>Paid by {split.paid_by_user.name}</div>
-                      {split.split_participants && split.split_participants.length > 0 && (
-                        <div style={{ marginTop: '4px' }}>
-                          Your share: ${(split.amount / split.split_participants.length).toFixed(2)}
-                        </div>
+                      {split.split_participants && split.split_participants.length > 1 && (() => {
+                        const perPersonAmount = split.amount / split.split_participants.length;
+                        const currentUserParticipant = split.split_participants.find((p: any) => p.user_id === user?.id);
+
+                        if (currentUserParticipant && split.paid_by !== user?.id) {
+                          // Current user is a participant but didn't pay
+                          return (
+                            <div style={{ marginTop: '4px' }}>
+                              {split.paid_by_user.name} paid ${split.amount.toFixed(2)}, <strong>you</strong> owe ${perPersonAmount.toFixed(2)}
+                            </div>
+                          );
+                        }
+                        return <div>Paid by {split.paid_by_user.name}</div>;
+                      })()}
+                      {(!split.split_participants || split.split_participants.length <= 1) && (
+                        <div>Paid by {split.paid_by_user.name}</div>
                       )}
                     </div>
                     {split.notes && (
