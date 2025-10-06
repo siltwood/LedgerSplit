@@ -95,13 +95,6 @@ export default function EditSplit() {
     }
   };
 
-  const toggleParticipant = (userId: string) => {
-    setSelectedParticipants(prev =>
-      prev.includes(userId)
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
-    );
-  };
 
   if (loadingData) {
     return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Loading...</div>;

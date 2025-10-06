@@ -11,6 +11,7 @@ export interface Event {
   event_id: string;
   name: string;
   description?: string;
+  share_token?: string;
   created_by: string;
   created_at: string;
   deleted_at?: string;
