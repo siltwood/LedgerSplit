@@ -65,9 +65,17 @@ app.get('/health', (req, res) => {
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../client/dist')));
-  app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../client/dist', 'index.html'));
+  const clientPath = path.join(__dirname, '../../client/dist');
+  app.use(express.static(clientPath));
+
+  // Handle client-side routing - serve index.html for all non-API routes
+  app.use((req, res, next) => {
+    // If not an API route and file doesn't exist, serve index.html
+    if (!req.path.startsWith('/api/')) {
+      res.sendFile(path.join(clientPath, 'index.html'));
+    } else {
+      next();
+    }
   });
 }
 
