@@ -5,6 +5,8 @@ import type { Event, Split } from '../types/index';
 import { colors } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
 
+type SortOption = 'date-newest' | 'date-oldest' | 'amount-high' | 'amount-low' | 'payer';
+
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
@@ -13,6 +15,7 @@ export default function EventDetail() {
   const [loading, setLoading] = useState(true);
   const [copyStatus, setCopyStatus] = useState('');
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; splitId: string | null }>({ show: false, splitId: null });
+  const [sortBy, setSortBy] = useState<SortOption>('date-newest');
 
   useEffect(() => {
     loadData();
@@ -82,6 +85,43 @@ export default function EventDetail() {
 
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
   const isCreator = event.created_by === user?.id;
+
+  // Sort splits based on selected option
+  const sortedSplits = [...splits].sort((a, b) => {
+    switch (sortBy) {
+      case 'date-newest':
+        return new Date(b.date || b.created_at).getTime() - new Date(a.date || a.created_at).getTime();
+      case 'date-oldest':
+        return new Date(a.date || a.created_at).getTime() - new Date(b.date || b.created_at).getTime();
+      case 'amount-high':
+        return b.amount - a.amount;
+      case 'amount-low':
+        return a.amount - b.amount;
+      case 'payer':
+        return (a.paid_by_user?.name || '').localeCompare(b.paid_by_user?.name || '');
+      default:
+        return 0;
+    }
+  });
+
+  // Calculate balances (who owes whom)
+  const balances: Record<string, number> = {};
+  event.participants?.forEach(p => {
+    balances[p.user_id] = 0;
+  });
+
+  splits.forEach(split => {
+    const participants = split.split_participants || [];
+    if (participants.length > 0) {
+      const perPerson = split.amount / participants.length;
+      // Person who paid gets credited
+      balances[split.paid_by] = (balances[split.paid_by] || 0) + split.amount;
+      // Each participant owes their share
+      participants.forEach((p: any) => {
+        balances[p.user_id] = (balances[p.user_id] || 0) - perPerson;
+      });
+    }
+  });
 
   // Assign colors to participants (using approved palette)
   const participantColors = [
@@ -203,9 +243,79 @@ export default function EventDetail() {
         </div>
       )}
 
+      {/* Balances Summary */}
+      {splits.length > 0 && event.participants && event.participants.length > 1 && (
+        <div style={{
+          background: colors.surface,
+          padding: '20px',
+          borderRadius: '8px',
+          border: `1px solid ${colors.border}`,
+          marginBottom: '24px'
+        }}>
+          <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>Balances</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {event.participants.map(p => {
+              const balance = balances[p.user_id] || 0;
+              const isCurrentUser = p.user_id === user?.id;
+              return (
+                <div key={p.user_id} style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '12px',
+                  background: isCurrentUser ? getParticipantColor(p.user_id) : colors.background,
+                  borderRadius: '6px',
+                  border: isCurrentUser ? `2px solid ${colors.primary}` : 'none'
+                }}>
+                  <span style={{ fontSize: '16px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500' }}>
+                    {p.user?.name}{isCurrentUser ? ' (you)' : ''}
+                  </span>
+                  <span style={{
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    color: balance > 0.01 ? '#22c55e' : balance < -0.01 ? '#ef4444' : (isCurrentUser ? '#000' : colors.text)
+                  }}>
+                    {balance > 0.01 ? `+$${balance.toFixed(2)}` : balance < -0.01 ? `-$${Math.abs(balance).toFixed(2)}` : '$0.00'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ marginTop: '12px', fontSize: '14px', color: colors.text, opacity: 0.7, fontStyle: 'italic' }}>
+            Positive balance = gets paid back, Negative balance = owes money
+          </div>
+        </div>
+      )}
+
       {/* Bills Section */}
       <div>
-        <h2 style={{ marginBottom: '16px', color: colors.text, fontSize: '20px' }}>Bills</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+          <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>Bills ({splits.length})</h2>
+          {splits.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <label style={{ fontSize: '14px', color: colors.text }}>Sort by:</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                style={{
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  background: colors.surface,
+                  color: colors.text,
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="date-newest">Date (Newest)</option>
+                <option value="date-oldest">Date (Oldest)</option>
+                <option value="amount-high">Amount (High to Low)</option>
+                <option value="amount-low">Amount (Low to High)</option>
+                <option value="payer">Paid By (A-Z)</option>
+              </select>
+            </div>
+          )}
+        </div>
         {splits.length === 0 ? (
           <div style={{
             padding: '48px',
@@ -221,7 +331,7 @@ export default function EventDetail() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {splits.map((split) => (
+            {sortedSplits.map((split) => (
               <div
                 key={split.split_id}
                 style={{

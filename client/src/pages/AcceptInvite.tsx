@@ -54,7 +54,12 @@ export default function AcceptInvite() {
 
     try {
       await axios.post(`/api/events/invites/token/${token}/accept`);
-      navigate('/dashboard');
+      // Navigate to the event page
+      if (invite?.event_id) {
+        navigate(`/events/${invite.event_id}`);
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to accept invite');
     }
