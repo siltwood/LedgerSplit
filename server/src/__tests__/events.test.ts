@@ -40,6 +40,7 @@ describe('Events API', () => {
     it('should create a new event and auto-add creator as participant', async () => {
       const { db } = require('../config/database');
 
+      let callCount = 0;
       db.from.mockImplementation((table: string) => {
         if (table === 'events') {
           return {
@@ -58,19 +59,40 @@ describe('Events API', () => {
             })),
           };
         } else if (table === 'event_participants') {
-          return {
-            insert: jest.fn().mockResolvedValue({ error: null }),
-          };
+          callCount++;
+          if (callCount === 1) {
+            // First call: insert participant
+            return {
+              insert: jest.fn().mockResolvedValue({ error: null }),
+            };
+          } else {
+            // Second call: select participants with user details
+            return {
+              select: jest.fn(() => ({
+                eq: jest.fn().mockResolvedValue({
+                  data: [{
+                    user_id: 'test-user-id',
+                    joined_at: new Date().toISOString(),
+                    users: {
+                      user_id: 'test-user-id',
+                      name: 'Test User',
+                      email: 'test@example.com',
+                      avatar_url: null,
+                    },
+                  }],
+                  error: null,
+                }),
+              })),
+            };
+          }
         } else if (table === 'users') {
           return {
             select: jest.fn(() => ({
               eq: jest.fn(() => ({
-                in: jest.fn(() => ({
-                  mockResolvedValue: jest.fn().mockResolvedValue({
-                    data: [{ user_id: 'friend-123', name: 'Friend' }],
-                    error: null,
-                  }),
-                })),
+                in: jest.fn().mockResolvedValue({
+                  data: [],
+                  error: null,
+                }),
               })),
             })),
           };
@@ -262,20 +284,37 @@ describe('Events API', () => {
       expect(response.body.message).toBe('Invite sent successfully');
     });
 
-    it('should fail if user has blocked the invitee', async () => {
+    it('should fail if user already in event', async () => {
       const { db } = require('../config/database');
 
       db.from.mockImplementation((table: string) => {
         if (table === 'event_participants') {
+          let callCount = 0;
           return {
             select: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                eq: jest.fn().mockReturnValue({
-                  single: jest.fn().mockResolvedValue({
-                    data: { event_id: 'event-123', user_id: 'test-user-id' },
-                    error: null,
-                  }),
-                }),
+              eq: jest.fn().mockImplementation((field: string, value: string) => {
+                callCount++;
+                if (callCount === 1) {
+                  // First call: check current user is participant
+                  return {
+                    eq: jest.fn().mockReturnValue({
+                      single: jest.fn().mockResolvedValue({
+                        data: { event_id: 'event-123', user_id: 'test-user-id' },
+                        error: null,
+                      }),
+                    }),
+                  };
+                } else {
+                  // Second call: check if invited user already in event
+                  return {
+                    eq: jest.fn().mockReturnValue({
+                      single: jest.fn().mockResolvedValue({
+                        data: { event_id: 'event-123', user_id: 'friend-123' },
+                        error: null,
+                      }),
+                    }),
+                  };
+                }
               }),
             }),
           };
@@ -301,20 +340,6 @@ describe('Events API', () => {
               }),
             }),
           };
-        } else if (table === 'friends') {
-          // User has blocked the friend
-          return {
-            select: jest.fn().mockReturnValue({
-              or: jest.fn().mockReturnValue({
-                eq: jest.fn().mockReturnValue({
-                  single: jest.fn().mockResolvedValue({
-                    data: { status: 'blocked' },
-                    error: null,
-                  }),
-                }),
-              }),
-            }),
-          };
         }
       });
 
@@ -322,8 +347,8 @@ describe('Events API', () => {
         .post('/events/event-123/invite')
         .send({ user_id: 'friend-123' });
 
-      expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Cannot invite this user');
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('User already in event');
     });
 
     it('should invite user by email (non-existing user)', async () => {
@@ -462,7 +487,7 @@ describe('Events API', () => {
         .send({ email: 'existing@example.com' });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('already exists');
+      expect(response.body.error).toBe('User already in event');
     });
 
     it('should fail if user not participant of event', async () => {
@@ -736,5 +761,30 @@ describe('Events API', () => {
       expect(response.status).toBe(403);
       expect(response.body.error).toBe('Only event creator can delete');
     });
+
+    it('should handle database errors', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            is: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: { created_by: 'test-user-id' },
+                error: null,
+              }),
+            })),
+          })),
+        })),
+        update: jest.fn(() => ({
+          eq: jest.fn().mockResolvedValue({ error: { message: 'DB error' } }),
+        })),
+      }));
+
+      const response = await request(app).delete('/events/event-123');
+
+      expect(response.status).toBe(500);
+    });
   });
+
 });

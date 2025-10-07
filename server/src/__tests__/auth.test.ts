@@ -99,6 +99,19 @@ describe('Auth Routes', () => {
       expect(response.body.user.email).toBe('test@example.com');
     });
 
+    it('should return 400 if password is less than 6 characters', async () => {
+      const response = await request(app)
+        .post('/auth/register')
+        .send({
+          email: 'test@example.com',
+          password: '12345',
+          name: 'Test User',
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Password must be at least 6 characters');
+    });
+
     it('should return 400 if email already exists', async () => {
       const { db } = require('../config/database');
 

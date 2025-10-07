@@ -15,7 +15,7 @@ export default function Layout() {
   };
 
   return (
-    <div>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <nav style={{
         background: colors.primary,
         padding: '15px 20px',
@@ -173,9 +173,23 @@ export default function Layout() {
         }
       `}</style>
 
-      <main>
+      <main style={{ flex: 1 }}>
         <Outlet />
       </main>
+
+      <footer style={{
+        background: colors.surface,
+        padding: '15px 20px',
+        textAlign: 'center',
+        borderTop: `1px solid ${colors.border}`
+      }}>
+        <div style={{ color: colors.text, fontSize: '14px' }}>
+          Need help? Contact us at{' '}
+          <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
+            hello@ledgersplit.com
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }

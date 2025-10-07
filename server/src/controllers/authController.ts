@@ -95,6 +95,11 @@ export const register = async (req: AuthRequest, res: Response) => {
   const { email, password, name } = req.body;
 
   try {
+    // Validate password
+    if (!password || password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
     // Check if user already exists
     const { data: existingUser } = await db
       .from('users')

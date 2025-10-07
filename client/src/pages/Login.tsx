@@ -48,7 +48,7 @@ export default function Login() {
   };
 
   return (
-    <>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Modal for email already exists */}
       {showModal && (
         <div style={{
@@ -96,7 +96,7 @@ export default function Login() {
         </div>
       )}
 
-      <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
+      <div style={{ flex: 1, maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
         <h1 style={{ color: colors.text, marginBottom: '20px' }}>Login</h1>
 
         {error && (
@@ -194,6 +194,20 @@ export default function Login() {
           Don't have an account? <Link to="/register" style={{ color: colors.text }}>Register</Link>
         </p>
       </div>
-    </>
+
+      <footer style={{
+        background: colors.surface,
+        padding: '15px 20px',
+        textAlign: 'center',
+        borderTop: `1px solid ${colors.border}`
+      }}>
+        <div style={{ color: colors.text, fontSize: '14px' }}>
+          Need help? Contact us at{' '}
+          <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
+            hello@ledgersplit.com
+          </a>
+        </div>
+      </footer>
+    </div>
   );
 }
