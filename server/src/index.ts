@@ -16,6 +16,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy for Heroku (needed for rate limiting and secure cookies)
+app.set('trust proxy', 1);
+
 // Security middleware with relaxed CSP for production
 app.use(
   helmet({
@@ -99,7 +102,7 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true, // Required for OAuth state to persist
     cookie: {
       secure: process.env.NODE_ENV === 'production', // HTTPS only in production
       httpOnly: true,
