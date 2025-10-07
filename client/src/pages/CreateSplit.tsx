@@ -13,7 +13,6 @@ export default function CreateSplit() {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [event, setEvent] = useState<Event | null>(null);
-  const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -35,14 +34,6 @@ export default function CreateSplit() {
         participants: eventRes.data.participants || []
       };
       setEvent(loadedEvent);
-
-      // Auto-select all participants by default (always including current user)
-      if (loadedEvent.participants && loadedEvent.participants.length > 0) {
-        setSelectedParticipants(loadedEvent.participants.map((p: any) => p.user_id));
-      } else if (user) {
-        // If no participants loaded yet, at least select current user
-        setSelectedParticipants([user.id]);
-      }
     } catch (error) {
       console.error('Failed to load event:', error);
       setError('Failed to load event. Please try again.');
@@ -72,7 +63,6 @@ export default function CreateSplit() {
         amount: parseFloat(amount),
         paid_by: user.id,
         date: new Date().toISOString().split('T')[0],
-        participant_ids: selectedParticipants,
       });
 
       navigate(`/events/${eventIdFromParams}`);
