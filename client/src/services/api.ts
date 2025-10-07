@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.PROD ? 'https://api.ledgersplit.com/api' : '/api',
   withCredentials: true,
 });
 
