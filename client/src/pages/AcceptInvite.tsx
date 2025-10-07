@@ -281,8 +281,8 @@ export default function AcceptInvite() {
                   {submitting ? 'Creating Account...' : 'Create Account & Join'}
                 </button>
 
-                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                  <span style={{ color: colors.text, fontSize: '16px' }}>or</span>
+                <div style={{ textAlign: 'center', marginBottom: '15px', marginTop: '5px' }}>
+                  <span style={{ color: colors.text, fontSize: '18px' }}>or</span>
                 </div>
 
                 <button
@@ -308,12 +308,14 @@ export default function AcceptInvite() {
                     type="button"
                     onClick={() => setShowRegister(false)}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      color: colors.text,
+                      width: '100%',
+                      padding: '12px',
                       fontSize: '16px',
-                      cursor: 'pointer',
-                      textDecoration: 'underline'
+                      background: colors.columbiaBlue,
+                      color: colors.text,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: '4px',
+                      cursor: 'pointer'
                     }}
                   >
                     Already have an account? Sign in
@@ -397,8 +399,8 @@ export default function AcceptInvite() {
                   </Link>
                 </div>
 
-                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                  <span style={{ color: colors.text, fontSize: '16px' }}>or</span>
+                <div style={{ textAlign: 'center', marginBottom: '15px', marginTop: '5px' }}>
+                  <span style={{ color: colors.text, fontSize: '18px' }}>or</span>
                 </div>
 
                 <button
@@ -424,12 +426,14 @@ export default function AcceptInvite() {
                     type="button"
                     onClick={() => setShowRegister(true)}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      color: colors.text,
+                      width: '100%',
+                      padding: '12px',
                       fontSize: '16px',
-                      cursor: 'pointer',
-                      textDecoration: 'underline'
+                      background: colors.columbiaBlue,
+                      color: colors.text,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: '4px',
+                      cursor: 'pointer'
                     }}
                   >
                     Don't have an account? Create one
