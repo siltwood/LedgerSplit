@@ -168,11 +168,6 @@ export default function AcceptInvite() {
         <p style={{ color: colors.text, fontSize: '16px', marginBottom: '20px', lineHeight: '1.5' }}>
           Your friend wants to split payments using LedgerSplit for the <strong>{invite.name}</strong> event.
         </p>
-        {invite.description && (
-          <p style={{ color: colors.text, fontSize: '16px', marginTop: '16px', padding: '16px', background: colors.background, borderRadius: '6px', fontStyle: 'italic' }}>
-            "{invite.description}"
-          </p>
-        )}
       </div>
 
       {error && (
@@ -399,7 +394,7 @@ export default function AcceptInvite() {
                   {submitting ? 'Signing In...' : 'Sign In'}
                 </button>
 
-                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                <div style={{ textAlign: 'left', marginBottom: '15px' }}>
                   <Link to="/forgot-password" style={{ color: colors.text, fontSize: '14px', textDecoration: 'underline' }}>
                     Forgot password?
                   </Link>
