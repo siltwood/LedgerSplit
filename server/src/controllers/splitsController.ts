@@ -39,6 +39,10 @@ export const getSplits = async (req: AuthRequest, res: Response) => {
           user_id,
           name,
           email
+        ),
+        split_participants (
+          user_id,
+          amount_owed
         )
       `)
       .in('event_id', eventIds)
