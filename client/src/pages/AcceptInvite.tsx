@@ -214,7 +214,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.surface,
+                      background: colors.columbiaBlue,
                       color: colors.text
                     }}
                   />
@@ -235,7 +235,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.surface,
+                      background: colors.columbiaBlue,
                       color: colors.text
                     }}
                   />
@@ -257,7 +257,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.surface,
+                      background: colors.columbiaBlue,
                       color: colors.text
                     }}
                   />
@@ -270,7 +270,7 @@ export default function AcceptInvite() {
                     width: '100%',
                     padding: '12px',
                     fontSize: '16px',
-                    background: colors.surface,
+                    background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
@@ -292,7 +292,7 @@ export default function AcceptInvite() {
                     width: '100%',
                     padding: '12px',
                     fontSize: '16px',
-                    background: colors.surface,
+                    background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
@@ -329,9 +329,6 @@ export default function AcceptInvite() {
               borderRadius: '8px',
               border: `1px solid ${colors.border}`
             }}>
-              <h2 style={{ color: colors.text, marginBottom: '20px', fontSize: '22px' }}>
-                Sign In to Join
-              </h2>
 
               <form onSubmit={handleLogin}>
                 <div style={{ marginBottom: '15px' }}>
@@ -349,7 +346,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.surface,
+                      background: colors.columbiaBlue,
                       color: colors.text
                     }}
                   />
@@ -370,7 +367,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.surface,
+                      background: colors.columbiaBlue,
                       color: colors.text
                     }}
                   />
@@ -383,7 +380,7 @@ export default function AcceptInvite() {
                     width: '100%',
                     padding: '12px',
                     fontSize: '16px',
-                    background: colors.surface,
+                    background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
@@ -411,7 +408,7 @@ export default function AcceptInvite() {
                     width: '100%',
                     padding: '12px',
                     fontSize: '16px',
-                    background: colors.surface,
+                    background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
