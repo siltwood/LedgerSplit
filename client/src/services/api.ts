@@ -59,7 +59,6 @@ export const splitsAPI = {
     paid_by: string;
     date: string;
     notes?: string;
-    participant_ids: string[];
   }) => api.post('/splits', data),
   update: (id: string, data: any) => api.put(`/splits/${id}`, data),
   delete: (id: string) => api.delete(`/splits/${id}`),
