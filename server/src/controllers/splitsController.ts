@@ -438,7 +438,7 @@ export const deleteSplit = async (req: AuthRequest, res: Response) => {
     // Get split to check permissions
     const { data: split } = await db
       .from('splits')
-      .select('created_by, event_id')
+      .select('created_by')
       .eq('split_id', id)
       .is('deleted_at', null)
       .single();
@@ -447,16 +447,9 @@ export const deleteSplit = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Split not found' });
     }
 
-    // Check if user is participant of the event
-    const { data: participation } = await db
-      .from('event_participants')
-      .select('*')
-      .eq('event_id', split.event_id)
-      .eq('user_id', userId)
-      .single();
-
-    if (!participation) {
-      return res.status(403).json({ error: 'Not a participant of this event' });
+    // Check if user is creator
+    if (split.created_by !== userId) {
+      return res.status(403).json({ error: 'Only split creator can delete' });
     }
 
     // Soft delete split

@@ -98,7 +98,7 @@ export default function EventDetail() {
       case 'amount-low':
         return a.amount - b.amount;
       case 'payer':
-        return (a.paid_by_user?.name || '').localeCompare(b.paid_by_user?.name || '');
+        return (a.paid_by_user?.email || '').localeCompare(b.paid_by_user?.email || '');
       default:
         return 0;
     }
@@ -187,7 +187,7 @@ export default function EventDetail() {
                     fontWeight: '500'
                   }}
                 >
-                  {p.user?.name}{p.user_id === user?.id ? ' (you)' : ''}
+                  {p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
                 </span>
               ))}
             </div>
@@ -268,7 +268,7 @@ export default function EventDetail() {
                   border: isCurrentUser ? `2px solid ${colors.primary}` : 'none'
                 }}>
                   <span style={{ fontSize: '16px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500' }}>
-                    {p.user?.name}{isCurrentUser ? ' (you)' : ''}
+                    {p.user?.email}{isCurrentUser ? ' (you)' : ''}
                   </span>
                   <span style={{
                     fontSize: '18px',
@@ -356,14 +356,14 @@ export default function EventDetail() {
                           // Current user is a participant but didn't pay
                           return (
                             <div style={{ marginTop: '4px' }}>
-                              {split.paid_by_user.name} paid ${split.amount.toFixed(2)}, <strong>you</strong> owe ${perPersonAmount.toFixed(2)}
+                              {split.paid_by_user.email} paid ${split.amount.toFixed(2)}, <strong>you</strong> owe ${perPersonAmount.toFixed(2)}
                             </div>
                           );
                         }
-                        return <div>Paid by {split.paid_by_user.name}</div>;
+                        return <div>Paid by {split.paid_by_user.email}</div>;
                       })()}
                       {(!split.split_participants || split.split_participants.length <= 1) && (
-                        <div>Paid by {split.paid_by_user.name}</div>
+                        <div>Paid by {split.paid_by_user.email}</div>
                       )}
                     </div>
                     {split.notes && (
