@@ -165,7 +165,7 @@ export default function AcceptInvite() {
         <h1 style={{ color: colors.text, marginBottom: '16px', fontSize: '28px' }}>
           You're Invited!
         </h1>
-        <p style={{ color: colors.text, fontSize: '16px', marginBottom: '20px', lineHeight: '1.5' }}>
+        <p style={{ color: colors.text, fontSize: '16px', marginBottom: '0', lineHeight: '1.5' }}>
           Your friend wants to split payments using LedgerSplit for the <strong>{invite.name}</strong> event.
         </p>
       </div>
