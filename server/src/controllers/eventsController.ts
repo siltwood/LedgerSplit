@@ -622,6 +622,42 @@ export const declineInvite = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// Get invite details by token (public - no auth required)
+export const getInviteByToken = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+
+    // Get invite with event and inviter details
+    const { data: invite, error: inviteError } = await db
+      .from('event_invites')
+      .select(`
+        *,
+        events!inner (
+          event_id,
+          name,
+          description
+        ),
+        inviter:invited_by (
+          user_id,
+          name,
+          email
+        )
+      `)
+      .eq('invite_token', token)
+      .eq('status', 'pending')
+      .single();
+
+    if (inviteError || !invite) {
+      return res.status(404).json({ error: 'Invite not found or already used' });
+    }
+
+    res.json({ invite });
+  } catch (error) {
+    console.error('Get invite error:', error);
+    res.status(500).json({ error: 'Failed to get invite' });
+  }
+};
+
 // Accept event invite by token (for email invites)
 export const acceptInviteByToken = async (req: AuthRequest, res: Response) => {
   try {

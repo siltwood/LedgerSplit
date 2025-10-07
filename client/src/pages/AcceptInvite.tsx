@@ -39,7 +39,8 @@ export default function AcceptInvite() {
 
   const loadInvite = async () => {
     try {
-      const response = await axios.get(`/api/events/invites/token/${token}`);
+      const baseURL = import.meta.env.PROD ? 'https://api.ledgersplit.com/api' : '/api';
+      const response = await axios.get(`${baseURL}/events/invites/token/${token}`);
       setInvite(response.data.invite);
       setEmail(response.data.invite.invited_email || '');
     } catch (err: any) {
@@ -53,7 +54,8 @@ export default function AcceptInvite() {
     if (!token) return;
 
     try {
-      await axios.post(`/api/events/invites/token/${token}/accept`);
+      const baseURL = import.meta.env.PROD ? 'https://api.ledgersplit.com/api' : '/api';
+      await axios.post(`${baseURL}/events/invites/token/${token}/accept`, {}, { withCredentials: true });
       // Navigate to the event page
       if (invite?.event_id) {
         navigate(`/events/${invite.event_id}`);
@@ -71,11 +73,12 @@ export default function AcceptInvite() {
     setSubmitting(true);
 
     try {
-      await axios.post('/api/auth/register', {
+      const baseURL = import.meta.env.PROD ? 'https://api.ledgersplit.com/api' : '/api';
+      await axios.post(`${baseURL}/auth/register`, {
         email,
         password,
         name,
-      });
+      }, { withCredentials: true });
 
       // Login automatically
       await login(email, password);

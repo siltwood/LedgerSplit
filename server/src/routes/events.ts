@@ -13,13 +13,15 @@ import {
   acceptInvite,
   declineInvite,
   acceptInviteByToken,
+  getInviteByToken,
 } from '../controllers/eventsController';
 import { requireAuth } from '../middleware/auth';
 
 const router = Router();
 
-// Public route to get event details by share token
+// Public routes (no auth required)
 router.get('/join/:token', getEventByShareToken);
+router.get('/invites/token/:token', getInviteByToken);
 
 // All routes below require authentication
 router.use(requireAuth);
