@@ -22,8 +22,9 @@ export default function CreateEvent() {
         description: description || undefined,
       });
 
-      console.log('Event created:', response);
-      navigate('/events');
+      // Navigate to the newly created event page
+      const eventId = response.data.event.event_id;
+      navigate(`/events/${eventId}`);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to create event');
     } finally {
