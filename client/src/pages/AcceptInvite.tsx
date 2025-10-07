@@ -278,7 +278,7 @@ export default function AcceptInvite() {
                     marginBottom: '15px'
                   }}
                 >
-                  {submitting ? 'Creating Account...' : 'Create Account & Join'}
+                  {submitting ? 'Creating Account...' : 'Create Account and Join Event'}
                 </button>
 
                 <div style={{ textAlign: 'center', marginBottom: '15px', marginTop: '5px' }}>
@@ -390,7 +390,7 @@ export default function AcceptInvite() {
                     marginBottom: '15px'
                   }}
                 >
-                  {submitting ? 'Signing In...' : 'Sign In'}
+                  {submitting ? 'Signing In...' : 'Sign in and Join Event'}
                 </button>
 
                 <div style={{ textAlign: 'left' }}>
