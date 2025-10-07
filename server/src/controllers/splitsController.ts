@@ -64,29 +64,34 @@ export const getSplits = async (req: AuthRequest, res: Response) => {
     // Auto-fix any splits that are missing split_participants
     if (splits && splits.length > 0) {
       for (const split of splits) {
-        // Check if this split has participants
-        const { data: existingParticipants } = await db
-          .from('split_participants')
-          .select('user_id')
-          .eq('split_id', split.split_id);
-
-        // If no participants, backfill with all event participants
-        if (!existingParticipants || existingParticipants.length === 0) {
-          const { data: eventParticipants } = await db
-            .from('event_participants')
+        try {
+          // Check if this split has participants
+          const { data: existingParticipants } = await db
+            .from('split_participants')
             .select('user_id')
-            .eq('event_id', split.event_id);
+            .eq('split_id', split.split_id);
 
-          if (eventParticipants && eventParticipants.length > 0) {
-            const amountOwed = split.amount / eventParticipants.length;
-            const participantRecords = eventParticipants.map((p: any) => ({
-              split_id: split.split_id,
-              user_id: p.user_id,
-              amount_owed: amountOwed,
-            }));
+          // If no participants, backfill with all event participants
+          if (!existingParticipants || existingParticipants.length === 0) {
+            const { data: eventParticipants } = await db
+              .from('event_participants')
+              .select('user_id')
+              .eq('event_id', split.event_id);
 
-            await db.from('split_participants').insert(participantRecords);
+            if (eventParticipants && eventParticipants.length > 0) {
+              const amountOwed = split.amount / eventParticipants.length;
+              const participantRecords = eventParticipants.map((p: any) => ({
+                split_id: split.split_id,
+                user_id: p.user_id,
+                amount_owed: amountOwed,
+              }));
+
+              await db.from('split_participants').insert(participantRecords);
+            }
           }
+        } catch (backfillError) {
+          // Log but don't fail the request
+          console.error(`Failed to backfill split ${split.split_id}:`, backfillError);
         }
       }
     }
