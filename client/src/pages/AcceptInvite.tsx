@@ -162,22 +162,15 @@ export default function AcceptInvite() {
         marginBottom: '30px',
         textAlign: 'center'
       }}>
-        <h1 style={{ color: colors.text, marginBottom: '10px', fontSize: '28px' }}>
-          Join Event
+        <h1 style={{ color: colors.text, marginBottom: '16px', fontSize: '28px' }}>
+          You're Invited!
         </h1>
-        <div style={{
-          background: colors.primary,
-          padding: '15px',
-          borderRadius: '4px',
-          margin: '20px 0',
-        }}>
-          <h2 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>
-            {invite.name}
-          </h2>
-        </div>
+        <p style={{ color: colors.text, fontSize: '16px', marginBottom: '20px', lineHeight: '1.5' }}>
+          Your friend wants to split payments using LedgerSplit for the <strong>{invite.name}</strong> event.
+        </p>
         {invite.description && (
-          <p style={{ color: colors.text, fontSize: '16px', marginTop: '10px' }}>
-            {invite.description}
+          <p style={{ color: colors.text, fontSize: '16px', marginTop: '16px', padding: '16px', background: colors.background, borderRadius: '6px', fontStyle: 'italic' }}>
+            "{invite.description}"
           </p>
         )}
       </div>
