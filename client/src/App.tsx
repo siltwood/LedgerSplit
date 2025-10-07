@@ -25,16 +25,6 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   return user ? <>{children}</> : <Navigate to="/login" />;
 }
 
-function RootRedirect() {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return null;
-  }
-
-  return user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />;
-}
-
 function App() {
   return (
     <BrowserRouter>
