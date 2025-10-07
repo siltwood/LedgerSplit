@@ -16,8 +16,31 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Security middleware
-app.use(helmet());
+// Security middleware with relaxed CSP for production
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        connectSrc: [
+          "'self'",
+          'https://api.ledgersplit.com',
+          'https://ledgersplit.com',
+          'https://*.google.com',
+          'https://*.googleapis.com',
+        ],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'https://www.googletagmanager.com',
+          'https://static.cloudflareinsights.com',
+        ],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
+      },
+    },
+  })
+);
 
 // Rate limiting
 const limiter = rateLimit({
