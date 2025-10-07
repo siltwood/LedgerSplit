@@ -49,22 +49,52 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS
+// Stricter rate limiting for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === 'production' ? 5 : 100, // 5 attempts per 15 minutes in production
+  skipSuccessfulRequests: true, // Don't count successful requests
+});
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/forgot-password', authLimiter);
+
+// CORS - allow multiple origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://ledgersplit.com',
+  'https://www.ledgersplit.com',
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
 
-// Body parsing
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Body parsing with size limits
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Session management
+if (!process.env.SESSION_SECRET) {
+  console.error('CRITICAL: SESSION_SECRET environment variable is not set!');
+  process.exit(1);
+}
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -101,6 +131,10 @@ if (process.env.NODE_ENV === 'production') {
     }
   });
 }
+
+// Start cleanup scheduler for expired tokens
+import { startCleanupScheduler } from './utils/cleanup';
+startCleanupScheduler();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

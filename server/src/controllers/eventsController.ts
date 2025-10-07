@@ -96,16 +96,54 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
     const { name, description, participant_ids = [] } = req.body;
     const userId = req.user?.id;
 
+    // Import validation utilities
+    const { sanitizeText, isValidUUID } = await import('../utils/validation');
+
     if (!name) {
       return res.status(400).json({ error: 'Event name is required' });
+    }
+
+    // Validate and sanitize name
+    const nameValidation = sanitizeText(name, 200);
+    if (!nameValidation.valid) {
+      return res.status(400).json({ error: nameValidation.error });
+    }
+
+    // Validate and sanitize description
+    const descriptionValidation = sanitizeText(description || '', 1000);
+    if (!descriptionValidation.valid) {
+      return res.status(400).json({ error: descriptionValidation.error });
+    }
+
+    // Validate participant IDs - only allow UUIDs, no arbitrary additions
+    const validParticipantIds: string[] = [];
+    if (participant_ids && participant_ids.length > 0) {
+      for (const id of participant_ids) {
+        if (!isValidUUID(id)) {
+          return res.status(400).json({ error: 'Invalid participant ID format' });
+        }
+
+        // Verify participant exists and is not the creator
+        if (id !== userId) {
+          const { data: participant } = await db
+            .from('users')
+            .select('user_id')
+            .eq('user_id', id)
+            .single();
+
+          if (participant) {
+            validParticipantIds.push(id);
+          }
+        }
+      }
     }
 
     // Create event
     const { data: event, error: eventError } = await db
       .from('events')
       .insert({
-        name,
-        description,
+        name: nameValidation.sanitized,
+        description: descriptionValidation.sanitized,
         created_by: userId,
       })
       .select()
@@ -116,8 +154,8 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
       return res.status(500).json({ error: 'Failed to create event' });
     }
 
-    // Add creator as participant
-    const participantsToAdd = [userId, ...participant_ids.filter((id: string) => id !== userId)];
+    // Add creator and verified participants
+    const participantsToAdd: string[] = [userId!, ...validParticipantIds];
 
     const participantRecords = participantsToAdd.map((participantId: string) => ({
       event_id: event.event_id,

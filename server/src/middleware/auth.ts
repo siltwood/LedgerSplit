@@ -9,6 +9,7 @@ declare module 'express-session' {
       name: string;
       google_id?: string;
     };
+    oauthState?: string;
   }
 }
 

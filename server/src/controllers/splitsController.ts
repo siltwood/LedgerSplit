@@ -148,11 +148,40 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
     } = req.body;
     const userId = req.user?.id;
 
+    // Import validation utilities
+    const { sanitizeText, validateAmount, isValidUUID } = await import('../utils/validation');
+
     // Validate required fields
     if (!event_id || !title || !amount || !paid_by) {
       return res.status(400).json({
         error: 'Event ID, title, amount, and paid_by are required',
       });
+    }
+
+    // Validate UUIDs
+    if (!isValidUUID(event_id)) {
+      return res.status(400).json({ error: 'Invalid event ID' });
+    }
+    if (!isValidUUID(paid_by)) {
+      return res.status(400).json({ error: 'Invalid paid_by user ID' });
+    }
+
+    // Validate and sanitize title
+    const titleValidation = sanitizeText(title, 200);
+    if (!titleValidation.valid) {
+      return res.status(400).json({ error: titleValidation.error });
+    }
+
+    // Validate amount
+    const amountValidation = validateAmount(amount);
+    if (!amountValidation.valid) {
+      return res.status(400).json({ error: amountValidation.error });
+    }
+
+    // Validate and sanitize notes
+    const notesValidation = sanitizeText(notes || '', 1000);
+    if (!notesValidation.valid) {
+      return res.status(400).json({ error: notesValidation.error });
     }
 
     // Allow creating splits with no participants initially
@@ -200,7 +229,7 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
 
     // Calculate amount owed per participant (equal split)
     const amountOwed = participant_ids && participant_ids.length > 0
-      ? parseFloat(amount) / participant_ids.length
+      ? amountValidation.value! / participant_ids.length
       : 0;
 
     // Create split
@@ -208,13 +237,13 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       .from('splits')
       .insert({
         event_id,
-        title,
-        amount: parseFloat(amount),
+        title: titleValidation.sanitized,
+        amount: amountValidation.value,
         currency,
         paid_by,
         created_by: userId,
         date: date || new Date().toISOString(),
-        notes,
+        notes: notesValidation.sanitized,
       })
       .select()
       .single();

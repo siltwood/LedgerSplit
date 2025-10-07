@@ -95,16 +95,31 @@ export const register = async (req: AuthRequest, res: Response) => {
   const { email, password, name } = req.body;
 
   try {
+    // Import validation utilities
+    const { isValidEmail, validatePassword, validateName } = await import('../utils/validation');
+
+    // Validate email
+    if (!email || !isValidEmail(email)) {
+      return res.status(400).json({ error: 'Valid email is required' });
+    }
+
     // Validate password
-    if (!password || password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      return res.status(400).json({ error: passwordValidation.error });
+    }
+
+    // Validate and sanitize name
+    const nameValidation = validateName(name);
+    if (!nameValidation.valid) {
+      return res.status(400).json({ error: nameValidation.error });
     }
 
     // Check if user already exists
     const { data: existingUser } = await db
       .from('users')
       .select('*')
-      .eq('email', email)
+      .eq('email', email.toLowerCase())
       .single();
 
     if (existingUser) {
@@ -118,9 +133,9 @@ export const register = async (req: AuthRequest, res: Response) => {
     const { data: user, error } = await db
       .from('users')
       .insert({
-        email,
+        email: email.toLowerCase(),
         password_hash: passwordHash,
-        name,
+        name: nameValidation.sanitized,
         email_verified: false,
       })
       .select()
@@ -131,19 +146,35 @@ export const register = async (req: AuthRequest, res: Response) => {
       return res.status(500).json({ error: 'Failed to create user' });
     }
 
-    // Set session
-    req.session.user = {
-      id: user.user_id,
-      email: user.email,
-      name: user.name,
-    };
+    // Regenerate session to prevent fixation
+    req.session.regenerate((err) => {
+      if (err) {
+        console.error('Session regeneration error:', err);
+        return res.status(500).json({ error: 'Session error' });
+      }
 
-    // Auto-accept any pending email invites
-    await autoAcceptPendingInvites(user.user_id, user.email);
+      // Set session
+      req.session.user = {
+        id: user.user_id,
+        email: user.email,
+        name: user.name,
+      };
 
-    res.status(201).json({
-      message: 'User created successfully',
-      user: req.session.user,
+      // Save session before continuing
+      req.session.save(async (saveErr) => {
+        if (saveErr) {
+          console.error('Session save error:', saveErr);
+          return res.status(500).json({ error: 'Session error' });
+        }
+
+        // Auto-accept any pending email invites
+        await autoAcceptPendingInvites(user.user_id, user.email);
+
+        res.status(201).json({
+          message: 'User created successfully',
+          user: req.session.user,
+        });
+      });
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -156,11 +187,19 @@ export const login = async (req: AuthRequest, res: Response) => {
   const { email, password } = req.body;
 
   try {
+    // Import validation utilities
+    const { isValidEmail } = await import('../utils/validation');
+
+    // Validate email format
+    if (!email || !isValidEmail(email)) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
     // Find user
     const { data: user, error } = await db
       .from('users')
       .select('*')
-      .eq('email', email)
+      .eq('email', email.toLowerCase())
       .single();
 
     if (error || !user) {
@@ -179,16 +218,32 @@ export const login = async (req: AuthRequest, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Set session
-    req.session.user = {
-      id: user.user_id,
-      email: user.email,
-      name: user.name,
-    };
+    // Regenerate session to prevent fixation
+    req.session.regenerate((err) => {
+      if (err) {
+        console.error('Session regeneration error:', err);
+        return res.status(500).json({ error: 'Session error' });
+      }
 
-    res.json({
-      message: 'Login successful',
-      user: req.session.user,
+      // Set session
+      req.session.user = {
+        id: user.user_id,
+        email: user.email,
+        name: user.name,
+      };
+
+      // Save session
+      req.session.save((saveErr) => {
+        if (saveErr) {
+          console.error('Session save error:', saveErr);
+          return res.status(500).json({ error: 'Session error' });
+        }
+
+        res.json({
+          message: 'Login successful',
+          user: req.session.user,
+        });
+      });
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -198,23 +253,39 @@ export const login = async (req: AuthRequest, res: Response) => {
 
 // Google OAuth URL
 export const getGoogleAuthUrl = (req: AuthRequest, res: Response) => {
+  // Generate state parameter to prevent CSRF
+  const crypto = require('crypto');
+  const state = crypto.randomBytes(32).toString('hex');
+
+  // Store state in session
+  req.session.oauthState = state;
+
   const url = googleClient.generateAuthUrl({
     access_type: 'offline',
     scope: [
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email',
     ],
+    state,
   });
   res.json({ url });
 };
 
 // Google OAuth callback
 export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
-  const { code } = req.query;
+  const { code, state } = req.query;
 
   if (!code || typeof code !== 'string') {
     return res.status(400).json({ error: 'Authorization code missing' });
   }
+
+  // Verify state parameter to prevent CSRF
+  if (!state || state !== req.session.oauthState) {
+    return res.status(403).json({ error: 'Invalid state parameter' });
+  }
+
+  // Clear state from session
+  delete req.session.oauthState;
 
   try {
     const { tokens } = await googleClient.getToken(code);
@@ -274,27 +345,37 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
       user = newUser;
     }
 
-    // Set session
-    req.session.user = {
-      id: user.user_id,
-      email: user.email,
-      name: user.name,
-      google_id: user.google_id,
-    };
-
-    // Auto-accept any pending email invites
-    await autoAcceptPendingInvites(user.user_id, user.email);
-
-    // Save session before redirect
-    req.session.save((err) => {
+    // Regenerate session to prevent fixation
+    req.session.regenerate((err) => {
       if (err) {
-        console.error('Session save error:', err);
+        console.error('Session regeneration error:', err);
         return res.status(500).json({ error: 'Session error' });
       }
 
-      // Redirect to client with success
-      const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-      res.redirect(`${clientUrl}/dashboard`);
+      // Set session
+      req.session.user = {
+        id: user.user_id,
+        email: user.email,
+        name: user.name,
+        google_id: user.google_id,
+      };
+
+      // Auto-accept any pending email invites
+      autoAcceptPendingInvites(user.user_id, user.email).catch(e => {
+        console.error('Error auto-accepting invites:', e);
+      });
+
+      // Save session before redirect
+      req.session.save((saveErr) => {
+        if (saveErr) {
+          console.error('Session save error:', saveErr);
+          return res.status(500).json({ error: 'Session error' });
+        }
+
+        // Redirect to client with success
+        const clientUrl = 'https://www.ledgersplit.com';
+        res.redirect(`${clientUrl}/dashboard`);
+      });
     });
   } catch (error) {
     console.error('Google auth error:', error);
