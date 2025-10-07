@@ -226,7 +226,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.background,
+                      background: colors.surface,
                       color: colors.text
                     }}
                   />
@@ -247,7 +247,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.background,
+                      background: colors.surface,
                       color: colors.text
                     }}
                   />
@@ -269,7 +269,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.background,
+                      background: colors.surface,
                       color: colors.text
                     }}
                   />
@@ -282,9 +282,9 @@ export default function AcceptInvite() {
                     width: '100%',
                     padding: '12px',
                     fontSize: '16px',
-                    background: colors.primary,
+                    background: colors.surface,
                     color: colors.text,
-                    border: 'none',
+                    border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
                     cursor: submitting ? 'not-allowed' : 'pointer',
                     marginBottom: '15px'
@@ -304,7 +304,7 @@ export default function AcceptInvite() {
                     width: '100%',
                     padding: '12px',
                     fontSize: '16px',
-                    background: colors.background,
+                    background: colors.surface,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
@@ -361,7 +361,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.background,
+                      background: colors.surface,
                       color: colors.text
                     }}
                   />
@@ -382,7 +382,7 @@ export default function AcceptInvite() {
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
-                      background: colors.background,
+                      background: colors.surface,
                       color: colors.text
                     }}
                   />
@@ -395,16 +395,22 @@ export default function AcceptInvite() {
                     width: '100%',
                     padding: '12px',
                     fontSize: '16px',
-                    background: colors.primary,
+                    background: colors.surface,
                     color: colors.text,
-                    border: 'none',
+                    border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
                     cursor: submitting ? 'not-allowed' : 'pointer',
                     marginBottom: '15px'
                   }}
                 >
-                  {submitting ? 'Signing In...' : 'Sign In & Join'}
+                  {submitting ? 'Signing In...' : 'Sign In'}
                 </button>
+
+                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                  <Link to="/forgot-password" style={{ color: colors.text, fontSize: '14px', textDecoration: 'underline' }}>
+                    Forgot password?
+                  </Link>
+                </div>
 
                 <div style={{ textAlign: 'center', marginBottom: '15px' }}>
                   <span style={{ color: colors.text, fontSize: '16px' }}>or</span>
@@ -417,7 +423,7 @@ export default function AcceptInvite() {
                     width: '100%',
                     padding: '12px',
                     fontSize: '16px',
-                    background: colors.background,
+                    background: colors.surface,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
