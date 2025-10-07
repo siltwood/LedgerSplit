@@ -66,25 +66,40 @@ describe('Auth Routes', () => {
     it('should register a new user', async () => {
       const { db } = require('../config/database');
 
-      db.from.mockImplementation(() => ({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn().mockResolvedValue({ data: null, error: null }),
-          })),
-        })),
-        insert: jest.fn(() => ({
-          select: jest.fn(() => ({
-            single: jest.fn().mockResolvedValue({
-              data: {
-                user_id: '123',
-                email: 'test@example.com',
-                name: 'Test User',
-              },
-              error: null,
-            }),
-          })),
-        })),
-      }));
+      db.from.mockImplementation((table: string) => {
+        if (table === 'users') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                single: jest.fn().mockResolvedValue({ data: null, error: null }),
+              })),
+            })),
+            insert: jest.fn(() => ({
+              select: jest.fn(() => ({
+                single: jest.fn().mockResolvedValue({
+                  data: {
+                    user_id: '123e4567-e89b-12d3-a456-426614174001',
+                    email: 'test@example.com',
+                    name: 'Test User',
+                  },
+                  error: null,
+                }),
+              })),
+            })),
+          };
+        } else if (table === 'event_invites') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  data: [],
+                  error: null,
+                })),
+              })),
+            })),
+          };
+        }
+      });
 
       const response = await request(app)
         .post('/auth/register')
@@ -99,7 +114,7 @@ describe('Auth Routes', () => {
       expect(response.body.user.email).toBe('test@example.com');
     });
 
-    it('should return 400 if password is less than 6 characters', async () => {
+    it('should return 400 if password is less than 8 characters', async () => {
       const response = await request(app)
         .post('/auth/register')
         .send({
@@ -109,7 +124,7 @@ describe('Auth Routes', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Password must be at least 6 characters');
+      expect(response.body.error).toBe('Password must be at least 8 characters');
     });
 
     it('should return 400 if email already exists', async () => {
@@ -361,6 +376,27 @@ describe('Auth Routes', () => {
       const { googleClient } = require('../config/google');
       const { db } = require('../config/database');
 
+      const mockState = 'test-oauth-state';
+
+      // Create custom app with session pre-configured
+      const testApp = express();
+      testApp.use(express.json());
+      testApp.use(
+        session({
+          secret: 'test-secret',
+          resave: false,
+          saveUninitialized: true, // Allow test session to be created
+        })
+      );
+
+      // Middleware to inject oauthState into session
+      testApp.use((req, res, next) => {
+        req.session.oauthState = mockState;
+        next();
+      });
+
+      testApp.use('/auth', authRoutes);
+
       googleClient.getToken = jest.fn().mockResolvedValue({
         tokens: { id_token: 'mock-token' },
       });
@@ -426,9 +462,9 @@ describe('Auth Routes', () => {
         }
       });
 
-      const response = await request(app)
+      const response = await request(testApp)
         .get('/auth/google/callback')
-        .query({ code: 'auth-code' });
+        .query({ code: 'auth-code', state: mockState });
 
       expect(response.status).toBe(302); // Redirect
       expect(response.header.location).toContain('/dashboard');
@@ -437,6 +473,24 @@ describe('Auth Routes', () => {
     it('should login existing Google user', async () => {
       const { googleClient } = require('../config/google');
       const { db } = require('../config/database');
+
+      const mockState = 'test-oauth-state';
+
+      // Create custom app with session pre-configured
+      const testApp = express();
+      testApp.use(express.json());
+      testApp.use(
+        session({
+          secret: 'test-secret',
+          resave: false,
+          saveUninitialized: true,
+        })
+      );
+      testApp.use((req, res, next) => {
+        req.session.oauthState = mockState;
+        next();
+      });
+      testApp.use('/auth', authRoutes);
 
       googleClient.getToken = jest.fn().mockResolvedValue({
         tokens: { id_token: 'mock-token' },
@@ -500,9 +554,9 @@ describe('Auth Routes', () => {
         }
       });
 
-      const response = await request(app)
+      const response = await request(testApp)
         .get('/auth/google/callback')
-        .query({ code: 'auth-code' });
+        .query({ code: 'auth-code', state: mockState });
 
       expect(response.status).toBe(302);
       expect(response.header.location).toContain('/dashboard');
@@ -511,6 +565,24 @@ describe('Auth Routes', () => {
     it('should redirect with error if email already registered with password', async () => {
       const { googleClient } = require('../config/google');
       const { db } = require('../config/database');
+
+      const mockState = 'test-oauth-state';
+
+      // Create custom app with session pre-configured
+      const testApp = express();
+      testApp.use(express.json());
+      testApp.use(
+        session({
+          secret: 'test-secret',
+          resave: false,
+          saveUninitialized: true,
+        })
+      );
+      testApp.use((req, res, next) => {
+        req.session.oauthState = mockState;
+        next();
+      });
+      testApp.use('/auth', authRoutes);
 
       googleClient.getToken = jest.fn().mockResolvedValue({
         tokens: { id_token: 'mock-token' },
@@ -540,9 +612,9 @@ describe('Auth Routes', () => {
         })),
       }));
 
-      const response = await request(app)
+      const response = await request(testApp)
         .get('/auth/google/callback')
-        .query({ code: 'auth-code' });
+        .query({ code: 'auth-code', state: mockState });
 
       expect(response.status).toBe(302);
       expect(response.header.location).toContain('error=email_exists');

@@ -3,12 +3,18 @@ import express from 'express';
 
 jest.mock('../config/database');
 
+// Test UUIDs
+const TEST_USER_ID = '123e4567-e89b-12d3-a456-426614174001';
+const TEST_EVENT_ID = '123e4567-e89b-12d3-a456-426614174002';
+const TEST_SPLIT_ID = '123e4567-e89b-12d3-a456-426614174003';
+const TEST_OTHER_USER_ID = '123e4567-e89b-12d3-a456-426614174004';
+
 // Mock requireAuth middleware to pass through with test user
 jest.mock('../middleware/auth', () => ({
   requireAuth: (req: any, res: any, next: any) => {
-    req.user = { id: 'test-user-id', email: 'test@example.com', name: 'Test User' };
+    req.user = { id: '123e4567-e89b-12d3-a456-426614174001', email: 'test@example.com', name: 'Test User' };
     req.session = {
-      user: { id: 'test-user-id', email: 'test@example.com', name: 'Test User' },
+      user: { id: '123e4567-e89b-12d3-a456-426614174001', email: 'test@example.com', name: 'Test User' },
       touch: jest.fn(),
       save: jest.fn((cb: any) => cb && cb()),
       regenerate: jest.fn((cb: any) => cb && cb()),
@@ -42,7 +48,7 @@ describe('Splits API', () => {
               eq: jest.fn(() => ({
                 eq: jest.fn(() => ({
                   single: jest.fn().mockResolvedValue({
-                    data: { event_id: 'event-123', user_id: 'test-user-id' },
+                    data: { event_id: TEST_EVENT_ID, user_id: TEST_USER_ID },
                     error: null,
                   }),
                 })),
@@ -55,11 +61,11 @@ describe('Splits API', () => {
               select: jest.fn(() => ({
                 single: jest.fn().mockResolvedValue({
                   data: {
-                    split_id: 'split-123',
-                    event_id: 'event-123',
+                    split_id: TEST_SPLIT_ID,
+                    event_id: TEST_EVENT_ID,
                     title: 'Dinner',
                     amount: 100,
-                    paid_by: 'test-user-id',
+                    paid_by: TEST_USER_ID,
                   },
                   error: null,
                 }),
@@ -76,12 +82,12 @@ describe('Splits API', () => {
       const response = await request(app)
         .post('/splits')
         .send({
-          event_id: 'event-123',
+          event_id: TEST_EVENT_ID,
           title: 'Dinner',
           amount: 100,
-          paid_by: 'test-user-id',
+          paid_by: TEST_USER_ID,
           date: '2025-01-01',
-          participant_ids: ['user-1', 'user-2'],
+          participant_ids: [],
         });
 
       expect(response.status).toBe(201);
@@ -99,7 +105,7 @@ describe('Splits API', () => {
               eq: jest.fn(() => ({
                 eq: jest.fn(() => ({
                   single: jest.fn().mockResolvedValue({
-                    data: { event_id: 'event-123', user_id: 'test-user-id' },
+                    data: { event_id: TEST_EVENT_ID, user_id: TEST_USER_ID },
                     error: null,
                   }),
                 })),
@@ -112,11 +118,11 @@ describe('Splits API', () => {
               select: jest.fn(() => ({
                 single: jest.fn().mockResolvedValue({
                   data: {
-                    split_id: 'split-123',
-                    event_id: 'event-123',
+                    split_id: TEST_SPLIT_ID,
+                    event_id: TEST_EVENT_ID,
                     title: 'Future expense',
                     amount: 50,
-                    paid_by: 'test-user-id',
+                    paid_by: TEST_USER_ID,
                   },
                   error: null,
                 }),
@@ -129,10 +135,10 @@ describe('Splits API', () => {
       const response = await request(app)
         .post('/splits')
         .send({
-          event_id: 'event-123',
+          event_id: TEST_EVENT_ID,
           title: 'Future expense',
           amount: 50,
-          paid_by: 'test-user-id',
+          paid_by: TEST_USER_ID,
           date: '2025-01-01',
           participant_ids: [],
         });
@@ -176,12 +182,12 @@ describe('Splits API', () => {
       const response = await request(app)
         .post('/splits')
         .send({
-          event_id: 'event-123',
+          event_id: TEST_EVENT_ID,
           title: 'Dinner',
           amount: 100,
-          paid_by: 'test-user-id',
+          paid_by: TEST_USER_ID,
           date: '2025-01-01',
-          participant_ids: ['user-1'],
+          participant_ids: [],
         });
 
       expect(response.status).toBe(403);
@@ -198,7 +204,7 @@ describe('Splits API', () => {
           return {
             select: jest.fn(() => ({
               eq: jest.fn().mockResolvedValue({
-                data: [{ event_id: 'event-123' }],
+                data: [{ event_id: TEST_EVENT_ID }],
                 error: null,
               }),
             })),
@@ -211,8 +217,8 @@ describe('Splits API', () => {
                   order: jest.fn(() => ({
                     eq: jest.fn().mockResolvedValue({
                       data: [
-                        { split_id: 'split-1', title: 'Dinner', event_id: 'event-123' },
-                        { split_id: 'split-2', title: 'Uber', event_id: 'event-123' },
+                        { split_id: TEST_SPLIT_ID, title: 'Dinner', event_id: TEST_EVENT_ID },
+                        { split_id: '123e4567-e89b-12d3-a456-426614174005', title: 'Uber', event_id: TEST_EVENT_ID },
                       ],
                       error: null,
                     }),
@@ -224,7 +230,7 @@ describe('Splits API', () => {
         }
       });
 
-      const response = await request(app).get('/splits?event_id=event-123');
+      const response = await request(app).get(`/splits?event_id=${TEST_EVENT_ID}`);
 
       expect(response.status).toBe(200);
       expect(response.body.splits).toHaveLength(2);
@@ -243,9 +249,9 @@ describe('Splits API', () => {
                 is: jest.fn(() => ({
                   single: jest.fn().mockResolvedValue({
                     data: {
-                      split_id: 'split-123',
-                      created_by: 'test-user-id',
-                      event_id: 'event-123',
+                      split_id: TEST_SPLIT_ID,
+                      created_by: TEST_USER_ID,
+                      event_id: TEST_EVENT_ID,
                       amount: 100,
                     },
                     error: null,
@@ -257,7 +263,7 @@ describe('Splits API', () => {
               eq: jest.fn(() => ({
                 select: jest.fn(() => ({
                   single: jest.fn().mockResolvedValue({
-                    data: { split_id: 'split-123', title: 'Updated Dinner' },
+                    data: { split_id: TEST_SPLIT_ID, title: 'Updated Dinner' },
                     error: null,
                   }),
                 })),
@@ -270,7 +276,7 @@ describe('Splits API', () => {
               eq: jest.fn(() => ({
                 eq: jest.fn(() => ({
                   single: jest.fn().mockResolvedValue({
-                    data: { event_id: 'event-123', user_id: 'user-1' },
+                    data: { event_id: TEST_EVENT_ID, user_id: TEST_USER_ID },
                     error: null,
                   }),
                 })),
@@ -288,10 +294,9 @@ describe('Splits API', () => {
       });
 
       const response = await request(app)
-        .put('/splits/split-123')
+        .put(`/splits/${TEST_SPLIT_ID}`)
         .send({
           title: 'Updated Dinner',
-          participant_ids: ['user-1', 'user-2', 'user-3'],
         });
 
       expect(response.status).toBe(200);
@@ -309,9 +314,9 @@ describe('Splits API', () => {
                 is: jest.fn(() => ({
                   single: jest.fn().mockResolvedValue({
                     data: {
-                      split_id: 'split-123',
-                      created_by: 'other-user-id',
-                      event_id: 'event-123',
+                      split_id: TEST_SPLIT_ID,
+                      created_by: TEST_OTHER_USER_ID,
+                      event_id: TEST_EVENT_ID,
                     },
                     error: null,
                   }),
@@ -323,7 +328,7 @@ describe('Splits API', () => {
       });
 
       const response = await request(app)
-        .put('/splits/split-123')
+        .put(`/splits/${TEST_SPLIT_ID}`)
         .send({ title: 'Updated Dinner' });
 
       expect(response.status).toBe(403);
@@ -342,7 +347,7 @@ describe('Splits API', () => {
               eq: jest.fn(() => ({
                 is: jest.fn(() => ({
                   single: jest.fn().mockResolvedValue({
-                    data: { created_by: 'test-user-id' },
+                    data: { created_by: TEST_USER_ID },
                     error: null,
                   }),
                 })),
@@ -355,7 +360,7 @@ describe('Splits API', () => {
         }
       });
 
-      const response = await request(app).delete('/splits/split-123');
+      const response = await request(app).delete(`/splits/${TEST_SPLIT_ID}`);
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe('Split deleted successfully');
@@ -371,7 +376,7 @@ describe('Splits API', () => {
               eq: jest.fn(() => ({
                 is: jest.fn(() => ({
                   single: jest.fn().mockResolvedValue({
-                    data: { created_by: 'other-user-id' },
+                    data: { created_by: TEST_OTHER_USER_ID },
                     error: null,
                   }),
                 })),
@@ -381,7 +386,7 @@ describe('Splits API', () => {
         }
       });
 
-      const response = await request(app).delete('/splits/split-123');
+      const response = await request(app).delete(`/splits/${TEST_SPLIT_ID}`);
 
       expect(response.status).toBe(403);
       expect(response.body.error).toBe('Only split creator can delete');
