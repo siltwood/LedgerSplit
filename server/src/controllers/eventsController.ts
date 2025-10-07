@@ -886,6 +886,47 @@ export const joinEventByShareToken = async (req: AuthRequest, res: Response) => 
       return res.status(500).json({ error: 'Failed to join event' });
     }
 
+    // Add new participant to ALL existing splits in this event
+    const { data: existingSplits } = await db
+      .from('splits')
+      .select('split_id, amount')
+      .eq('event_id', event.event_id)
+      .is('deleted_at', null);
+
+    if (existingSplits && existingSplits.length > 0) {
+      for (const split of existingSplits) {
+        // Get current participants for this split
+        const { data: currentParticipants } = await db
+          .from('split_participants')
+          .select('user_id')
+          .eq('split_id', split.split_id);
+
+        // Recalculate amount_owed for everyone (including new person)
+        const totalParticipants = (currentParticipants?.length || 0) + 1;
+        const newAmountOwed = split.amount / totalParticipants;
+
+        // Update existing participants' amounts
+        if (currentParticipants && currentParticipants.length > 0) {
+          for (const participant of currentParticipants) {
+            await db
+              .from('split_participants')
+              .update({ amount_owed: newAmountOwed })
+              .eq('split_id', split.split_id)
+              .eq('user_id', participant.user_id);
+          }
+        }
+
+        // Add new participant
+        await db
+          .from('split_participants')
+          .insert({
+            split_id: split.split_id,
+            user_id: userId,
+            amount_owed: newAmountOwed,
+          });
+      }
+    }
+
     res.status(201).json({
       message: 'Successfully joined event',
       event_id: event.event_id
