@@ -28,6 +28,9 @@ app.use(
           'https://ledgersplit.com',
           'https://*.google.com',
           'https://*.googleapis.com',
+          'https://*.google-analytics.com',
+          'https://*.analytics.google.com',
+          'https://*.googletagmanager.com',
         ],
         scriptSrc: [
           "'self'",
