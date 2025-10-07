@@ -40,9 +40,8 @@ export default function AcceptInvite() {
   const loadInvite = async () => {
     try {
       const baseURL = import.meta.env.PROD ? 'https://api.ledgersplit.com/api' : '/api';
-      const response = await axios.get(`${baseURL}/events/invites/token/${token}`);
-      setInvite(response.data.invite);
-      setEmail(response.data.invite.invited_email || '');
+      const response = await axios.get(`${baseURL}/events/join/${token}`);
+      setInvite(response.data.event);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to load invite');
     } finally {
@@ -55,7 +54,7 @@ export default function AcceptInvite() {
 
     try {
       const baseURL = import.meta.env.PROD ? 'https://api.ledgersplit.com/api' : '/api';
-      await axios.post(`${baseURL}/events/invites/token/${token}/accept`, {}, { withCredentials: true });
+      await axios.post(`${baseURL}/events/join/${token}`, {}, { withCredentials: true });
       // Navigate to the event page
       if (invite?.event_id) {
         navigate(`/events/${invite.event_id}`);
@@ -164,11 +163,8 @@ export default function AcceptInvite() {
         textAlign: 'center'
       }}>
         <h1 style={{ color: colors.text, marginBottom: '10px', fontSize: '28px' }}>
-          You're Invited!
+          Join Event
         </h1>
-        <p style={{ color: colors.text, fontSize: '18px', marginBottom: '5px' }}>
-          <strong>{invite.inviter?.name}</strong> invited you to join
-        </p>
         <div style={{
           background: colors.primary,
           padding: '15px',
@@ -176,12 +172,12 @@ export default function AcceptInvite() {
           margin: '20px 0',
         }}>
           <h2 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>
-            {invite.events?.name}
+            {invite.name}
           </h2>
         </div>
-        {invite.events?.description && (
+        {invite.description && (
           <p style={{ color: colors.text, fontSize: '16px', marginTop: '10px' }}>
-            {invite.events.description}
+            {invite.description}
           </p>
         )}
       </div>
