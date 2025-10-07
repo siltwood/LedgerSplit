@@ -393,7 +393,7 @@ export default function AcceptInvite() {
                   {submitting ? 'Signing In...' : 'Sign In'}
                 </button>
 
-                <div style={{ textAlign: 'left', marginBottom: '15px' }}>
+                <div style={{ textAlign: 'left' }}>
                   <Link to="/forgot-password" style={{ color: colors.text, fontSize: '14px', textDecoration: 'underline' }}>
                     Forgot password?
                   </Link>
