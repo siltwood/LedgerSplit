@@ -387,7 +387,7 @@ export default function EventDetail() {
                         style={{
                           padding: '8px 16px',
                           background: colors.primary,
-                          color: '#fff',
+                          color: '#000',
                           border: 'none',
                           borderRadius: '6px',
                           cursor: 'pointer',
@@ -396,7 +396,7 @@ export default function EventDetail() {
                           whiteSpace: 'nowrap'
                         }}
                       >
-                        ✓ Paid
+                        Paid
                       </button>
                     </div>
                   );
@@ -537,23 +537,23 @@ export default function EventDetail() {
 
       {/* Collapsible All Balances Section */}
       {splits.length > 0 && event.participants && event.participants.length > 1 && (
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '24px', marginTop: '24px' }}>
           <button
             onClick={() => setShowAllBalances(!showAllBalances)}
             style={{
               background: colors.surface,
               border: `1px solid ${colors.border}`,
               color: colors.text,
-              fontSize: '16px',
+              fontSize: '14px',
               cursor: 'pointer',
-              padding: '12px 20px',
+              padding: '8px 16px',
               borderRadius: '8px',
               fontWeight: '500',
-              width: '100%',
-              textAlign: 'left'
+              textAlign: 'left',
+              display: 'inline-block'
             }}
           >
-            {showAllBalances ? '▼ Hide all balances' : '▶ See all balances'}
+            {showAllBalances ? 'Hide all balances' : 'See all balances'}
           </button>
           {showAllBalances && (
             <div style={{
