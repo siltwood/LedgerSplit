@@ -123,6 +123,51 @@ export default function EventDetail() {
     }
   });
 
+  // Calculate optimal settle up transactions
+  interface Settlement {
+    from: string;
+    to: string;
+    amount: number;
+  }
+
+  const calculateSettlements = (): Settlement[] => {
+    const settlements: Settlement[] = [];
+    const balancesCopy = { ...balances };
+
+    // Get creditors (people owed money) and debtors (people who owe)
+    const creditors = Object.entries(balancesCopy).filter(([_, amt]) => amt > 0.01);
+    const debtors = Object.entries(balancesCopy).filter(([_, amt]) => amt < -0.01);
+
+    // Greedy algorithm: match largest debtor with largest creditor
+    let creditorIdx = 0;
+    let debtorIdx = 0;
+
+    while (creditorIdx < creditors.length && debtorIdx < debtors.length) {
+      const [creditorId, creditorAmt] = creditors[creditorIdx];
+      const [debtorId, debtorAmt] = debtors[debtorIdx];
+
+      const settleAmount = Math.min(creditorAmt, Math.abs(debtorAmt));
+
+      if (settleAmount > 0.01) {
+        settlements.push({
+          from: debtorId,
+          to: creditorId,
+          amount: settleAmount
+        });
+
+        creditors[creditorIdx][1] -= settleAmount;
+        debtors[debtorIdx][1] += settleAmount;
+      }
+
+      if (Math.abs(creditors[creditorIdx][1]) < 0.01) creditorIdx++;
+      if (Math.abs(debtors[debtorIdx][1]) < 0.01) debtorIdx++;
+    }
+
+    return settlements;
+  };
+
+  const settlements = calculateSettlements();
+
   // Assign colors to participants (using approved palette)
   const participantColors = [
     colors.powderBlue,    // lightest
@@ -290,6 +335,74 @@ export default function EventDetail() {
           </div>
           <div style={{ marginTop: '12px', fontSize: '14px', color: colors.text, opacity: 0.7, fontStyle: 'italic' }}>
             Positive balance = gets paid back, Negative balance = owes money
+          </div>
+        </div>
+      )}
+
+      {/* Settle Up Section */}
+      {settlements.length > 0 && (
+        <div style={{
+          background: colors.surface,
+          padding: '20px',
+          borderRadius: '8px',
+          border: `1px solid ${colors.border}`,
+          marginBottom: '24px'
+        }}>
+          <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>💸 Settle Up</h2>
+          <div style={{ fontSize: '14px', color: colors.text, marginBottom: '16px', opacity: 0.8 }}>
+            Simplest way to settle all debts:
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {settlements.map((settlement, idx) => {
+              const fromUser = event.participants?.find(p => p.user_id === settlement.from);
+              const toUser = event.participants?.find(p => p.user_id === settlement.to);
+              const isUserInvolved = settlement.from === user?.id || settlement.to === user?.id;
+              const isUserPaying = settlement.from === user?.id;
+              const isUserReceiving = settlement.to === user?.id;
+
+              return (
+                <div key={idx} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '14px',
+                  background: isUserInvolved ? colors.columbiaBlue : colors.background,
+                  borderRadius: '6px',
+                  border: isUserInvolved ? `2px solid ${colors.primary}` : `1px solid ${colors.border}`
+                }}>
+                  <div style={{ flex: 1, fontSize: '16px', color: '#000', fontWeight: isUserInvolved ? '600' : '500' }}>
+                    {isUserPaying ? (
+                      <>
+                        <span style={{ color: '#ef4444', fontWeight: 'bold' }}>You</span>
+                        {' pay '}
+                        <span style={{ fontWeight: '600' }}>{toUser?.user?.name}</span>
+                      </>
+                    ) : isUserReceiving ? (
+                      <>
+                        <span style={{ fontWeight: '600' }}>{fromUser?.user?.name}</span>
+                        {' pays '}
+                        <span style={{ color: '#22c55e', fontWeight: 'bold' }}>you</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{fromUser?.user?.name}</span>
+                        {' → '}
+                        <span>{toUser?.user?.name}</span>
+                      </>
+                    )}
+                  </div>
+                  <div style={{
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    color: isUserPaying ? '#ef4444' : isUserReceiving ? '#22c55e' : colors.text,
+                    minWidth: '80px',
+                    textAlign: 'right'
+                  }}>
+                    ${settlement.amount.toFixed(2)}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
