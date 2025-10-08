@@ -471,6 +471,9 @@ export default function EventDetail() {
                     </div>
                     <div style={{ fontSize: '14px', color: '#000', opacity: 0.9, marginBottom: '8px' }}>
                       <div>Total: ${split.amount.toFixed(2)}</div>
+                      {split.split_participants && split.split_participants.length > 0 && (
+                        <div>Split between {split.split_participants.length} {split.split_participants.length === 1 ? 'person' : 'people'}</div>
+                      )}
                       {split.split_participants && split.split_participants.length > 1 && (() => {
                         const perPersonAmount = split.amount / split.split_participants.length;
                         const currentUserParticipant = split.split_participants.find((p: any) => p.user_id === user?.id);
