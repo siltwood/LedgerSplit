@@ -224,7 +224,7 @@ export default function EventDetail() {
         {/* Participants */}
         {event.participants && event.participants.length > 0 && (
           <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${colors.border}` }}>
-            <div style={{ fontSize: '14px', color: colors.text, opacity: 0.8, marginBottom: '8px' }}>
+            <div style={{ fontSize: '20px', color: colors.text, opacity: 0.8, marginBottom: '8px' }}>
               {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -400,7 +400,7 @@ export default function EventDetail() {
                     <div style={{ marginBottom: '8px' }}>
                       <strong style={{ fontSize: '18px', color: '#000' }}>{split.title}</strong>
                     </div>
-                    <div style={{ fontSize: '14px', color: '#000', opacity: 0.9, marginBottom: '8px' }}>
+                    <div style={{ fontSize: '20px', color: '#000', opacity: 0.9, marginBottom: '8px' }}>
                       <div>Total: ${split.amount.toFixed(2)}</div>
                       {split.split_participants && split.split_participants.length > 0 && (
                         <div>Split between {split.split_participants.length} {split.split_participants.length === 1 ? 'person' : 'people'}</div>
@@ -427,7 +427,7 @@ export default function EventDetail() {
                       )}
                     </div>
                     {split.notes && (
-                      <div style={{ fontSize: '14px', color: '#000', marginTop: '8px', padding: '8px', background: 'rgba(255, 255, 255, 0.3)', borderRadius: '4px', fontStyle: 'italic' }}>
+                      <div style={{ fontSize: '20px', color: '#000', marginTop: '8px', padding: '8px', background: 'rgba(255, 255, 255, 0.3)', borderRadius: '4px', fontStyle: 'italic' }}>
                         {split.notes}
                       </div>
                     )}

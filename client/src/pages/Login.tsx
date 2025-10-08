@@ -146,7 +146,7 @@ export default function Login() {
           />
         </div>
 
-        <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+        <div style={{ marginBottom: '20px', textAlign: 'left' }}>
           <Link to="/forgot-password" style={{ color: colors.text, fontSize: '20px' }}>
             Forgot password?
           </Link>
@@ -201,7 +201,7 @@ export default function Login() {
         textAlign: 'center',
         borderTop: `1px solid ${colors.border}`
       }}>
-        <div style={{ color: colors.text, fontSize: '14px' }}>
+        <div style={{ color: colors.text, fontSize: '20px' }}>
           Need help? Contact us at{' '}
           <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
             hello@ledgersplit.com

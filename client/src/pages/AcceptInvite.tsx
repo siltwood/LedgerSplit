@@ -394,7 +394,7 @@ export default function AcceptInvite() {
                 </button>
 
                 <div style={{ textAlign: 'left' }}>
-                  <Link to="/forgot-password" style={{ color: colors.text, fontSize: '14px', textDecoration: 'underline' }}>
+                  <Link to="/forgot-password" style={{ color: colors.text, fontSize: '20px', textDecoration: 'underline' }}>
                     Forgot password?
                   </Link>
                 </div>

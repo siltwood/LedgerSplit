@@ -38,7 +38,7 @@ export const buttonStyles = {
     border: `1px solid ${colors.border}`,
     borderRadius: '4px',
     cursor: 'pointer',
-    fontSize: '14px',
+    fontSize: '20px',
     fontWeight: '500'
   }
 } as const;

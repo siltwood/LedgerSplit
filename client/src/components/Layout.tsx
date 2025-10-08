@@ -183,7 +183,7 @@ export default function Layout() {
         textAlign: 'center',
         borderTop: `1px solid ${colors.border}`
       }}>
-        <div style={{ color: colors.text, fontSize: '14px' }}>
+        <div style={{ color: colors.text, fontSize: '20px' }}>
           Need help? Contact us at{' '}
           <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
             hello@ledgersplit.com

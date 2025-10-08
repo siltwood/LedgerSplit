@@ -255,7 +255,7 @@ export default function EditSplit() {
             })}
           </div>
           {selectedParticipants.length > 0 && (
-            <div style={{ marginTop: '8px', fontSize: '14px', color: colors.text, opacity: 0.7 }}>
+            <div style={{ marginTop: '8px', fontSize: '20px', color: colors.text, opacity: 0.7 }}>
               ${parseFloat(amount || '0').toFixed(2)} ÷ {selectedParticipants.length} = ${(parseFloat(amount || '0') / selectedParticipants.length).toFixed(2)} per person
             </div>
           )}

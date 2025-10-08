@@ -142,7 +142,7 @@ export default function Register() {
             }}
           />
           {passwordError && (
-            <div style={{ color: '#ff6b6b', fontSize: '14px', marginTop: '5px' }}>
+            <div style={{ color: '#ff6b6b', fontSize: '20px', marginTop: '5px' }}>
               {passwordError}
             </div>
           )}
