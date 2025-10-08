@@ -15,6 +15,7 @@ export interface Event {
   created_by: string;
   created_at: string;
   deleted_at?: string;
+  is_dismissed?: boolean;
   participants?: EventParticipant[];
   creator?: User;
 }

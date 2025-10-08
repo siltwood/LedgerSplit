@@ -16,6 +16,30 @@ export default function Dashboard() {
   const [events, setEvents] = useState<EventWithStatus[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const handleDismiss = async (eventId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      await eventsAPI.update(eventId, { is_dismissed: true });
+      loadData();
+    } catch (error) {
+      console.error('Failed to dismiss event:', error);
+    }
+  };
+
+  const handleUndismiss = async (eventId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      await eventsAPI.update(eventId, { is_dismissed: false });
+      loadData();
+    } catch (error) {
+      console.error('Failed to undismiss event:', error);
+    }
+  };
+
   useEffect(() => {
     // Check for pending invite token (from Google OAuth redirect)
     const inviteToken = sessionStorage.getItem('invite_token');
@@ -124,7 +148,15 @@ export default function Dashboard() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {events.map((event) => (
+            {events
+              .sort((a, b) => {
+                // Sort: active events first, then dismissed events
+                if (a.is_dismissed && !b.is_dismissed) return 1;
+                if (!a.is_dismissed && b.is_dismissed) return -1;
+                // Within each group, sort by creation date (newest first)
+                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+              })
+              .map((event) => (
               <Link
                 key={event.event_id}
                 to={`/events/${event.event_id}`}
@@ -133,7 +165,7 @@ export default function Dashboard() {
                 <div
                   style={{
                     padding: '24px',
-                    background: colors.surface,
+                    background: event.is_dismissed ? colors.cadetGray2 : colors.surface,
                     border: `2px solid ${event.isSettled ? colors.purple : colors.border}`,
                     borderRadius: '12px',
                     cursor: 'pointer',
@@ -144,6 +176,7 @@ export default function Dashboard() {
                     flexWrap: 'wrap',
                     gap: '16px',
                     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                    opacity: event.is_dismissed ? 0.6 : 1,
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-2px)';
@@ -155,7 +188,7 @@ export default function Dashboard() {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: '200px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                       <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
                       {event.isSettled && (
                         <span style={{
@@ -169,6 +202,30 @@ export default function Dashboard() {
                           ✓ Settled
                         </span>
                       )}
+                      {event.created_by === user?.id && (
+                        <button
+                          onClick={(e) => event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e)}
+                          style={{
+                            padding: '4px 12px',
+                            background: event.is_dismissed ? colors.primary : colors.cadetGray2,
+                            color: '#000',
+                            border: 'none',
+                            borderRadius: '16px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {event.is_dismissed ? '↩ Restore' : '✕ Dismiss'}
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
+                      {new Date(event.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
                     </div>
                     {event.description && (
                       <div style={{ fontSize: '22px', color: colors.text, marginBottom: '8px', opacity: 0.8 }}>

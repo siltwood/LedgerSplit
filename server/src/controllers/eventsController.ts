@@ -197,7 +197,7 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
 export const updateEvent = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { name, description, is_dismissed } = req.body;
     const userId = req.user?.id;
 
     // Check if user is creator
@@ -212,10 +212,16 @@ export const updateEvent = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ error: 'Only event creator can update' });
     }
 
+    // Build update object
+    const updateData: any = {};
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description;
+    if (is_dismissed !== undefined) updateData.is_dismissed = is_dismissed;
+
     // Update event
     const { data: updatedEvent, error } = await db
       .from('events')
-      .update({ name, description })
+      .update(updateData)
       .eq('event_id', id)
       .select()
       .single();
