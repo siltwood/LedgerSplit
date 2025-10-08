@@ -324,28 +324,27 @@ export default function EventDetail() {
         if (Math.abs(userBalance) < 0.01 && userSettlements.length === 0) return null;
 
         return (
-          <div style={{
-            background: colors.surface,
-            padding: '24px',
-            borderRadius: '8px',
-            border: `2px solid ${userBalance < -0.01 ? '#ef4444' : userBalance > 0.01 ? '#22c55e' : colors.border}`,
-            marginBottom: '24px'
-          }}>
-            {/* Big Balance Display */}
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ fontSize: '16px', color: colors.text, marginBottom: '8px', opacity: 0.8 }}>
-                Your Balance
+          <>
+            <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>Your Balance</h2>
+            <div style={{
+              background: colors.surface,
+              padding: '24px',
+              borderRadius: '8px',
+              border: `2px solid ${userBalance < -0.01 ? '#ef4444' : userBalance > 0.01 ? '#22c55e' : colors.border}`,
+              marginBottom: '24px'
+            }}>
+              {/* Big Balance Display */}
+              <div style={{ marginBottom: userSettlements.length > 0 ? '20px' : '0' }}>
+                <div style={{
+                  fontSize: '32px',
+                  fontWeight: 'bold',
+                  color: userBalance < -0.01 ? '#ef4444' : userBalance > 0.01 ? '#22c55e' : colors.text
+                }}>
+                  {userBalance < -0.01 ? `You owe $${Math.abs(userBalance).toFixed(2)}` :
+                   userBalance > 0.01 ? `People owe $${userBalance.toFixed(2)}` :
+                   'All settled up!'}
+                </div>
               </div>
-              <div style={{
-                fontSize: '32px',
-                fontWeight: 'bold',
-                color: userBalance < -0.01 ? '#ef4444' : userBalance > 0.01 ? '#22c55e' : colors.text
-              }}>
-                {userBalance < -0.01 ? `You owe $${Math.abs(userBalance).toFixed(2)}` :
-                 userBalance > 0.01 ? `People owe $${userBalance.toFixed(2)}` :
-                 'All settled up!'}
-              </div>
-            </div>
 
             {/* Settlement Actions */}
             {userSettlements.length > 0 && (
@@ -367,9 +366,9 @@ export default function EventDetail() {
                     }}>
                       <div style={{ flex: 1, fontSize: '16px', color: '#000', fontWeight: '600' }}>
                         {isUserPaying ? (
-                          <>Pay {toUser?.user?.name}</>
+                          <>Pay {toUser?.user?.name || toUser?.user?.email} / {toUser?.user?.email}</>
                         ) : (
-                          <>{fromUser?.user?.name} pays you</>
+                          <>{fromUser?.user?.name || fromUser?.user?.email} / {fromUser?.user?.email} pays you</>
                         )}
                       </div>
                       <div style={{
@@ -402,7 +401,8 @@ export default function EventDetail() {
                 })}
               </div>
             )}
-          </div>
+            </div>
+          </>
         );
       })()}
 
