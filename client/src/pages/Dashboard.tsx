@@ -172,11 +172,12 @@ export default function Dashboard() {
                     transition: 'all 0.2s',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     flexWrap: 'wrap',
                     gap: '16px',
                     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
                     opacity: event.is_dismissed ? 0.6 : 1,
+                    position: 'relative',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-2px)';
@@ -187,6 +188,26 @@ export default function Dashboard() {
                     e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
                   }}
                 >
+                  {event.created_by === user?.id && (
+                    <button
+                      onClick={(e) => event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e)}
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        padding: '8px 16px',
+                        background: event.is_dismissed ? colors.primary : colors.cadetGray2,
+                        color: '#000',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {event.is_dismissed ? 'Restore' : 'Dismiss'}
+                    </button>
+                  )}
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                       <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
@@ -201,23 +222,6 @@ export default function Dashboard() {
                         }}>
                           ✓ Settled
                         </span>
-                      )}
-                      {event.created_by === user?.id && (
-                        <button
-                          onClick={(e) => event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e)}
-                          style={{
-                            padding: '4px 12px',
-                            background: event.is_dismissed ? colors.primary : colors.cadetGray2,
-                            color: '#000',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          {event.is_dismissed ? '↩ Restore' : '✕ Dismiss'}
-                        </button>
                       )}
                     </div>
                     <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
