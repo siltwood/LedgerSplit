@@ -787,4 +787,509 @@ describe('Events API', () => {
     });
   });
 
+  describe('GET /events/:id', () => {
+    it('should get event by ID with participants', async () => {
+      const { db } = require('../config/database');
+
+      let callCount = 0;
+      db.from.mockImplementation((table: string) => {
+        if (table === 'event_participants') {
+          callCount++;
+          if (callCount === 1) {
+            // Check participation
+            return {
+              select: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    single: jest.fn().mockResolvedValue({
+                      data: { event_id: 'event-123', user_id: 'test-user-id' },
+                      error: null,
+                    }),
+                  })),
+                })),
+              })),
+            };
+          } else {
+            // Get participants
+            return {
+              select: jest.fn(() => ({
+                eq: jest.fn().mockResolvedValue({
+                  data: [
+                    { user_id: 'test-user-id', users: { name: 'Test User', email: 'test@example.com' } },
+                  ],
+                  error: null,
+                }),
+              })),
+            };
+          }
+        } else if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { event_id: 'event-123', name: 'Test Event' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).get('/events/event-123');
+
+      expect(response.status).toBe(200);
+      expect(response.body.event.name).toBe('Test Event');
+      expect(response.body.participants).toBeDefined();
+    });
+
+    it('should fail if user not participant', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: null,
+                error: null,
+              }),
+            })),
+          })),
+        })),
+      }));
+
+      const response = await request(app).get('/events/event-123');
+
+      expect(response.status).toBe(403);
+      expect(response.body.error).toBe('Not a participant of this event');
+    });
+
+    it('should fail if event not found', async () => {
+      const { db } = require('../config/database');
+
+      let callCount = 0;
+      db.from.mockImplementation((table: string) => {
+        if (table === 'event_participants') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { event_id: 'event-123', user_id: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: null,
+                    error: { message: 'Not found' },
+                  }),
+                })),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).get('/events/event-123');
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe('Event not found');
+    });
+  });
+
+  describe('PUT /events/:id', () => {
+    it('should update event if user is creator', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation((table: string) => {
+        if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { created_by: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+            update: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                select: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { event_id: 'event-123', name: 'Updated Event' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app)
+        .put('/events/event-123')
+        .send({ name: 'Updated Event' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.event.name).toBe('Updated Event');
+    });
+
+    it('should fail if user not creator', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            is: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: { created_by: 'other-user-id' },
+                error: null,
+              }),
+            })),
+          })),
+        })),
+      }));
+
+      const response = await request(app)
+        .put('/events/event-123')
+        .send({ name: 'Updated Event' });
+
+      expect(response.status).toBe(403);
+      expect(response.body.error).toBe('Only event creator can update');
+    });
+  });
+
+  describe('GET /events/invites', () => {
+    it('should get all pending invites for user', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              order: jest.fn().mockResolvedValue({
+                data: [
+                  {
+                    invite_id: 'invite-123',
+                    events: { event_id: 'event-123', name: 'Test Event' },
+                    inviter: { name: 'Inviter' },
+                  },
+                ],
+                error: null,
+              }),
+            })),
+          })),
+        })),
+      }));
+
+      const response = await request(app).get('/events/invites');
+
+      expect(response.status).toBe(200);
+      expect(response.body.invites).toHaveLength(1);
+    });
+  });
+
+  describe('POST /invites/:id/decline', () => {
+    it('should decline invite', async () => {
+      const { db } = require('../config/database');
+
+      let callCount = 0;
+      db.from.mockImplementation((table: string) => {
+        if (table === 'event_invites') {
+          callCount++;
+          if (callCount === 1) {
+            // First call: Get invite
+            return {
+              select: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    eq: jest.fn(() => ({
+                      single: jest.fn().mockResolvedValue({
+                        data: { invite_id: 'invite-123', status: 'pending' },
+                        error: null,
+                      }),
+                    })),
+                  })),
+                })),
+              })),
+            };
+          } else {
+            // Second call: Update invite
+            return {
+              update: jest.fn(() => ({
+                eq: jest.fn().mockResolvedValue({
+                  error: null,
+                }),
+              })),
+            };
+          }
+        }
+      });
+
+      const response = await request(app).post('/events/invites/invite-123/decline');
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Invite declined');
+    });
+  });
+
+  describe('DELETE /events/:eventId/participants/:userId', () => {
+    it('should remove participant if user is creator', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation((table: string) => {
+        if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { created_by: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'splits') {
+          return {
+            update: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                or: jest.fn().mockResolvedValue({
+                  error: null,
+                }),
+              })),
+            })),
+          };
+        } else if (table === 'event_participants') {
+          return {
+            delete: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn().mockResolvedValue({ error: null }),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).delete('/events/event-123/participants/user-to-remove');
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Participant removed successfully (including their splits)');
+    });
+
+    it('should fail if user not creator', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            is: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: { created_by: 'other-user-id' },
+                error: null,
+              }),
+            })),
+          })),
+        })),
+      }));
+
+      const response = await request(app).delete('/events/event-123/participants/user-to-remove');
+
+      expect(response.status).toBe(403);
+      expect(response.body.error).toBe('Only event creator can remove participants');
+    });
+  });
+
+  describe('GET /join/:token', () => {
+    it('should get event by share token', async () => {
+      const { db } = require('../config/database');
+
+      let callCount = 0;
+      db.from.mockImplementation((table: string) => {
+        callCount++;
+        if (callCount === 1 || table === 'events') {
+          // First call: Get event
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: {
+                      event_id: 'event-123',
+                      name: 'Test Event',
+                      created_by: 'creator-123',
+                      share_token: 'test-token',
+                    },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else {
+          // Second call: Get creator
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                single: jest.fn().mockResolvedValue({
+                  data: { name: 'Creator Name' },
+                  error: null,
+                }),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).get('/events/join/test-token');
+
+      expect(response.status).toBe(200);
+      expect(response.body.event.name).toBe('Test Event');
+    });
+
+    it('should fail if token invalid', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            is: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: null,
+                error: null,
+              }),
+            })),
+          })),
+        })),
+      }));
+
+      const response = await request(app).get('/events/join/invalid-token');
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe('Event not found');
+    });
+  });
+
+  describe('POST /join/:token', () => {
+    it('should join event by share token', async () => {
+      const { db } = require('../config/database');
+
+      let callCount = 0;
+      db.from.mockImplementation((table: string) => {
+        if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: {
+                      event_id: 'event-123',
+                      name: 'Test Event',
+                      share_token: 'test-token',
+                    },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'event_participants') {
+          callCount++;
+          if (callCount === 1) {
+            // Check if already participant
+            return {
+              select: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    single: jest.fn().mockResolvedValue({
+                      data: null,
+                      error: null,
+                    }),
+                  })),
+                })),
+              })),
+            };
+          } else {
+            // Insert new participant
+            return {
+              insert: jest.fn().mockResolvedValue({ error: null }),
+            };
+          }
+        } else if (table === 'splits') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn().mockResolvedValue({
+                  data: [],
+                  error: null,
+                }),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).post('/events/join/test-token');
+
+      expect(response.status).toBe(201);
+      expect(response.body.message).toBe('Successfully joined event');
+    });
+
+    it('should fail if already participant', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation((table: string) => {
+        if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: {
+                      event_id: 'event-123',
+                      share_token: 'test-token',
+                    },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'event_participants') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { event_id: 'event-123', user_id: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).post('/events/join/test-token');
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Already a participant of this event');
+    });
+  });
+
 });

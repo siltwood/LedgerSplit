@@ -41,34 +41,40 @@ describe('Splits API', () => {
     it('should create split with equal amounts', async () => {
       const { db } = require('../config/database');
 
-      let eqCallCount = 0;
+      let selectCallCount = 0;
       db.from.mockImplementation((table: string) => {
         if (table === 'event_participants') {
           return {
-            select: jest.fn(() => ({
-              eq: jest.fn((field: string, value: any) => {
-                eqCallCount++;
-                if (eqCallCount === 1 && field === 'event_id') {
-                  // First call: getting ALL event participants for empty participant_ids array
-                  return Promise.resolve({
+            select: jest.fn(() => {
+              selectCallCount++;
+              // First select: user participation check - needs .eq().eq().single()
+              // Second select: payer participation check - needs .eq().eq().single()
+              // Third select: get all participants - needs .eq() only
+              if (selectCallCount <= 2) {
+                // User/payer participation checks
+                return {
+                  eq: jest.fn(() => ({
+                    eq: jest.fn(() => ({
+                      single: jest.fn().mockResolvedValue({
+                        data: { event_id: TEST_EVENT_ID, user_id: TEST_USER_ID },
+                        error: null,
+                      }),
+                    })),
+                  })),
+                };
+              } else {
+                // Get all participants
+                return {
+                  eq: jest.fn().mockResolvedValue({
                     data: [
                       { user_id: TEST_USER_ID },
                       { user_id: 'user-2' }
                     ],
                     error: null,
-                  });
-                }
-                // Checking if user/payer is participant (2 chained .eq calls)
-                return {
-                  eq: jest.fn(() => ({
-                    single: jest.fn().mockResolvedValue({
-                      data: { event_id: TEST_EVENT_ID, user_id: TEST_USER_ID },
-                      error: null,
-                    }),
-                  })),
+                  }),
                 };
-              }),
-            })),
+              }
+            }),
           };
         } else if (table === 'splits') {
           return {
@@ -113,31 +119,37 @@ describe('Splits API', () => {
     it('should allow creating split with 0 participants (defaults to all event participants)', async () => {
       const { db } = require('../config/database');
 
-      let eqCallCount = 0;
+      let selectCallCount = 0;
       db.from.mockImplementation((table: string) => {
         if (table === 'event_participants') {
           return {
-            select: jest.fn(() => ({
-              eq: jest.fn((field: string, value: any) => {
-                eqCallCount++;
-                if (eqCallCount === 1 && field === 'event_id') {
-                  // First call: getting ALL event participants for empty participant_ids array
-                  return Promise.resolve({
-                    data: [{ user_id: TEST_USER_ID }],
-                    error: null,
-                  });
-                }
-                // Checking if user/payer is participant (2 chained .eq calls)
+            select: jest.fn(() => {
+              selectCallCount++;
+              // First select: user participation check - needs .eq().eq().single()
+              // Second select: payer participation check - needs .eq().eq().single()
+              // Third select: get all participants - needs .eq() only
+              if (selectCallCount <= 2) {
+                // User/payer participation checks
                 return {
                   eq: jest.fn(() => ({
-                    single: jest.fn().mockResolvedValue({
-                      data: { event_id: TEST_EVENT_ID, user_id: TEST_USER_ID },
-                      error: null,
-                    }),
+                    eq: jest.fn(() => ({
+                      single: jest.fn().mockResolvedValue({
+                        data: { event_id: TEST_EVENT_ID, user_id: TEST_USER_ID },
+                        error: null,
+                      }),
+                    })),
                   })),
                 };
-              }),
-            })),
+              } else {
+                // Get all participants
+                return {
+                  eq: jest.fn().mockResolvedValue({
+                    data: [{ user_id: TEST_USER_ID }],
+                    error: null,
+                  }),
+                };
+              }
+            }),
           };
         } else if (table === 'splits') {
           return {
