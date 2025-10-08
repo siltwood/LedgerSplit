@@ -74,11 +74,11 @@ export default function EventDetail() {
     const shareUrl = `${window.location.origin}/join/${event.share_token}`;
     try {
       await navigator.clipboard.writeText(shareUrl);
-      setCopyStatus('Link copied!');
-      setTimeout(() => setCopyStatus(''), 3000);
+      setCopyStatus('✓ Link copied to clipboard!');
+      setTimeout(() => setCopyStatus(''), 2500);
     } catch (error) {
-      setCopyStatus('Failed to copy');
-      setTimeout(() => setCopyStatus(''), 3000);
+      setCopyStatus('✗ Failed to copy link');
+      setTimeout(() => setCopyStatus(''), 2500);
     }
   };
 
@@ -261,16 +261,21 @@ export default function EventDetail() {
         </button>
       </div>
 
-      {/* Copy Status Message */}
+      {/* Toast Notification for Copy Status */}
       {copyStatus && (
         <div style={{
-          padding: '12px 16px',
-          background: copyStatus.includes('Failed') ? colors.error : colors.success,
-          color: colors.text,
-          borderRadius: '6px',
-          marginBottom: '20px',
-          fontSize: '20px',
-          textAlign: 'center'
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          padding: '16px 24px',
+          background: copyStatus.includes('✗') ? colors.error : '#22c55e',
+          color: '#fff',
+          borderRadius: '8px',
+          fontSize: '18px',
+          fontWeight: '600',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          zIndex: 1000,
+          animation: 'slideIn 0.3s ease-out'
         }}>
           {copyStatus}
         </div>

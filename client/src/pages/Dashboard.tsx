@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { eventsAPI } from '../services/api';
+import { eventsAPI, splitsAPI } from '../services/api';
 import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
+
+type EventWithStatus = Event & {
+  isSettled?: boolean;
+  totalAmount?: number;
+};
 
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventWithStatus[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +33,46 @@ export default function Dashboard() {
 
     try {
       const eventsRes = await eventsAPI.getAll();
-      setEvents(eventsRes.data.events || []);
+      const eventsData = eventsRes.data.events || [];
+
+      // Fetch splits for each event to calculate settlement status
+      const eventsWithStatus = await Promise.all(
+        eventsData.map(async (event: Event) => {
+          try {
+            const splitsRes = await splitsAPI.getAll({ event_id: event.event_id });
+            const splits = splitsRes.data.splits || [];
+
+            // Calculate total amount
+            const totalAmount = splits.reduce((sum: number, split: any) => sum + split.amount, 0);
+
+            // Calculate if event is settled
+            const balances: Record<string, number> = {};
+            event.participants?.forEach(p => {
+              balances[p.user_id] = 0;
+            });
+
+            splits.forEach((split: any) => {
+              if (balances[split.paid_by] !== undefined) {
+                balances[split.paid_by] += split.amount;
+              }
+
+              split.split_participants?.forEach((sp: any) => {
+                if (balances[sp.user_id] !== undefined) {
+                  balances[sp.user_id] -= sp.amount_owed;
+                }
+              });
+            });
+
+            const isSettled = Object.values(balances).every(balance => Math.abs(balance) < 0.01);
+
+            return { ...event, isSettled, totalAmount };
+          } catch (error) {
+            return { ...event, isSettled: false, totalAmount: 0 };
+          }
+        })
+      );
+
+      setEvents(eventsWithStatus);
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
@@ -78,7 +122,7 @@ export default function Dashboard() {
             No events yet. Create one to get started!
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {events.map((event) => (
               <Link
                 key={event.event_id}
@@ -87,33 +131,63 @@ export default function Dashboard() {
               >
                 <div
                   style={{
-                    padding: '20px',
+                    padding: '24px',
                     background: colors.surface,
-                    border: `1px solid ${colors.border}`,
-                    borderRadius: '8px',
+                    border: `2px solid ${event.isSettled ? '#22c55e' : colors.border}`,
+                    borderRadius: '12px',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '16px',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.borderColor = colors.primary;
+                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.borderColor = colors.border;
+                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
                   }}
                 >
-                  <h3 style={{ margin: '0 0 8px 0', color: colors.text }}>{event.name}</h3>
-                  {event.description && (
-                    <div style={{ fontSize: '20px', color: colors.text, marginBottom: '10px' }}>
-                      {event.description}
+                  <div style={{ flex: 1, minWidth: '200px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                      <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
+                      {event.isSettled && (
+                        <span style={{
+                          padding: '4px 12px',
+                          background: '#22c55e',
+                          color: '#fff',
+                          borderRadius: '16px',
+                          fontSize: '14px',
+                          fontWeight: '600'
+                        }}>
+                          ✓ Settled
+                        </span>
+                      )}
                     </div>
-                  )}
-                  {event.participants && (
-                    <div style={{ fontSize: '20px', color: colors.text }}>
-                      {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
-                    </div>
-                  )}
+                    {event.description && (
+                      <div style={{ fontSize: '18px', color: colors.text, marginBottom: '8px', opacity: 0.8 }}>
+                        {event.description}
+                      </div>
+                    )}
+                    {event.participants && (
+                      <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7 }}>
+                        {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ textAlign: 'right' }}>
+                    {event.totalAmount !== undefined && event.totalAmount > 0 && (
+                      <div style={{ fontSize: '28px', fontWeight: 'bold', color: colors.purple }}>
+                        ${event.totalAmount.toFixed(2)}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </Link>
             ))}
