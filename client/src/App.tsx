@@ -12,7 +12,6 @@ import CreateSplit from './pages/CreateSplit';
 import EditSplit from './pages/EditSplit';
 import CreateEvent from './pages/CreateEvent';
 import EventDetail from './pages/EventDetail';
-import Events from './pages/Events';
 import Settings from './pages/Settings';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -57,14 +56,6 @@ function App() {
               element={
                 <PrivateRoute>
                   <CreateSplit />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/events"
-              element={
-                <PrivateRoute>
-                  <Events />
                 </PrivateRoute>
               }
             />
