@@ -63,7 +63,8 @@ export default function Dashboard() {
               });
             });
 
-            const isSettled = Object.values(balances).every(balance => Math.abs(balance) < 0.01);
+            // Only show settled if there are actual splits
+            const isSettled = splits.length > 0 && Object.values(balances).every(balance => Math.abs(balance) < 0.01);
 
             return { ...event, isSettled, totalAmount };
           } catch (error) {
