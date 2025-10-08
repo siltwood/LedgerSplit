@@ -290,7 +290,7 @@ export default function EventDetail() {
               background: colors.surface,
               padding: '20px',
               borderRadius: '8px',
-              border: `2px solid ${userBalance < -0.01 ? '#ef4444' : userBalance > 0.01 ? '#22c55e' : colors.border}`,
+              border: `2px solid ${Math.abs(userBalance) > 0.01 ? colors.purple : colors.border}`,
               marginBottom: '24px'
             }}>
               {/* Big Balance Display */}
@@ -298,7 +298,7 @@ export default function EventDetail() {
                 <div style={{
                   fontSize: '32px',
                   fontWeight: 'bold',
-                  color: userBalance < -0.01 ? '#ef4444' : userBalance > 0.01 ? '#22c55e' : colors.text
+                  color: Math.abs(userBalance) > 0.01 ? colors.purple : colors.text
                 }}>
                   {userBalance < -0.01 ? `You owe $${Math.abs(userBalance).toFixed(2)}` :
                    userBalance > 0.01 ? `People owe $${userBalance.toFixed(2)}` :
@@ -335,7 +335,7 @@ export default function EventDetail() {
                       <div style={{
                         fontSize: '18px',
                         fontWeight: 'bold',
-                        color: isUserPaying ? '#ef4444' : '#22c55e',
+                        color: colors.purple,
                         minWidth: '70px',
                         textAlign: 'right',
                         flexShrink: 0
@@ -493,7 +493,7 @@ export default function EventDetail() {
                       <span style={{
                         fontSize: '18px',
                         fontWeight: 'bold',
-                        color: balance > 0.01 ? '#22c55e' : balance < -0.01 ? '#ef4444' : (isCurrentUser ? '#000' : colors.text)
+                        color: Math.abs(balance) > 0.01 ? colors.purple : (isCurrentUser ? '#000' : colors.text)
                       }}>
                         {(() => {
                           if (balance > 0.01) {

@@ -47,6 +47,9 @@ export const colors = {
   // Special (only using the 5 colors)
   shadow: 'rgba(148, 155, 160, 0.5)',   // Cadet gray 3
   overlay: 'rgba(148, 155, 160, 0.7)',  // Cadet gray 3
+
+  // Accent colors
+  purple: '#915984',  // Purple accent for selections and highlights
 } as const;
 
 export type ColorName = keyof typeof colors;
