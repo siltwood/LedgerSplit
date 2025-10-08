@@ -6,6 +6,7 @@ DROP VIEW IF EXISTS user_balances CASCADE;
 DROP VIEW IF EXISTS split_details CASCADE;
 
 -- Drop all tables
+DROP TABLE IF EXISTS payments CASCADE;
 DROP TABLE IF EXISTS split_participants CASCADE;
 DROP TABLE IF EXISTS splits CASCADE;
 DROP TABLE IF EXISTS event_participants CASCADE;
@@ -79,6 +80,20 @@ CREATE TABLE split_participants (
   PRIMARY KEY (split_id, user_id)
 );
 
+-- Payments Table (track when debts are settled)
+CREATE TABLE payments (
+  payment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_id UUID NOT NULL REFERENCES events(event_id) ON DELETE CASCADE,
+  from_user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  to_user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  amount DECIMAL(10, 2) NOT NULL,
+  notes TEXT,
+  payment_date TIMESTAMP DEFAULT NOW(),
+  created_by UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  deleted_at TIMESTAMP
+);
+
 -- Indexes for better query performance
 CREATE INDEX idx_events_created_by ON events(created_by);
 CREATE INDEX idx_events_deleted_at ON events(deleted_at);
@@ -90,6 +105,10 @@ CREATE INDEX idx_splits_created_by ON splits(created_by);
 CREATE INDEX idx_splits_date ON splits(date);
 CREATE INDEX idx_splits_deleted_at ON splits(deleted_at);
 CREATE INDEX idx_split_participants_user_id ON split_participants(user_id);
+CREATE INDEX idx_payments_event_id ON payments(event_id);
+CREATE INDEX idx_payments_from_user_id ON payments(from_user_id);
+CREATE INDEX idx_payments_to_user_id ON payments(to_user_id);
+CREATE INDEX idx_payments_deleted_at ON payments(deleted_at);
 CREATE INDEX idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
 CREATE INDEX idx_users_deleted_at ON users(deleted_at);
 

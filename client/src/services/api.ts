@@ -64,4 +64,19 @@ export const splitsAPI = {
   delete: (id: string) => api.delete(`/splits/${id}`),
 };
 
+// Payments
+export const paymentsAPI = {
+  getAll: (params: { event_id: string }) =>
+    api.get('/payments', { params }),
+  create: (data: {
+    event_id: string;
+    from_user_id: string;
+    to_user_id: string;
+    amount: number;
+    notes?: string;
+    payment_date?: string;
+  }) => api.post('/payments', data),
+  delete: (id: string) => api.delete(`/payments/${id}`),
+};
+
 export default api;

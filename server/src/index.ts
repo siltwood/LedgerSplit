@@ -10,6 +10,7 @@ import path from 'path';
 import authRoutes from './routes/auth';
 import eventsRoutes from './routes/events';
 import splitsRoutes from './routes/splits';
+import paymentsRoutes from './routes/payments';
 
 dotenv.config();
 
@@ -116,6 +117,7 @@ app.use(
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/splits', splitsRoutes);
+app.use('/api/payments', paymentsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { eventsAPI, splitsAPI } from '../services/api';
+import { eventsAPI, splitsAPI, paymentsAPI } from '../services/api';
 import type { Event, Split } from '../types/index';
 import { colors } from '../styles/colors';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +12,7 @@ export default function EventDetail() {
   const { user } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [splits, setSplits] = useState<Split[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [copyStatus, setCopyStatus] = useState('');
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; splitId: string | null }>({ show: false, splitId: null });
@@ -25,9 +26,10 @@ export default function EventDetail() {
     if (!id) return;
 
     try {
-      const [eventRes, splitsRes] = await Promise.all([
+      const [eventRes, splitsRes, paymentsRes] = await Promise.all([
         eventsAPI.getById(id),
         splitsAPI.getAll({ event_id: id }),
+        paymentsAPI.getAll({ event_id: id }),
       ]);
 
       // Attach participants to event object
@@ -47,6 +49,7 @@ export default function EventDetail() {
         paid_by_user: split.payer || split.paid_by_user
       }));
       setSplits(transformedSplits);
+      setPayments(paymentsRes.data.payments || []);
     } catch (error) {
       console.error('Failed to load event:', error);
     } finally {
@@ -77,6 +80,23 @@ export default function EventDetail() {
     } catch (error) {
       setCopyStatus('Failed to copy');
       setTimeout(() => setCopyStatus(''), 3000);
+    }
+  };
+
+  const handleMarkAsPaid = async (settlement: { from: string; to: string; amount: number }) => {
+    if (!id) return;
+
+    try {
+      await paymentsAPI.create({
+        event_id: id,
+        from_user_id: settlement.from,
+        to_user_id: settlement.to,
+        amount: settlement.amount,
+      });
+      loadData(); // Reload to update balances
+    } catch (error) {
+      console.error('Failed to record payment:', error);
+      alert('Failed to record payment');
     }
   };
 
@@ -121,6 +141,14 @@ export default function EventDetail() {
         balances[p.user_id] = (balances[p.user_id] || 0) - perPerson;
       });
     }
+  });
+
+  // Account for payments (subtract from balances)
+  payments.forEach(payment => {
+    // Person who paid reduces their debt (increases balance)
+    balances[payment.from_user_id] = (balances[payment.from_user_id] || 0) + payment.amount;
+    // Person who received decreases their credit (decreases balance)
+    balances[payment.to_user_id] = (balances[payment.to_user_id] || 0) - payment.amount;
   });
 
   // Calculate optimal settle up transactions
@@ -400,6 +428,24 @@ export default function EventDetail() {
                   }}>
                     ${settlement.amount.toFixed(2)}
                   </div>
+                  {isUserInvolved && (
+                    <button
+                      onClick={() => handleMarkAsPaid(settlement)}
+                      style={{
+                        padding: '8px 16px',
+                        background: colors.primary,
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      ✓ Paid
+                    </button>
+                  )}
                 </div>
               );
             })}
