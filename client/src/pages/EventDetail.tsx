@@ -350,9 +350,9 @@ export default function EventDetail() {
                   }}>
                     {(() => {
                       if (balance > 0.01) {
-                        return isCurrentUser ? `You get paid $${balance.toFixed(2)}` : `+$${balance.toFixed(2)}`;
+                        return isCurrentUser ? `People owe $${balance.toFixed(2)}` : `People owe $${balance.toFixed(2)}`;
                       } else if (balance < -0.01) {
-                        return isCurrentUser ? `You owe $${Math.abs(balance).toFixed(2)}` : `-$${Math.abs(balance).toFixed(2)}`;
+                        return isCurrentUser ? `You owe $${Math.abs(balance).toFixed(2)}` : `Owes $${Math.abs(balance).toFixed(2)}`;
                       }
                       return '$0.00';
                     })()}
@@ -361,14 +361,11 @@ export default function EventDetail() {
               );
             })}
           </div>
-          <div style={{ marginTop: '12px', fontSize: '14px', color: colors.text, opacity: 0.7, fontStyle: 'italic' }}>
-            Positive balance = gets paid back, Negative balance = owes money
-          </div>
         </div>
       )}
 
       {/* Settle Up Section */}
-      {settlements.length > 0 && (
+      {settlements.filter(s => s.from === user?.id || s.to === user?.id).length > 0 && (
         <div style={{
           background: colors.surface,
           padding: '20px',
@@ -378,10 +375,10 @@ export default function EventDetail() {
         }}>
           <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>💸 Settle Up</h2>
           <div style={{ fontSize: '14px', color: colors.text, marginBottom: '16px', opacity: 0.8 }}>
-            Simplest way to settle all debts:
+            Your payments:
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {settlements.map((settlement, idx) => {
+            {settlements.filter(s => s.from === user?.id || s.to === user?.id).map((settlement, idx) => {
               const fromUser = event.participants?.find(p => p.user_id === settlement.from);
               const toUser = event.participants?.find(p => p.user_id === settlement.to);
               const isUserInvolved = settlement.from === user?.id || settlement.to === user?.id;
