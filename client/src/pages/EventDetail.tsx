@@ -275,7 +275,14 @@ export default function EventDetail() {
                     fontWeight: 'bold',
                     color: balance > 0.01 ? '#22c55e' : balance < -0.01 ? '#ef4444' : (isCurrentUser ? '#000' : colors.text)
                   }}>
-                    {balance > 0.01 ? `+$${balance.toFixed(2)}` : balance < -0.01 ? `-$${Math.abs(balance).toFixed(2)}` : '$0.00'}
+                    {(() => {
+                      if (balance > 0.01) {
+                        return isCurrentUser ? `You get paid $${balance.toFixed(2)}` : `+$${balance.toFixed(2)}`;
+                      } else if (balance < -0.01) {
+                        return isCurrentUser ? `You owe $${Math.abs(balance).toFixed(2)}` : `-$${Math.abs(balance).toFixed(2)}`;
+                      }
+                      return '$0.00';
+                    })()}
                   </span>
                 </div>
               );
