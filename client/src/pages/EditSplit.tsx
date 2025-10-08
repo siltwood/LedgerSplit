@@ -205,7 +205,12 @@ export default function EditSplit() {
             Split between *
           </label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {event.participants?.map((p: any) => {
+            {event.participants?.sort((a: any, b: any) => {
+              // Current user always first
+              if (a.user_id === user?.id) return -1;
+              if (b.user_id === user?.id) return 1;
+              return 0;
+            }).map((p: any) => {
               const isSelected = selectedParticipants.includes(p.user_id);
               const isCurrentUser = p.user_id === user?.id;
               return (
@@ -238,7 +243,8 @@ export default function EditSplit() {
                       marginRight: '12px',
                       width: '20px',
                       height: '20px',
-                      cursor: isCurrentUser ? 'not-allowed' : 'pointer'
+                      cursor: isCurrentUser ? 'not-allowed' : 'pointer',
+                      accentColor: colors.purple
                     }}
                   />
                   <span style={{ color: colors.text, fontSize: '16px' }}>
