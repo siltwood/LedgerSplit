@@ -119,7 +119,7 @@ export default function AcceptInvite() {
   if (loading) {
     return (
       <div style={{ maxWidth: '500px', margin: '50px auto', padding: '20px', textAlign: 'center' }}>
-        <div style={{ color: colors.text, fontSize: '16px' }}>Loading invite...</div>
+        <div style={{ color: colors.text, fontSize: '20px' }}>Loading invite...</div>
       </div>
     );
   }
@@ -133,13 +133,13 @@ export default function AcceptInvite() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px',
+          fontSize: '20px',
           textAlign: 'center'
         }}>
           {error}
         </div>
         <div style={{ textAlign: 'center' }}>
-          <Link to="/dashboard" style={{ color: colors.text, fontSize: '16px' }}>
+          <Link to="/dashboard" style={{ color: colors.text, fontSize: '20px' }}>
             Go to Dashboard
           </Link>
         </div>
@@ -165,7 +165,7 @@ export default function AcceptInvite() {
         <h1 style={{ color: colors.text, marginBottom: '16px', fontSize: '28px' }}>
           You're Invited!
         </h1>
-        <p style={{ color: colors.text, fontSize: '16px', marginBottom: '0', lineHeight: '1.5' }}>
+        <p style={{ color: colors.text, fontSize: '20px', marginBottom: '0', lineHeight: '1.5' }}>
           Your friend wants to split payments using LedgerSplit for the <strong>{invite.name}</strong> event.
         </p>
       </div>
@@ -177,7 +177,7 @@ export default function AcceptInvite() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px'
+          fontSize: '20px'
         }}>
           {error}
         </div>
@@ -200,7 +200,7 @@ export default function AcceptInvite() {
 
               <form onSubmit={handleRegister}>
                 <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
                     Name
                   </label>
                   <input
@@ -211,7 +211,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: '10px',
-                      fontSize: '16px',
+                      fontSize: '20px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -221,7 +221,7 @@ export default function AcceptInvite() {
                 </div>
 
                 <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
                     Email
                   </label>
                   <input
@@ -232,7 +232,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: '10px',
-                      fontSize: '16px',
+                      fontSize: '20px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -242,7 +242,7 @@ export default function AcceptInvite() {
                 </div>
 
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
                     Password
                   </label>
                   <input
@@ -254,7 +254,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: '10px',
-                      fontSize: '16px',
+                      fontSize: '20px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -269,7 +269,7 @@ export default function AcceptInvite() {
                   style={{
                     width: '100%',
                     padding: '12px',
-                    fontSize: '16px',
+                    fontSize: '20px',
                     background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
@@ -291,7 +291,7 @@ export default function AcceptInvite() {
                   style={{
                     width: '100%',
                     padding: '12px',
-                    fontSize: '16px',
+                    fontSize: '20px',
                     background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
@@ -310,7 +310,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: '12px',
-                      fontSize: '16px',
+                      fontSize: '20px',
                       background: colors.columbiaBlue,
                       color: colors.text,
                       border: `1px solid ${colors.border}`,
@@ -334,7 +334,7 @@ export default function AcceptInvite() {
 
               <form onSubmit={handleLogin}>
                 <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
                     Email
                   </label>
                   <input
@@ -345,7 +345,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: '10px',
-                      fontSize: '16px',
+                      fontSize: '20px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -355,7 +355,7 @@ export default function AcceptInvite() {
                 </div>
 
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
                     Password
                   </label>
                   <input
@@ -366,7 +366,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: '10px',
-                      fontSize: '16px',
+                      fontSize: '20px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -381,7 +381,7 @@ export default function AcceptInvite() {
                   style={{
                     width: '100%',
                     padding: '12px',
-                    fontSize: '16px',
+                    fontSize: '20px',
                     background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
@@ -409,7 +409,7 @@ export default function AcceptInvite() {
                   style={{
                     width: '100%',
                     padding: '12px',
-                    fontSize: '16px',
+                    fontSize: '20px',
                     background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
@@ -428,7 +428,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: '12px',
-                      fontSize: '16px',
+                      fontSize: '20px',
                       background: colors.columbiaBlue,
                       color: colors.text,
                       border: `1px solid ${colors.border}`,

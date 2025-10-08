@@ -56,7 +56,7 @@ export default function Layout() {
                   color: colors.text,
                   textDecoration: 'none',
                   fontWeight: location.pathname === '/dashboard' ? 'bold' : 'normal',
-                  fontSize: '16px'
+                  fontSize: '20px'
                 }}>
                   Dashboard
                 </Link>
@@ -64,7 +64,7 @@ export default function Layout() {
                   color: colors.text,
                   textDecoration: 'none',
                   fontWeight: location.pathname.startsWith('/events') ? 'bold' : 'normal',
-                  fontSize: '16px'
+                  fontSize: '20px'
                 }}>
                   Events
                 </Link>
@@ -72,11 +72,11 @@ export default function Layout() {
                   color: colors.text,
                   textDecoration: 'none',
                   fontWeight: location.pathname === '/settings' ? 'bold' : 'normal',
-                  fontSize: '16px'
+                  fontSize: '20px'
                 }}>
                   Settings
                 </Link>
-                <span style={{ color: colors.text, fontSize: '16px' }}>{user.name}</span>
+                <span style={{ color: colors.text, fontSize: '20px' }}>{user.name}</span>
                 <button
                   onClick={handleLogout}
                   style={{
@@ -86,7 +86,7 @@ export default function Layout() {
                     border: 'none',
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    fontSize: '16px'
+                    fontSize: '20px'
                   }}
                 >
                   Logout
@@ -112,7 +112,7 @@ export default function Layout() {
               textDecoration: 'none',
               padding: '10px',
               fontWeight: location.pathname === '/dashboard' ? 'bold' : 'normal',
-              fontSize: '16px'
+              fontSize: '20px'
             }}>
               Dashboard
             </Link>
@@ -121,7 +121,7 @@ export default function Layout() {
               textDecoration: 'none',
               padding: '10px',
               fontWeight: location.pathname.startsWith('/events') ? 'bold' : 'normal',
-              fontSize: '16px'
+              fontSize: '20px'
             }}>
               Events
             </Link>
@@ -130,11 +130,11 @@ export default function Layout() {
               textDecoration: 'none',
               padding: '10px',
               fontWeight: location.pathname === '/settings' ? 'bold' : 'normal',
-              fontSize: '16px'
+              fontSize: '20px'
             }}>
               Settings
             </Link>
-            <div style={{ padding: '10px', color: colors.text, fontSize: '16px', fontWeight: 'bold' }}>
+            <div style={{ padding: '10px', color: colors.text, fontSize: '20px', fontWeight: 'bold' }}>
               {user.name}
             </div>
             <button
@@ -149,7 +149,7 @@ export default function Layout() {
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                fontSize: '16px',
+                fontSize: '20px',
                 textAlign: 'left'
               }}
             >

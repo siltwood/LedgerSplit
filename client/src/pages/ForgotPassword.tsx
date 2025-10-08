@@ -29,7 +29,7 @@ export default function ForgotPassword() {
   return (
     <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
       <h1 style={{ color: colors.text, marginBottom: '20px' }}>Forgot Password</h1>
-      <p style={{ color: colors.text, fontSize: '16px' }}>
+      <p style={{ color: colors.text, fontSize: '20px' }}>
         Enter your email address and we'll send you a link to reset your password.
       </p>
 
@@ -40,7 +40,7 @@ export default function ForgotPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px'
+          fontSize: '20px'
         }}>
           {error}
         </div>
@@ -53,7 +53,7 @@ export default function ForgotPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px'
+          fontSize: '20px'
         }}>
           {message}
         </div>
@@ -61,7 +61,7 @@ export default function ForgotPassword() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Email
           </label>
           <input
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
             style={{
               width: '100%',
               padding: '10px',
-              fontSize: '16px',
+              fontSize: '20px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               color: colors.text
@@ -86,7 +86,7 @@ export default function ForgotPassword() {
           style={{
             width: '100%',
             padding: '12px',
-            fontSize: '16px',
+            fontSize: '20px',
             background: colors.primary,
             color: colors.text,
             border: 'none',
@@ -99,7 +99,7 @@ export default function ForgotPassword() {
       </form>
 
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <Link to="/login" style={{ color: colors.text, fontSize: '16px' }}>
+        <Link to="/login" style={{ color: colors.text, fontSize: '20px' }}>
           Back to Login
         </Link>
       </div>

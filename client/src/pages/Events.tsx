@@ -60,7 +60,7 @@ export default function Events() {
           borderRadius: '8px',
           textAlign: 'center',
           color: colors.text,
-          fontSize: '16px'
+          fontSize: '20px'
         }}>
           No events yet. Create one to get started!
         </div>
@@ -92,12 +92,12 @@ export default function Events() {
               >
                 <h3 style={{ margin: '0 0 8px 0', color: colors.text }}>{event.name}</h3>
                 {event.description && (
-                  <div style={{ fontSize: '16px', color: colors.text, marginBottom: '10px' }}>
+                  <div style={{ fontSize: '20px', color: colors.text, marginBottom: '10px' }}>
                     {event.description}
                   </div>
                 )}
                 {event.participants && (
-                  <div style={{ fontSize: '16px', color: colors.text }}>
+                  <div style={{ fontSize: '20px', color: colors.text }}>
                     {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
                   </div>
                 )}

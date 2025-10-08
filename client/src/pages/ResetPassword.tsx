@@ -62,7 +62,7 @@ export default function ResetPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px',
+          fontSize: '20px',
           textAlign: 'center'
         }}>
           Password reset successful! Redirecting to login...
@@ -76,7 +76,7 @@ export default function ResetPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px'
+          fontSize: '20px'
         }}>
           {error}
         </div>
@@ -85,7 +85,7 @@ export default function ResetPassword() {
       {token ? (
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
               New Password
             </label>
             <input
@@ -97,7 +97,7 @@ export default function ResetPassword() {
               style={{
                 width: '100%',
                 padding: '10px',
-                fontSize: '16px',
+                fontSize: '20px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -106,7 +106,7 @@ export default function ResetPassword() {
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
               Confirm Password
             </label>
             <input
@@ -118,7 +118,7 @@ export default function ResetPassword() {
               style={{
                 width: '100%',
                 padding: '10px',
-                fontSize: '16px',
+                fontSize: '20px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -132,7 +132,7 @@ export default function ResetPassword() {
             style={{
               width: '100%',
               padding: '12px',
-              fontSize: '16px',
+              fontSize: '20px',
               background: colors.primary,
               color: colors.text,
               border: 'none',
@@ -145,15 +145,15 @@ export default function ResetPassword() {
         </form>
       ) : (
         <div>
-          <p style={{ color: colors.text, fontSize: '16px' }}>Invalid or missing reset token.</p>
-          <Link to="/forgot-password" style={{ color: colors.text, fontSize: '16px' }}>
+          <p style={{ color: colors.text, fontSize: '20px' }}>Invalid or missing reset token.</p>
+          <Link to="/forgot-password" style={{ color: colors.text, fontSize: '20px' }}>
             Request a new reset link
           </Link>
         </div>
       )}
 
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <Link to="/login" style={{ color: colors.text, fontSize: '16px' }}>
+        <Link to="/login" style={{ color: colors.text, fontSize: '20px' }}>
           Back to Login
         </Link>
       </div>

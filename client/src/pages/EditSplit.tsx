@@ -114,7 +114,7 @@ export default function EditSplit() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px'
+          fontSize: '20px'
         }}>
           {error || 'Event not found'}
         </div>
@@ -127,7 +127,7 @@ export default function EditSplit() {
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '20px'
           }}
         >
           Back to Dashboard
@@ -147,7 +147,7 @@ export default function EditSplit() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px'
+          fontSize: '20px'
         }}>
           {error}
         </div>
@@ -156,7 +156,7 @@ export default function EditSplit() {
       <form onSubmit={handleSubmit}>
 
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Description *
           </label>
           <input
@@ -168,7 +168,7 @@ export default function EditSplit() {
             style={{
               width: '100%',
               padding: '10px',
-              fontSize: '16px',
+              fontSize: '20px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -178,7 +178,7 @@ export default function EditSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Amount *
           </label>
           <input
@@ -191,7 +191,7 @@ export default function EditSplit() {
             style={{
               width: '100%',
               padding: '10px',
-              fontSize: '16px',
+              fontSize: '20px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -201,7 +201,7 @@ export default function EditSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Split between *
           </label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -247,7 +247,7 @@ export default function EditSplit() {
                       accentColor: colors.purple
                     }}
                   />
-                  <span style={{ color: colors.text, fontSize: '16px' }}>
+                  <span style={{ color: colors.text, fontSize: '20px' }}>
                     {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
                   </span>
                 </label>
@@ -267,7 +267,7 @@ export default function EditSplit() {
             disabled={loading}
             style={{
               padding: '12px 24px',
-              fontSize: '16px',
+              fontSize: '20px',
               background: colors.primary,
               color: colors.text,
               border: 'none',
@@ -283,7 +283,7 @@ export default function EditSplit() {
             onClick={() => navigate(`/events/${eventIdFromParams}`)}
             style={{
               padding: '12px 20px',
-              fontSize: '16px',
+              fontSize: '20px',
               background: colors.textSecondary,
               color: colors.text,
               border: 'none',

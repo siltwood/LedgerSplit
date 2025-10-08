@@ -74,7 +74,7 @@ export default function Login() {
             <h2 style={{ color: colors.text, marginBottom: '15px', fontSize: '24px' }}>
               Email Already Registered
             </h2>
-            <p style={{ color: colors.text, marginBottom: '20px', fontSize: '16px', lineHeight: '1.5' }}>
+            <p style={{ color: colors.text, marginBottom: '20px', fontSize: '20px', lineHeight: '1.5' }}>
               This email is already registered with a password. Please log in with your email and password instead.
             </p>
             <button
@@ -86,7 +86,7 @@ export default function Login() {
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                fontSize: '16px',
+                fontSize: '20px',
                 fontWeight: 'bold'
               }}
             >
@@ -122,7 +122,7 @@ export default function Login() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '16px',
+              fontSize: '20px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
@@ -139,7 +139,7 @@ export default function Login() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '16px',
+              fontSize: '20px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
@@ -147,7 +147,7 @@ export default function Login() {
         </div>
 
         <div style={{ marginBottom: '20px', textAlign: 'right' }}>
-          <Link to="/forgot-password" style={{ color: colors.text, fontSize: '16px' }}>
+          <Link to="/forgot-password" style={{ color: colors.text, fontSize: '20px' }}>
             Forgot password?
           </Link>
         </div>

@@ -8,7 +8,7 @@ export const buttonStyles = {
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '20px',
     fontWeight: '500'
   },
   secondary: {
@@ -18,7 +18,7 @@ export const buttonStyles = {
     border: `1px solid ${colors.border}`,
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '20px',
     fontWeight: '500'
   },
   danger: {
@@ -28,7 +28,7 @@ export const buttonStyles = {
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '20px',
     fontWeight: '500'
   },
   small: {

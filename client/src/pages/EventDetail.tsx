@@ -100,7 +100,7 @@ export default function EventDetail() {
   };
 
   if (loading) return <div style={{ padding: '20px' }}></div>;
-  if (!event) return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Event not found</div>;
+  if (!event) return <div style={{ padding: '20px', color: colors.text, fontSize: '20px' }}>Event not found</div>;
 
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
 
@@ -211,7 +211,7 @@ export default function EventDetail() {
           <div style={{ flex: 1, minWidth: '250px' }}>
             <h1 style={{ margin: '0 0 8px 0', color: colors.text, fontSize: '28px' }}>{event.name}</h1>
             {event.description && (
-              <p style={{ color: colors.text, margin: '0', fontSize: '16px', opacity: 0.9 }}>
+              <p style={{ color: colors.text, margin: '0', fontSize: '20px', opacity: 0.9 }}>
                 {event.description}
               </p>
             )}
@@ -235,7 +235,7 @@ export default function EventDetail() {
                     padding: '6px 12px',
                     background: getParticipantColor(p.user_id),
                     borderRadius: '6px',
-                    fontSize: '16px',
+                    fontSize: '20px',
                     color: '#000',
                     fontWeight: '500',
                     wordBreak: 'break-word'
@@ -269,7 +269,7 @@ export default function EventDetail() {
           color: colors.text,
           borderRadius: '6px',
           marginBottom: '20px',
-          fontSize: '16px',
+          fontSize: '20px',
           textAlign: 'center'
         }}>
           {copyStatus}
@@ -325,7 +325,7 @@ export default function EventDetail() {
                       border: `1px solid ${colors.border}`,
                       flexWrap: 'wrap'
                     }}>
-                      <div style={{ flex: 1, fontSize: '16px', color: '#000', fontWeight: '600', wordBreak: 'break-word', minWidth: '150px' }}>
+                      <div style={{ flex: 1, fontSize: '20px', color: '#000', fontWeight: '600', wordBreak: 'break-word', minWidth: '150px' }}>
                         {isUserPaying ? (
                           <>Pay {toUser?.user?.name || toUser?.user?.email}</>
                         ) : (
@@ -378,7 +378,7 @@ export default function EventDetail() {
             borderRadius: '8px',
             textAlign: 'center',
             color: colors.text,
-            fontSize: '16px',
+            fontSize: '20px',
             opacity: 0.8
           }}>
             No bills yet. Add one to get started!
@@ -415,7 +415,7 @@ export default function EventDetail() {
                         } else if (currentUserParticipant) {
                           // Current user is a participant but didn't pay
                           return (
-                            <div style={{ marginTop: '4px', fontSize: '16px' }}>
+                            <div style={{ marginTop: '4px', fontSize: '20px' }}>
                               {split.paid_by_user.name || split.paid_by_user.email} paid ${split.amount.toFixed(2)}, <strong style={{ fontWeight: '700', textDecoration: 'underline' }}>you owe</strong> ${perPersonAmount.toFixed(2)}
                             </div>
                           );
@@ -487,7 +487,7 @@ export default function EventDetail() {
                       flexWrap: 'wrap',
                       gap: '8px'
                     }}>
-                      <span style={{ fontSize: '16px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', wordBreak: 'break-word' }}>
+                      <span style={{ fontSize: '20px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', wordBreak: 'break-word' }}>
                         {p.user?.name || p.user?.email}{isCurrentUser ? ' (you)' : ''}
                       </span>
                       <span style={{
@@ -536,7 +536,7 @@ export default function EventDetail() {
             width: '90%'
           }}>
             <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>Delete Bill?</h3>
-            <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '16px', opacity: 0.9 }}>
+            <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
               This action cannot be undone.
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>

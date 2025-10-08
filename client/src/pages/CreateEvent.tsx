@@ -43,7 +43,7 @@ export default function CreateEvent() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px'
+          fontSize: '20px'
         }}>
           {error}
         </div>
@@ -51,7 +51,7 @@ export default function CreateEvent() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Event Name *
           </label>
           <input
@@ -63,7 +63,7 @@ export default function CreateEvent() {
             style={{
               width: '100%',
               padding: '10px',
-              fontSize: '16px',
+              fontSize: '20px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -73,7 +73,7 @@ export default function CreateEvent() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Description (Optional)
           </label>
           <textarea
@@ -84,7 +84,7 @@ export default function CreateEvent() {
             style={{
               width: '100%',
               padding: '10px',
-              fontSize: '16px',
+              fontSize: '20px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -100,7 +100,7 @@ export default function CreateEvent() {
             disabled={loading}
             style={{
               padding: '12px 24px',
-              fontSize: '16px',
+              fontSize: '20px',
               background: colors.primary,
               color: colors.text,
               border: 'none',
@@ -116,7 +116,7 @@ export default function CreateEvent() {
             onClick={() => navigate('/dashboard')}
             style={{
               padding: '12px 20px',
-              fontSize: '16px',
+              fontSize: '20px',
               background: colors.textSecondary,
               color: colors.text,
               border: 'none',

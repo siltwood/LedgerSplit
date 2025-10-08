@@ -34,13 +34,13 @@ export default function Settings() {
       }}>
         <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text }}>Profile</h2>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Name
           </label>
           <div style={{ fontSize: '18px', color: colors.text }}>{user?.name}</div>
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Email
           </label>
           <div style={{ fontSize: '18px', color: colors.text }}>{user?.email}</div>
@@ -51,7 +51,7 @@ export default function Settings() {
             background: colors.surfaceLight,
             borderRadius: '4px',
             marginTop: '15px',
-            fontSize: '16px',
+            fontSize: '20px',
             color: colors.text
           }}>
             Connected with Google Account
@@ -76,12 +76,12 @@ export default function Settings() {
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                fontSize: '16px'
+                fontSize: '20px'
               }}
             >
               Change Password
             </button>
-            <p style={{ fontSize: '16px', color: colors.text, marginTop: '5px' }}>
+            <p style={{ fontSize: '20px', color: colors.text, marginTop: '5px' }}>
               We'll send you an email with a secure link to change your password
             </p>
           </div>
@@ -96,7 +96,7 @@ export default function Settings() {
           background: colors.success,
           color: colors.text,
           borderRadius: '4px',
-          fontSize: '16px'
+          fontSize: '20px'
         }}>
           {status}
         </div>
@@ -108,7 +108,7 @@ export default function Settings() {
         border: `1px solid ${colors.border}`
       }}>
         <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text }}>Danger Zone</h2>
-        <p style={{ color: colors.text, fontSize: '16px', marginBottom: '15px' }}>
+        <p style={{ color: colors.text, fontSize: '20px', marginBottom: '15px' }}>
           Once you delete your account, there is no going back. Your name will be grayed out in
           splits, but your data will remain for other users' records.
         </p>
@@ -123,14 +123,14 @@ export default function Settings() {
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '16px'
+              fontSize: '20px'
             }}
           >
             Delete Account
           </button>
         ) : (
           <div>
-            <p style={{ fontWeight: 'bold', marginBottom: '10px', color: colors.text, fontSize: '16px' }}>
+            <p style={{ fontWeight: 'bold', marginBottom: '10px', color: colors.text, fontSize: '20px' }}>
               Are you absolutely sure? This action cannot be undone.
             </p>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -143,7 +143,7 @@ export default function Settings() {
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '16px',
+                  fontSize: '20px',
                   fontWeight: 'bold'
                 }}
               >
@@ -158,7 +158,7 @@ export default function Settings() {
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '16px'
+                  fontSize: '20px'
                 }}
               >
                 Cancel
