@@ -190,6 +190,7 @@ export default function CreateSplit() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {event.participants?.map((p: any) => {
               const isSelected = selectedParticipants.includes(p.user_id);
+              const isCurrentUser = p.user_id === user?.id;
               return (
                 <label
                   key={p.user_id}
@@ -200,13 +201,15 @@ export default function CreateSplit() {
                     background: isSelected ? colors.columbiaBlue : colors.surface,
                     border: `1px solid ${isSelected ? colors.primary : colors.border}`,
                     borderRadius: '6px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s'
+                    cursor: isCurrentUser ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s',
+                    opacity: isCurrentUser ? 0.6 : 1
                   }}
                 >
                   <input
                     type="checkbox"
                     checked={isSelected}
+                    disabled={isCurrentUser}
                     onChange={(e) => {
                       if (e.target.checked) {
                         setSelectedParticipants([...selectedParticipants, p.user_id]);
@@ -218,7 +221,7 @@ export default function CreateSplit() {
                       marginRight: '12px',
                       width: '20px',
                       height: '20px',
-                      cursor: 'pointer'
+                      cursor: isCurrentUser ? 'not-allowed' : 'pointer'
                     }}
                   />
                   <span style={{ color: colors.text, fontSize: '16px' }}>
