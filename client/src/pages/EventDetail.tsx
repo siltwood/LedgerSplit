@@ -218,11 +218,11 @@ export default function EventDetail() {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
       {/* Event Header */}
       <div style={{
         background: colors.surface,
-        padding: '24px',
+        padding: '20px',
         borderRadius: '8px',
         border: `1px solid ${colors.border}`,
         marginBottom: '24px'
@@ -257,10 +257,11 @@ export default function EventDetail() {
                     borderRadius: '6px',
                     fontSize: '16px',
                     color: '#000',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    wordBreak: 'break-word'
                   }}
                 >
-                  {p.user?.name} / {p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
+                  {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
                 </span>
               ))}
             </div>
@@ -328,7 +329,7 @@ export default function EventDetail() {
             <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>Your Balance</h2>
             <div style={{
               background: colors.surface,
-              padding: '24px',
+              padding: '20px',
               borderRadius: '8px',
               border: `2px solid ${userBalance < -0.01 ? '#ef4444' : userBalance > 0.01 ? '#22c55e' : colors.border}`,
               marginBottom: '24px'
@@ -362,21 +363,23 @@ export default function EventDetail() {
                       padding: '14px',
                       background: colors.background,
                       borderRadius: '6px',
-                      border: `1px solid ${colors.border}`
+                      border: `1px solid ${colors.border}`,
+                      flexWrap: 'wrap'
                     }}>
-                      <div style={{ flex: 1, fontSize: '16px', color: '#000', fontWeight: '600' }}>
+                      <div style={{ flex: 1, fontSize: '16px', color: '#000', fontWeight: '600', wordBreak: 'break-word', minWidth: '150px' }}>
                         {isUserPaying ? (
-                          <>Pay {toUser?.user?.name || toUser?.user?.email} / {toUser?.user?.email}</>
+                          <>Pay {toUser?.user?.name || toUser?.user?.email}</>
                         ) : (
-                          <>{fromUser?.user?.name || fromUser?.user?.email} / {fromUser?.user?.email} pays you</>
+                          <>{fromUser?.user?.name || fromUser?.user?.email} pays you</>
                         )}
                       </div>
                       <div style={{
                         fontSize: '18px',
                         fontWeight: 'bold',
                         color: isUserPaying ? '#ef4444' : '#22c55e',
-                        minWidth: '80px',
-                        textAlign: 'right'
+                        minWidth: '70px',
+                        textAlign: 'right',
+                        flexShrink: 0
                       }}>
                         ${settlement.amount.toFixed(2)}
                       </div>
@@ -391,7 +394,8 @@ export default function EventDetail() {
                           cursor: 'pointer',
                           fontSize: '14px',
                           fontWeight: '600',
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0
                         }}
                       >
                         Paid
@@ -473,19 +477,19 @@ export default function EventDetail() {
 
                         if (split.paid_by === user?.id) {
                           // Current user paid
-                          return <div>Paid by {split.paid_by_user.name} / {split.paid_by_user.email} (you)</div>;
+                          return <div>Paid by {split.paid_by_user.name || split.paid_by_user.email} (you)</div>;
                         } else if (currentUserParticipant) {
                           // Current user is a participant but didn't pay
                           return (
                             <div style={{ marginTop: '4px' }}>
-                              {split.paid_by_user.name} / {split.paid_by_user.email} paid ${split.amount.toFixed(2)}, <strong>you</strong> owe ${perPersonAmount.toFixed(2)}
+                              {split.paid_by_user.name || split.paid_by_user.email} paid ${split.amount.toFixed(2)}, <strong>you</strong> owe ${perPersonAmount.toFixed(2)}
                             </div>
                           );
                         }
-                        return <div>Paid by {split.paid_by_user.name} / {split.paid_by_user.email}</div>;
+                        return <div>Paid by {split.paid_by_user.name || split.paid_by_user.email}</div>;
                       })()}
                       {(!split.split_participants || split.split_participants.length <= 1) && (
-                        <div>Paid by {split.paid_by_user.name} / {split.paid_by_user.email}{split.paid_by === user?.id ? ' (you)' : ''}</div>
+                        <div>Paid by {split.paid_by_user.name || split.paid_by_user.email}{split.paid_by === user?.id ? ' (you)' : ''}</div>
                       )}
                     </div>
                     {split.notes && (
@@ -574,10 +578,12 @@ export default function EventDetail() {
                       padding: '12px',
                       background: isCurrentUser ? getParticipantColor(p.user_id) : colors.background,
                       borderRadius: '6px',
-                      border: isCurrentUser ? `2px solid ${colors.primary}` : 'none'
+                      border: isCurrentUser ? `2px solid ${colors.primary}` : 'none',
+                      flexWrap: 'wrap',
+                      gap: '8px'
                     }}>
-                      <span style={{ fontSize: '16px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500' }}>
-                        {p.user?.name} / {p.user?.email}{isCurrentUser ? ' (you)' : ''}
+                      <span style={{ fontSize: '16px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', wordBreak: 'break-word' }}>
+                        {p.user?.name || p.user?.email}{isCurrentUser ? ' (you)' : ''}
                       </span>
                       <span style={{
                         fontSize: '18px',
