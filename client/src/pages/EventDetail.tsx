@@ -3,9 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { eventsAPI, splitsAPI, paymentsAPI } from '../services/api';
 import type { Event, Split } from '../types/index';
 import { colors } from '../styles/colors';
+import { buttonStyles } from '../styles/buttons';
 import { useAuth } from '../context/AuthContext';
-
-type SortOption = 'date-newest' | 'date-oldest' | 'amount-high' | 'amount-low' | 'payer';
 
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
@@ -16,7 +15,6 @@ export default function EventDetail() {
   const [loading, setLoading] = useState(true);
   const [copyStatus, setCopyStatus] = useState('');
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; splitId: string | null }>({ show: false, splitId: null });
-  const [sortBy, setSortBy] = useState<SortOption>('date-newest');
   const [showAllBalances, setShowAllBalances] = useState(false);
 
   useEffect(() => {
@@ -105,24 +103,6 @@ export default function EventDetail() {
   if (!event) return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Event not found</div>;
 
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
-
-  // Sort splits based on selected option
-  const sortedSplits = [...splits].sort((a, b) => {
-    switch (sortBy) {
-      case 'date-newest':
-        return new Date(b.date || b.created_at).getTime() - new Date(a.date || a.created_at).getTime();
-      case 'date-oldest':
-        return new Date(a.date || a.created_at).getTime() - new Date(b.date || b.created_at).getTime();
-      case 'amount-high':
-        return b.amount - a.amount;
-      case 'amount-low':
-        return a.amount - b.amount;
-      case 'payer':
-        return (a.paid_by_user?.email || '').localeCompare(b.paid_by_user?.email || '');
-      default:
-        return 0;
-    }
-  });
 
   // Calculate balances (who owes whom)
   const balances: Record<string, number> = {};
@@ -272,32 +252,11 @@ export default function EventDetail() {
       {/* Action Buttons */}
       <div style={{ marginBottom: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
         <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none' }}>
-          <button style={{
-            padding: '12px 24px',
-            background: colors.primary,
-            color: colors.text,
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: '500'
-          }}>
+          <button style={buttonStyles.primary}>
             Add Bill
           </button>
         </Link>
-        <button
-          onClick={handleCopyShareLink}
-          style={{
-            padding: '12px 24px',
-            background: colors.surface,
-            color: colors.text,
-            border: `1px solid ${colors.border}`,
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: '500'
-          }}
-        >
+        <button onClick={handleCopyShareLink} style={buttonStyles.secondary}>
           Share Invite Link
         </button>
       </div>
@@ -386,13 +345,11 @@ export default function EventDetail() {
                       <button
                         onClick={() => handleMarkAsPaid(settlement)}
                         style={{
-                          padding: '8px 16px',
+                          ...buttonStyles.small,
                           background: colors.primary,
                           color: '#000',
                           border: 'none',
                           borderRadius: '6px',
-                          cursor: 'pointer',
-                          fontSize: '14px',
                           fontWeight: '600',
                           whiteSpace: 'nowrap',
                           flexShrink: 0
@@ -412,33 +369,7 @@ export default function EventDetail() {
 
       {/* Bills Section */}
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-          <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>Bills ({splits.length})</h2>
-          {splits.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <label style={{ fontSize: '14px', color: colors.text }}>Sort by:</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                style={{
-                  padding: '8px 12px',
-                  fontSize: '14px',
-                  background: colors.surface,
-                  color: colors.text,
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="date-newest">Date (Newest)</option>
-                <option value="date-oldest">Date (Oldest)</option>
-                <option value="amount-high">Amount (High to Low)</option>
-                <option value="amount-low">Amount (Low to High)</option>
-                <option value="payer">Paid By (A-Z)</option>
-              </select>
-            </div>
-          )}
-        </div>
+        <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>Bills ({splits.length})</h2>
         {splits.length === 0 ? (
           <div style={{
             padding: '48px',
@@ -454,7 +385,7 @@ export default function EventDetail() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {sortedSplits.map((split) => (
+            {splits.map((split) => (
               <div
                 key={split.split_id}
                 style={{
@@ -504,31 +435,13 @@ export default function EventDetail() {
                   {(split.created_by === user?.id) && (
                     <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start' }}>
                       <Link to={`/events/${id}/splits/${split.split_id}/edit`} style={{ textDecoration: 'none' }}>
-                        <button
-                          style={{
-                            padding: '8px 16px',
-                            background: colors.surface,
-                            color: colors.text,
-                            border: `1px solid ${colors.border}`,
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: '14px'
-                          }}
-                        >
+                        <button style={buttonStyles.small}>
                           Edit
                         </button>
                       </Link>
                       <button
                         onClick={() => setDeleteModal({ show: true, splitId: split.split_id })}
-                        style={{
-                          padding: '8px 16px',
-                          background: colors.error,
-                          color: colors.text,
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontSize: '14px'
-                        }}
+                        style={{ ...buttonStyles.small, background: colors.error, border: 'none' }}
                       >
                         Delete
                       </button>
@@ -546,18 +459,7 @@ export default function EventDetail() {
         <div style={{ marginBottom: '24px', marginTop: '24px' }}>
           <button
             onClick={() => setShowAllBalances(!showAllBalances)}
-            style={{
-              background: colors.surface,
-              border: `1px solid ${colors.border}`,
-              color: colors.text,
-              fontSize: '14px',
-              cursor: 'pointer',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              fontWeight: '500',
-              textAlign: 'left',
-              display: 'inline-block'
-            }}
+            style={{ ...buttonStyles.small, textAlign: 'left', display: 'inline-block' }}
           >
             {showAllBalances ? 'Hide all balances' : 'See all balances'}
           </button>
@@ -640,30 +542,13 @@ export default function EventDetail() {
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
               <button
                 onClick={() => setDeleteModal({ show: false, splitId: null })}
-                style={{
-                  padding: '10px 20px',
-                  background: colors.surface,
-                  color: colors.text,
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '16px'
-                }}
+                style={buttonStyles.secondary}
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteSplit}
-                style={{
-                  padding: '10px 20px',
-                  background: colors.error,
-                  color: colors.text,
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  fontWeight: '500'
-                }}
+                style={{ ...buttonStyles.danger, border: 'none' }}
               >
                 Delete
               </button>
