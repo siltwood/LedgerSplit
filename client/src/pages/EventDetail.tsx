@@ -541,14 +541,16 @@ export default function EventDetail() {
           <button
             onClick={() => setShowAllBalances(!showAllBalances)}
             style={{
-              background: 'transparent',
-              border: 'none',
+              background: colors.surface,
+              border: `1px solid ${colors.border}`,
               color: colors.text,
               fontSize: '16px',
               cursor: 'pointer',
-              padding: '12px',
-              textDecoration: 'underline',
-              opacity: 0.7
+              padding: '12px 20px',
+              borderRadius: '8px',
+              fontWeight: '500',
+              width: '100%',
+              textAlign: 'left'
             }}
           >
             {showAllBalances ? '▼ Hide all balances' : '▶ See all balances'}
