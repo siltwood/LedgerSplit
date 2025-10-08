@@ -282,7 +282,7 @@ export default function AcceptInvite() {
                 </button>
 
                 <div style={{ textAlign: 'center', marginBottom: '15px', marginTop: '5px' }}>
-                  <span style={{ color: colors.text, fontSize: '18px' }}>or</span>
+                  <span style={{ color: colors.text, fontSize: '22px' }}>or</span>
                 </div>
 
                 <button
@@ -400,7 +400,7 @@ export default function AcceptInvite() {
                 </div>
 
                 <div style={{ textAlign: 'center', marginBottom: '15px', marginTop: '5px' }}>
-                  <span style={{ color: colors.text, fontSize: '18px' }}>or</span>
+                  <span style={{ color: colors.text, fontSize: '22px' }}>or</span>
                 </div>
 
                 <button

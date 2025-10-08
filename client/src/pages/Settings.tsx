@@ -37,13 +37,13 @@ export default function Settings() {
           <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Name
           </label>
-          <div style={{ fontSize: '18px', color: colors.text }}>{user?.name}</div>
+          <div style={{ fontSize: '22px', color: colors.text }}>{user?.name}</div>
         </div>
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Email
           </label>
-          <div style={{ fontSize: '18px', color: colors.text }}>{user?.email}</div>
+          <div style={{ fontSize: '22px', color: colors.text }}>{user?.email}</div>
         </div>
         {user?.google_id && (
           <div style={{

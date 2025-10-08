@@ -271,7 +271,7 @@ export default function EventDetail() {
           background: copyStatus.includes('✗') ? colors.error : colors.purple,
           color: '#fff',
           borderRadius: '8px',
-          fontSize: '18px',
+          fontSize: '22px',
           fontWeight: '600',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           zIndex: 1000,
@@ -299,15 +299,21 @@ export default function EventDetail() {
               marginBottom: '24px'
             }}>
               {/* Big Balance Display */}
-              <div style={{ marginBottom: userSettlements.length > 0 ? '20px' : '0' }}>
+              <div style={{
+                marginBottom: userSettlements.length > 0 ? '20px' : '0',
+                padding: Math.abs(userBalance) < 0.01 ? '16px' : '0',
+                background: Math.abs(userBalance) < 0.01 ? colors.purple : 'transparent',
+                borderRadius: Math.abs(userBalance) < 0.01 ? '8px' : '0',
+                textAlign: Math.abs(userBalance) < 0.01 ? 'center' : 'left'
+              }}>
                 <div style={{
                   fontSize: '32px',
                   fontWeight: 'bold',
-                  color: Math.abs(userBalance) > 0.01 ? colors.purple : colors.text
+                  color: Math.abs(userBalance) > 0.01 ? colors.purple : '#fff'
                 }}>
                   {userBalance < -0.01 ? `You owe $${Math.abs(userBalance).toFixed(2)}` :
                    userBalance > 0.01 ? `People owe $${userBalance.toFixed(2)}` :
-                   'All settled up!'}
+                   '✓ All settled up!'}
                 </div>
               </div>
 
@@ -338,7 +344,7 @@ export default function EventDetail() {
                         )}
                       </div>
                       <div style={{
-                        fontSize: '18px',
+                        fontSize: '22px',
                         fontWeight: 'bold',
                         color: colors.purple,
                         minWidth: '70px',
@@ -403,7 +409,7 @@ export default function EventDetail() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>
                   <div style={{ flex: 1, minWidth: '250px' }}>
                     <div style={{ marginBottom: '8px' }}>
-                      <strong style={{ fontSize: '18px', color: '#000' }}>{split.title}</strong>
+                      <strong style={{ fontSize: '22px', color: '#000' }}>{split.title}</strong>
                     </div>
                     <div style={{ fontSize: '20px', color: '#000', opacity: 0.9, marginBottom: '8px' }}>
                       <div>Total: ${split.amount.toFixed(2)}</div>
@@ -496,7 +502,7 @@ export default function EventDetail() {
                         {p.user?.name || p.user?.email}{isCurrentUser ? ' (you)' : ''}
                       </span>
                       <span style={{
-                        fontSize: '18px',
+                        fontSize: '22px',
                         fontWeight: 'bold',
                         color: Math.abs(balance) > 0.01 ? colors.purple : (isCurrentUser ? '#000' : colors.text)
                       }}>

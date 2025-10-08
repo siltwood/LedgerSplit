@@ -158,7 +158,7 @@ export default function Login() {
           style={{
             width: '100%',
             padding: '10px',
-            fontSize: '18px',
+            fontSize: '22px',
             background: colors.primary,
             color: colors.text,
             border: 'none',
@@ -179,7 +179,7 @@ export default function Login() {
         style={{
           width: '100%',
           padding: '10px',
-          fontSize: '18px',
+          fontSize: '22px',
           background: colors.surface,
           color: colors.text,
           border: `1px solid ${colors.border}`,

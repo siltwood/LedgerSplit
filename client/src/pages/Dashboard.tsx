@@ -98,7 +98,7 @@ export default function Dashboard() {
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '18px',
+            fontSize: '22px',
             fontWeight: 'bold'
           }}>
             + New Event
@@ -170,7 +170,7 @@ export default function Dashboard() {
                       )}
                     </div>
                     {event.description && (
-                      <div style={{ fontSize: '18px', color: colors.text, marginBottom: '8px', opacity: 0.8 }}>
+                      <div style={{ fontSize: '22px', color: colors.text, marginBottom: '8px', opacity: 0.8 }}>
                         {event.description}
                       </div>
                     )}
