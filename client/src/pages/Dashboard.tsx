@@ -169,23 +169,13 @@ export default function Dashboard() {
                     border: `2px solid ${event.isSettled ? colors.purple : colors.border}`,
                     borderRadius: '12px',
                     cursor: 'pointer',
-                    transition: 'all 0.2s',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'flex-start',
                     flexWrap: 'wrap',
                     gap: '16px',
-                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
                     opacity: event.is_dismissed ? 0.6 : 1,
                     position: 'relative',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
                   }}
                 >
                   {event.created_by === user?.id && (
