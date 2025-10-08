@@ -408,10 +408,44 @@ export default function EventDetail() {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>
                   <div style={{ flex: 1, minWidth: '250px' }}>
-                    <div style={{ marginBottom: '8px' }}>
+                    <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                       <strong style={{ fontSize: '22px', color: '#000' }}>{split.title}</strong>
+                      {(() => {
+                        // Check if this split is settled for the current user
+                        const perPersonAmount = split.split_participants && split.split_participants.length > 0
+                          ? split.amount / split.split_participants.length
+                          : 0;
+                        const currentUserParticipant = split.split_participants?.find((p: any) => p.user_id === user?.id);
+
+                        // If current user didn't pay and is a participant
+                        if (split.paid_by !== user?.id && currentUserParticipant) {
+                          // Check if there's a payment record for this
+                          const hasPayment = payments.some((payment: any) =>
+                            payment.from_user_id === user?.id &&
+                            payment.to_user_id === split.paid_by &&
+                            Math.abs(payment.amount - perPersonAmount) < 0.01
+                          );
+
+                          if (hasPayment) {
+                            return (
+                              <span style={{
+                                padding: '4px 12px',
+                                background: colors.purple,
+                                color: '#fff',
+                                borderRadius: '16px',
+                                fontSize: '14px',
+                                fontWeight: '600'
+                              }}>
+                                ✓ Settled
+                              </span>
+                            );
+                          }
+                        }
+                        return null;
+                      })()}
                     </div>
                     <div style={{ fontSize: '20px', color: '#000', opacity: 0.9, marginBottom: '8px' }}>
+                      <div>Purchased by {split.paid_by === user?.id ? 'you' : (split.paid_by_user.name || split.paid_by_user.email)}</div>
                       <div>Total: ${split.amount.toFixed(2)}</div>
                       {split.split_participants && split.split_participants.length > 0 && (
                         <div>Split between {split.split_participants.length} {split.split_participants.length === 1 ? 'person' : 'people'}</div>
@@ -421,21 +455,59 @@ export default function EventDetail() {
                         const currentUserParticipant = split.split_participants.find((p: any) => p.user_id === user?.id);
 
                         if (split.paid_by === user?.id) {
-                          // Current user paid
-                          return <div>Paid by {split.paid_by_user.name || split.paid_by_user.email} (you)</div>;
+                          // Current user paid - check who has paid them back
+                          const whoOwes = split.split_participants
+                            .filter((p: any) => p.user_id !== user?.id)
+                            .map((p: any) => {
+                              const hasPayment = payments.some((payment: any) =>
+                                payment.from_user_id === p.user_id &&
+                                payment.to_user_id === user?.id &&
+                                Math.abs(payment.amount - perPersonAmount) < 0.01
+                              );
+                              return { participant: p, hasPaid: hasPayment };
+                            });
+
+                          const paidBackList = whoOwes.filter(w => w.hasPaid);
+                          const stillOweList = whoOwes.filter(w => !w.hasPaid);
+
+                          return (
+                            <div style={{ marginTop: '4px', fontSize: '20px' }}>
+                              {paidBackList.length > 0 && (
+                                <div>
+                                  {paidBackList.map(w => {
+                                    const participant = event.participants?.find(ep => ep.user_id === w.participant.user_id);
+                                    return (
+                                      <div key={w.participant.user_id}>
+                                        {participant?.user?.name || participant?.user?.email} paid you back ${perPersonAmount.toFixed(2)}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                              {stillOweList.length > 0 && (
+                                <div>
+                                  {stillOweList.map(w => {
+                                    const participant = event.participants?.find(ep => ep.user_id === w.participant.user_id);
+                                    return (
+                                      <div key={w.participant.user_id}>
+                                        {participant?.user?.name || participant?.user?.email} owes ${perPersonAmount.toFixed(2)}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          );
                         } else if (currentUserParticipant) {
                           // Current user is a participant but didn't pay
                           return (
                             <div style={{ marginTop: '4px', fontSize: '20px' }}>
-                              {split.paid_by_user.name || split.paid_by_user.email} paid ${split.amount.toFixed(2)}, <strong style={{ fontWeight: '700', textDecoration: 'underline' }}>you owe</strong> ${perPersonAmount.toFixed(2)}
+                              <strong style={{ fontWeight: '700', textDecoration: 'underline' }}>You owe</strong> ${perPersonAmount.toFixed(2)}
                             </div>
                           );
                         }
-                        return <div>Paid by {split.paid_by_user.name || split.paid_by_user.email}</div>;
+                        return null;
                       })()}
-                      {(!split.split_participants || split.split_participants.length <= 1) && (
-                        <div>Paid by {split.paid_by_user.name || split.paid_by_user.email}{split.paid_by === user?.id ? ' (you)' : ''}</div>
-                      )}
                     </div>
                     {split.notes && (
                       <div style={{ fontSize: '20px', color: '#000', marginTop: '8px', padding: '8px', background: 'rgba(255, 255, 255, 0.3)', borderRadius: '4px', fontStyle: 'italic' }}>
