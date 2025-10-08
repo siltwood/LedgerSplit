@@ -187,7 +187,7 @@ export default function EventDetail() {
                     fontWeight: '500'
                   }}
                 >
-                  {p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
+                  {p.user?.name} / {p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
                 </span>
               ))}
             </div>
@@ -268,7 +268,7 @@ export default function EventDetail() {
                   border: isCurrentUser ? `2px solid ${colors.primary}` : 'none'
                 }}>
                   <span style={{ fontSize: '16px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500' }}>
-                    {p.user?.email}{isCurrentUser ? ' (you)' : ''}
+                    {p.user?.name} / {p.user?.email}{isCurrentUser ? ' (you)' : ''}
                   </span>
                   <span style={{
                     fontSize: '18px',
@@ -361,19 +361,19 @@ export default function EventDetail() {
 
                         if (split.paid_by === user?.id) {
                           // Current user paid
-                          return <div>Paid by {split.paid_by_user.email} (you)</div>;
+                          return <div>Paid by {split.paid_by_user.name} / {split.paid_by_user.email} (you)</div>;
                         } else if (currentUserParticipant) {
                           // Current user is a participant but didn't pay
                           return (
                             <div style={{ marginTop: '4px' }}>
-                              {split.paid_by_user.email} paid ${split.amount.toFixed(2)}, <strong>you</strong> owe ${perPersonAmount.toFixed(2)}
+                              {split.paid_by_user.name} / {split.paid_by_user.email} paid ${split.amount.toFixed(2)}, <strong>you</strong> owe ${perPersonAmount.toFixed(2)}
                             </div>
                           );
                         }
-                        return <div>Paid by {split.paid_by_user.email}</div>;
+                        return <div>Paid by {split.paid_by_user.name} / {split.paid_by_user.email}</div>;
                       })()}
                       {(!split.split_participants || split.split_participants.length <= 1) && (
-                        <div>Paid by {split.paid_by_user.email}{split.paid_by === user?.id ? ' (you)' : ''}</div>
+                        <div>Paid by {split.paid_by_user.name} / {split.paid_by_user.email}{split.paid_by === user?.id ? ' (you)' : ''}</div>
                       )}
                     </div>
                     {split.notes && (
