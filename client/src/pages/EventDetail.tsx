@@ -105,7 +105,6 @@ export default function EventDetail() {
   if (!event) return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Event not found</div>;
 
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
-  const isCreator = event.created_by === user?.id;
 
   // Sort splits based on selected option
   const sortedSplits = [...splits].sort((a, b) => {
@@ -495,7 +494,7 @@ export default function EventDetail() {
                       </div>
                     )}
                   </div>
-                  {(isCreator || split.created_by === user?.id) && (
+                  {(split.created_by === user?.id) && (
                     <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start' }}>
                       <Link to={`/events/${id}/splits/${split.split_id}/edit`} style={{ textDecoration: 'none' }}>
                         <button

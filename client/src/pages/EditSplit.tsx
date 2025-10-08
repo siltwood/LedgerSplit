@@ -33,10 +33,14 @@ export default function EditSplit() {
         splitsAPI.getAll({ event_id: eventIdFromParams })
       ]);
 
-      // Attach participants to event object
+      // Attach participants to event object and map user data
+      const participantsWithUser = (eventRes.data.participants || []).map((p: any) => ({
+        ...p,
+        user: p.users || p.user
+      }));
       const loadedEvent = {
         ...eventRes.data.event,
-        participants: eventRes.data.participants || []
+        participants: participantsWithUser
       };
       setEvent(loadedEvent);
 
@@ -235,7 +239,7 @@ export default function EditSplit() {
                     }}
                   />
                   <span style={{ color: colors.text, fontSize: '16px' }}>
-                    {p.user?.name} / {p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
+                    {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
                   </span>
                 </label>
               );

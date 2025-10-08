@@ -183,6 +183,7 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       paid_by,
       date,
       notes,
+      participant_ids,
     } = req.body;
     const userId = req.user?.id;
 
@@ -246,20 +247,41 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: 'Payer must be a participant of the event' });
     }
 
-    // Get ALL event participants to auto-split the bill
-    const { data: eventParticipants, error: participantsError } = await db
-      .from('event_participants')
-      .select('user_id')
-      .eq('event_id', event_id);
+    // Use provided participant_ids or default to ALL event participants
+    let finalParticipantIds = participant_ids;
 
-    if (participantsError || !eventParticipants || eventParticipants.length === 0) {
-      return res.status(400).json({ error: 'No participants found for this event' });
+    if (!finalParticipantIds || finalParticipantIds.length === 0) {
+      // Get ALL event participants to auto-split the bill
+      const { data: eventParticipants, error: participantsError } = await db
+        .from('event_participants')
+        .select('user_id')
+        .eq('event_id', event_id);
+
+      if (participantsError || !eventParticipants || eventParticipants.length === 0) {
+        return res.status(400).json({ error: 'No participants found for this event' });
+      }
+
+      finalParticipantIds = eventParticipants.map(p => p.user_id);
+    } else {
+      // Verify all participant_ids are participants of the event
+      for (const participantId of finalParticipantIds) {
+        const { data: participation } = await db
+          .from('event_participants')
+          .select('*')
+          .eq('event_id', event_id)
+          .eq('user_id', participantId)
+          .single();
+
+        if (!participation) {
+          return res.status(400).json({
+            error: `User ${participantId} is not a participant of this event`,
+          });
+        }
+      }
     }
 
-    const participant_ids = eventParticipants.map(p => p.user_id);
-
-    // Calculate amount owed per participant (equal split among ALL event participants)
-    const amountOwed = amountValidation.value! / participant_ids.length;
+    // Calculate amount owed per participant
+    const amountOwed = amountValidation.value! / finalParticipantIds.length;
 
     // Create split
     const { data: split, error: splitError } = await db
@@ -282,8 +304,8 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       return res.status(500).json({ error: 'Failed to create split' });
     }
 
-    // Add split participants (ALWAYS split among all event participants)
-    const participantRecords = participant_ids.map((participantId: string) => ({
+    // Add split participants
+    const participantRecords = finalParticipantIds.map((participantId: string) => ({
       split_id: split.split_id,
       user_id: participantId,
       amount_owed: amountOwed,
