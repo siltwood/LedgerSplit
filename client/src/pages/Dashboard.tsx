@@ -37,7 +37,7 @@ export default function Dashboard() {
   };
 
   if (loading) {
-    return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Loading...</div>;
+    return <div style={{ padding: '20px' }}></div>;
   }
 
   return (

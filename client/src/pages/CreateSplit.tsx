@@ -84,7 +84,7 @@ export default function CreateSplit() {
 
 
   if (!event && !error) {
-    return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Loading...</div>;
+    return <div style={{ padding: '20px' }}></div>;
   }
 
   if (!event) {

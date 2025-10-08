@@ -99,7 +99,7 @@ export default function EventDetail() {
     }
   };
 
-  if (loading) return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Loading...</div>;
+  if (loading) return <div style={{ padding: '20px' }}></div>;
   if (!event) return <div style={{ padding: '20px', color: colors.text, fontSize: '16px' }}>Event not found</div>;
 
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
