@@ -133,7 +133,7 @@ export default function Dashboard() {
                   style={{
                     padding: '24px',
                     background: colors.surface,
-                    border: `2px solid ${event.isSettled ? '#22c55e' : colors.border}`,
+                    border: `2px solid ${event.isSettled ? colors.purple : colors.border}`,
                     borderRadius: '12px',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
@@ -159,7 +159,7 @@ export default function Dashboard() {
                       {event.isSettled && (
                         <span style={{
                           padding: '4px 12px',
-                          background: '#22c55e',
+                          background: colors.purple,
                           color: '#fff',
                           borderRadius: '16px',
                           fontSize: '14px',

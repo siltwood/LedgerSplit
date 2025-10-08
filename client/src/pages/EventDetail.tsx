@@ -268,7 +268,7 @@ export default function EventDetail() {
           top: '20px',
           right: '20px',
           padding: '16px 24px',
-          background: copyStatus.includes('✗') ? colors.error : '#22c55e',
+          background: copyStatus.includes('✗') ? colors.error : colors.purple,
           color: '#fff',
           borderRadius: '8px',
           fontSize: '18px',
