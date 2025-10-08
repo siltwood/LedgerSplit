@@ -481,8 +481,8 @@ export default function EventDetail() {
                         } else if (currentUserParticipant) {
                           // Current user is a participant but didn't pay
                           return (
-                            <div style={{ marginTop: '4px' }}>
-                              {split.paid_by_user.name || split.paid_by_user.email} paid ${split.amount.toFixed(2)}, <strong>you</strong> owe ${perPersonAmount.toFixed(2)}
+                            <div style={{ marginTop: '4px', fontSize: '16px' }}>
+                              {split.paid_by_user.name || split.paid_by_user.email} paid ${split.amount.toFixed(2)}, <strong style={{ fontWeight: '700', textDecoration: 'underline' }}>you owe</strong> ${perPersonAmount.toFixed(2)}
                             </div>
                           );
                         }
