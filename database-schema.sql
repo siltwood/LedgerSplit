@@ -45,7 +45,8 @@ CREATE TABLE events (
   share_token UUID UNIQUE DEFAULT gen_random_uuid(), -- For shareable event links
   created_by UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT NOW(),
-  deleted_at TIMESTAMP
+  deleted_at TIMESTAMP,
+  is_dismissed BOOLEAN DEFAULT FALSE
 );
 
 -- Event Participants Table (people involved in this event)
