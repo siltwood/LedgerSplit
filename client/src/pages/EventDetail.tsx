@@ -359,7 +359,10 @@ export default function EventDetail() {
                         const perPersonAmount = split.amount / split.split_participants.length;
                         const currentUserParticipant = split.split_participants.find((p: any) => p.user_id === user?.id);
 
-                        if (currentUserParticipant && split.paid_by !== user?.id) {
+                        if (split.paid_by === user?.id) {
+                          // Current user paid
+                          return <div>Paid by {split.paid_by_user.email} (you)</div>;
+                        } else if (currentUserParticipant) {
                           // Current user is a participant but didn't pay
                           return (
                             <div style={{ marginTop: '4px' }}>
