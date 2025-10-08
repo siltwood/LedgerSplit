@@ -373,7 +373,7 @@ export default function EventDetail() {
                         return <div>Paid by {split.paid_by_user.email}</div>;
                       })()}
                       {(!split.split_participants || split.split_participants.length <= 1) && (
-                        <div>Paid by {split.paid_by_user.email}</div>
+                        <div>Paid by {split.paid_by_user.email}{split.paid_by === user?.id ? ' (you)' : ''}</div>
                       )}
                     </div>
                     {split.notes && (
