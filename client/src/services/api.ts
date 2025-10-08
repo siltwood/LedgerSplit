@@ -28,7 +28,7 @@ export const eventsAPI = {
   getById: (id: string) => api.get(`/events/${id}`),
   create: (data: { name: string; description?: string; participant_ids?: string[] }) =>
     api.post('/events', data),
-  update: (id: string, data: { name: string; description?: string }) =>
+  update: (id: string, data: { name?: string; description?: string; is_dismissed?: boolean }) =>
     api.put(`/events/${id}`, data),
   delete: (id: string) => api.delete(`/events/${id}`),
   inviteUser: (id: string, email: string) =>
