@@ -16,7 +16,6 @@ export const getEvents = async (req: AuthRequest, res: Response) => {
           description,
           created_by,
           created_at,
-          is_dismissed,
           is_settled
         )
       `)
@@ -33,7 +32,22 @@ export const getEvents = async (req: AuthRequest, res: Response) => {
       .map((ep: any) => ep.events)
       .filter(Boolean);
 
-    res.json({ events });
+    // Get user preferences for these events
+    const eventIds = events.map((e: any) => e.event_id);
+    const { data: preferences } = await db
+      .from('user_event_preferences')
+      .select('event_id, is_dismissed')
+      .eq('user_id', userId)
+      .in('event_id', eventIds);
+
+    // Merge preferences into events
+    const prefsMap = new Map(preferences?.map(p => [p.event_id, p.is_dismissed]) || []);
+    const eventsWithPrefs = events.map((event: any) => ({
+      ...event,
+      is_dismissed: prefsMap.get(event.event_id) || false
+    }));
+
+    res.json({ events: eventsWithPrefs });
   } catch (error) {
     console.error('Get events error:', error);
     res.status(500).json({ error: 'Failed to fetch events' });
@@ -208,7 +222,38 @@ export const updateEvent = async (req: AuthRequest, res: Response) => {
     const { name, description, is_dismissed, is_settled } = req.body;
     const userId = req.user?.id;
 
-    // Check if user is creator
+    // Handle is_dismissed separately (per-user preference)
+    if (is_dismissed !== undefined) {
+      // Check if preference exists
+      const { data: existingPref } = await db
+        .from('user_event_preferences')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('event_id', id)
+        .single();
+
+      if (existingPref) {
+        // Update existing preference
+        await db
+          .from('user_event_preferences')
+          .update({ is_dismissed })
+          .eq('user_id', userId)
+          .eq('event_id', id);
+      } else {
+        // Insert new preference
+        await db
+          .from('user_event_preferences')
+          .insert({
+            user_id: userId,
+            event_id: id,
+            is_dismissed
+          });
+      }
+
+      return res.json({ message: 'Preference updated successfully' });
+    }
+
+    // For other fields, check if user is creator
     const { data: event } = await db
       .from('events')
       .select('created_by')
@@ -220,11 +265,10 @@ export const updateEvent = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ error: 'Only event creator can update' });
     }
 
-    // Build update object
+    // Build update object (no longer includes is_dismissed)
     const updateData: any = {};
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
-    if (is_dismissed !== undefined) updateData.is_dismissed = is_dismissed;
     if (is_settled !== undefined) updateData.is_settled = is_settled;
 
     // Update event

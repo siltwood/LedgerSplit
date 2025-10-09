@@ -6,6 +6,7 @@ DROP VIEW IF EXISTS user_balances CASCADE;
 DROP VIEW IF EXISTS split_details CASCADE;
 
 -- Drop all tables
+DROP TABLE IF EXISTS user_event_preferences CASCADE;
 DROP TABLE IF EXISTS event_settled_confirmations CASCADE;
 DROP TABLE IF EXISTS payments CASCADE;
 DROP TABLE IF EXISTS split_participants CASCADE;
@@ -47,7 +48,6 @@ CREATE TABLE events (
   created_by UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT NOW(),
   deleted_at TIMESTAMP,
-  is_dismissed BOOLEAN DEFAULT FALSE,
   is_settled BOOLEAN DEFAULT FALSE
 );
 
@@ -105,6 +105,14 @@ CREATE TABLE event_settled_confirmations (
   PRIMARY KEY (event_id, user_id)
 );
 
+-- User Event Preferences Table (track per-user settings like dismiss)
+CREATE TABLE user_event_preferences (
+  user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  event_id UUID NOT NULL REFERENCES events(event_id) ON DELETE CASCADE,
+  is_dismissed BOOLEAN DEFAULT FALSE,
+  PRIMARY KEY (user_id, event_id)
+);
+
 -- Indexes for better query performance
 CREATE INDEX idx_events_created_by ON events(created_by);
 CREATE INDEX idx_events_deleted_at ON events(deleted_at);
@@ -124,6 +132,8 @@ CREATE INDEX idx_password_reset_tokens_user_id ON password_reset_tokens(user_id)
 CREATE INDEX idx_users_deleted_at ON users(deleted_at);
 CREATE INDEX idx_event_settled_confirmations_event_id ON event_settled_confirmations(event_id);
 CREATE INDEX idx_event_settled_confirmations_user_id ON event_settled_confirmations(user_id);
+CREATE INDEX idx_user_event_preferences_user_id ON user_event_preferences(user_id);
+CREATE INDEX idx_user_event_preferences_event_id ON user_event_preferences(event_id);
 
 -- Helper views for calculating balances
 

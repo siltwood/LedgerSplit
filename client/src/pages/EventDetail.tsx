@@ -78,8 +78,8 @@ export default function EventDetail() {
     const shareUrl = `${window.location.origin}/join/${event.share_token}`;
     try {
       await navigator.clipboard.writeText(shareUrl);
-      setCopyStatus('✓ Link copied to clipboard!');
-      setTimeout(() => setCopyStatus(''), 2500);
+      setCopyStatus(`✓ Link copied!\n${shareUrl}`);
+      setTimeout(() => setCopyStatus(''), 3500);
     } catch (error) {
       setCopyStatus('✗ Failed to copy link');
       setTimeout(() => setCopyStatus(''), 2500);
@@ -433,11 +433,14 @@ export default function EventDetail() {
           background: copyStatus.includes('✗') ? colors.error : colors.purple,
           color: '#fff',
           borderRadius: '8px',
-          fontSize: '22px',
+          fontSize: '20px',
           fontWeight: '600',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           zIndex: 1000,
-          animation: 'slideIn 0.3s ease-out'
+          animation: 'slideIn 0.3s ease-out',
+          whiteSpace: 'pre-line',
+          maxWidth: '90%',
+          wordBreak: 'break-all'
         }}>
           {copyStatus}
         </div>
@@ -482,6 +485,9 @@ export default function EventDetail() {
             {/* Settlement Actions */}
             {userSettlements.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ fontSize: '18px', color: colors.text, opacity: 0.8, marginBottom: '4px', fontStyle: 'italic' }}>
+                  💡 Payments optimized to minimize transactions
+                </div>
                 {userSettlements.map((settlement, idx) => {
                   const fromUser = event.participants?.find(p => p.user_id === settlement.from);
                   const toUser = event.participants?.find(p => p.user_id === settlement.to);
@@ -528,7 +534,7 @@ export default function EventDetail() {
                           flexShrink: 0
                         }}
                       >
-                        Paid
+                        Mark as Paid
                       </button>
                     </div>
                   );

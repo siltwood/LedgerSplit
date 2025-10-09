@@ -148,23 +148,23 @@ export default function Dashboard() {
                     position: 'relative',
                   }}
                 >
-                  {event.created_by === user?.id && (
-                    <div style={{ position: 'absolute', top: '12px', right: '12px', display: 'flex', gap: '8px' }}>
-                      <button
-                        onClick={(e) => event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e)}
-                        style={{
-                          padding: '8px 16px',
-                          background: event.is_dismissed ? colors.primary : colors.cadetGray2,
-                          color: '#000',
-                          border: 'none',
-                          borderRadius: '4px',
-                          fontSize: '20px',
-                          fontWeight: '600',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        {event.is_dismissed ? 'Restore' : 'Dismiss'}
-                      </button>
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={(e) => event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e)}
+                      style={{
+                        padding: '8px 16px',
+                        background: event.is_dismissed ? colors.primary : colors.cadetGray2,
+                        color: '#000',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {event.is_dismissed ? 'Restore' : 'Dismiss'}
+                    </button>
+                    {event.created_by === user?.id && (
                       <button
                         onClick={(e) => {
                           e.preventDefault();
@@ -184,8 +184,8 @@ export default function Dashboard() {
                       >
                         Delete
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                       <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
