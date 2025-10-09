@@ -16,8 +16,16 @@ export interface Event {
   created_at: string;
   deleted_at?: string;
   is_dismissed?: boolean;
+  is_settled?: boolean;
   participants?: EventParticipant[];
   creator?: User;
+  settled_confirmations?: EventSettledConfirmation[];
+}
+
+export interface EventSettledConfirmation {
+  event_id: string;
+  user_id: string;
+  confirmed_at: string;
 }
 
 export interface EventParticipant {

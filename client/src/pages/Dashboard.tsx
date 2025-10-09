@@ -1,19 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { eventsAPI, splitsAPI } from '../services/api';
+import { eventsAPI } from '../services/api';
 import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
-
-type EventWithStatus = Event & {
-  isSettled?: boolean;
-  totalAmount?: number;
-};
 
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [events, setEvents] = useState<EventWithStatus[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
   const handleDismiss = async (eventId: string, e: React.MouseEvent) => {
@@ -58,46 +53,7 @@ export default function Dashboard() {
     try {
       const eventsRes = await eventsAPI.getAll();
       const eventsData = eventsRes.data.events || [];
-
-      // Fetch splits for each event to calculate settlement status
-      const eventsWithStatus = await Promise.all(
-        eventsData.map(async (event: Event) => {
-          try {
-            const splitsRes = await splitsAPI.getAll({ event_id: event.event_id });
-            const splits = splitsRes.data.splits || [];
-
-            // Calculate total amount
-            const totalAmount = splits.reduce((sum: number, split: any) => sum + split.amount, 0);
-
-            // Calculate if event is settled
-            const balances: Record<string, number> = {};
-            event.participants?.forEach(p => {
-              balances[p.user_id] = 0;
-            });
-
-            splits.forEach((split: any) => {
-              if (balances[split.paid_by] !== undefined) {
-                balances[split.paid_by] += split.amount;
-              }
-
-              split.split_participants?.forEach((sp: any) => {
-                if (balances[sp.user_id] !== undefined) {
-                  balances[sp.user_id] -= sp.amount_owed;
-                }
-              });
-            });
-
-            // Only show settled if there are actual splits
-            const isSettled = splits.length > 0 && Object.values(balances).every(balance => Math.abs(balance) < 0.01);
-
-            return { ...event, isSettled, totalAmount };
-          } catch (error) {
-            return { ...event, isSettled: false, totalAmount: 0 };
-          }
-        })
-      );
-
-      setEvents(eventsWithStatus);
+      setEvents(eventsData);
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
@@ -166,7 +122,7 @@ export default function Dashboard() {
                   style={{
                     padding: '24px',
                     background: event.is_dismissed ? colors.cadetGray2 : colors.surface,
-                    border: `2px solid ${event.isSettled ? colors.purple : colors.border}`,
+                    border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
                     borderRadius: '12px',
                     cursor: 'pointer',
                     display: 'flex',
@@ -201,6 +157,18 @@ export default function Dashboard() {
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                       <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
+                      {event.is_settled && (
+                        <span style={{
+                          padding: '6px 12px',
+                          background: colors.purple,
+                          color: '#fff',
+                          borderRadius: '16px',
+                          fontSize: '16px',
+                          fontWeight: '600'
+                        }}>
+                          ✓ Settled
+                        </span>
+                      )}
                     </div>
                     <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
                       {new Date(event.created_at).toLocaleDateString('en-US', {

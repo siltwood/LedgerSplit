@@ -28,7 +28,7 @@ export const eventsAPI = {
   getById: (id: string) => api.get(`/events/${id}`),
   create: (data: { name: string; description?: string; participant_ids?: string[] }) =>
     api.post('/events', data),
-  update: (id: string, data: { name?: string; description?: string; is_dismissed?: boolean }) =>
+  update: (id: string, data: { name?: string; description?: string; is_dismissed?: boolean; is_settled?: boolean }) =>
     api.put(`/events/${id}`, data),
   delete: (id: string) => api.delete(`/events/${id}`),
   inviteUser: (id: string, email: string) =>
@@ -78,6 +78,14 @@ export const paymentsAPI = {
     payment_date?: string;
   }) => api.post('/payments', data),
   delete: (id: string) => api.delete(`/payments/${id}`),
+};
+
+// Settled Confirmations
+export const settledAPI = {
+  toggleConfirmation: (eventId: string) =>
+    api.post(`/events/${eventId}/settled/toggle`),
+  getConfirmations: (eventId: string) =>
+    api.get(`/events/${eventId}/settled`),
 };
 
 export default api;

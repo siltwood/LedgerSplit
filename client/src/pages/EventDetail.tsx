@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { eventsAPI, splitsAPI, paymentsAPI } from '../services/api';
-import type { Event, Split } from '../types/index';
+import { eventsAPI, splitsAPI, paymentsAPI, settledAPI } from '../services/api';
+import type { Event, Split, EventSettledConfirmation } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
 import { useAuth } from '../context/AuthContext';
@@ -16,6 +16,7 @@ export default function EventDetail() {
   const [copyStatus, setCopyStatus] = useState('');
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; splitId: string | null }>({ show: false, splitId: null });
   const [showAllBalances, setShowAllBalances] = useState(false);
+  const [settledConfirmations, setSettledConfirmations] = useState<EventSettledConfirmation[]>([]);
 
   useEffect(() => {
     loadData();
@@ -49,6 +50,7 @@ export default function EventDetail() {
       }));
       setSplits(transformedSplits);
       setPayments(paymentsRes.data.payments || []);
+      setSettledConfirmations(eventRes.data.settled_confirmations || []);
     } catch (error) {
       console.error('Failed to load event:', error);
     } finally {
@@ -79,6 +81,17 @@ export default function EventDetail() {
     } catch (error) {
       setCopyStatus('✗ Failed to copy link');
       setTimeout(() => setCopyStatus(''), 2500);
+    }
+  };
+
+  const handleToggleSettledConfirmation = async () => {
+    if (!id) return;
+
+    try {
+      await settledAPI.toggleConfirmation(id);
+      loadData();
+    } catch (error) {
+      console.error('Failed to toggle settled confirmation:', error);
     }
   };
 
@@ -260,6 +273,111 @@ export default function EventDetail() {
           Share Invite Link
         </button>
       </div>
+
+      {/* Settling Vote Section */}
+      {event.participants && event.participants.length > 0 && splits.length > 0 && (
+        <div style={{
+          background: colors.surface,
+          padding: '20px',
+          borderRadius: '8px',
+          border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
+          marginBottom: '24px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+            <h3 style={{ margin: 0, color: colors.text, fontSize: '22px' }}>
+              {event.is_settled ? '✓ Event Settled!' : 'Settle Event'}
+            </h3>
+            {event.is_settled && (
+              <span style={{
+                padding: '8px 16px',
+                background: colors.purple,
+                color: '#fff',
+                borderRadius: '20px',
+                fontSize: '18px',
+                fontWeight: '600'
+              }}>
+                All settled up!
+              </span>
+            )}
+          </div>
+
+          <div style={{ fontSize: '18px', color: colors.text, marginBottom: '16px', opacity: 0.9 }}>
+            {event.is_settled
+              ? 'Everyone has confirmed this event is settled.'
+              : 'Once all participants confirm, this event will be marked as settled.'}
+          </div>
+
+          {/* Participant Checkboxes */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {event.participants.map((participant) => {
+              const hasConfirmed = settledConfirmations.some(c => c.user_id === participant.user_id);
+              const isCurrentUser = participant.user_id === user?.id;
+
+              return (
+                <div
+                  key={participant.user_id}
+                  onClick={isCurrentUser ? handleToggleSettledConfirmation : undefined}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '12px 16px',
+                    background: hasConfirmed ? colors.purple : colors.background,
+                    borderRadius: '8px',
+                    border: `2px solid ${hasConfirmed ? colors.purple : colors.border}`,
+                    cursor: isCurrentUser ? 'pointer' : 'default',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '4px',
+                    border: `2px solid ${hasConfirmed ? '#fff' : colors.border}`,
+                    background: hasConfirmed ? colors.purple : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    {hasConfirmed && (
+                      <span style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>✓</span>
+                    )}
+                  </div>
+                  <span style={{
+                    fontSize: '20px',
+                    color: hasConfirmed ? '#fff' : colors.text,
+                    fontWeight: hasConfirmed ? '600' : '500'
+                  }}>
+                    {participant.user?.name || participant.user?.email}
+                    {isCurrentUser && ' (you)'}
+                  </span>
+                  {hasConfirmed && (
+                    <span style={{
+                      marginLeft: 'auto',
+                      fontSize: '16px',
+                      color: '#fff',
+                      opacity: 0.9
+                    }}>
+                      Confirmed
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{
+            marginTop: '16px',
+            fontSize: '16px',
+            color: colors.text,
+            opacity: 0.7,
+            textAlign: 'center'
+          }}>
+            {settledConfirmations.length} of {event.participants.length} participants confirmed
+          </div>
+        </div>
+      )}
 
       {/* Toast Notification for Copy Status */}
       {copyStatus && (

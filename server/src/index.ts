@@ -11,6 +11,7 @@ import authRoutes from './routes/auth';
 import eventsRoutes from './routes/events';
 import splitsRoutes from './routes/splits';
 import paymentsRoutes from './routes/payments';
+import settledRoutes from './routes/settled';
 
 dotenv.config();
 
@@ -118,6 +119,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/splits', splitsRoutes);
 app.use('/api/payments', paymentsRoutes);
+app.use('/api', settledRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

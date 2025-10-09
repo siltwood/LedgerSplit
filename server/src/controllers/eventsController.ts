@@ -15,7 +15,9 @@ export const getEvents = async (req: AuthRequest, res: Response) => {
           name,
           description,
           created_by,
-          created_at
+          created_at,
+          is_dismissed,
+          is_settled
         )
       `)
       .eq('user_id', userId)
@@ -83,7 +85,13 @@ export const getEventById = async (req: AuthRequest, res: Response) => {
       `)
       .eq('event_id', id);
 
-    res.json({ event, participants });
+    // Get settled confirmations
+    const { data: settledConfirmations } = await db
+      .from('event_settled_confirmations')
+      .select('user_id, confirmed_at')
+      .eq('event_id', id);
+
+    res.json({ event, participants, settled_confirmations: settledConfirmations || [] });
   } catch (error) {
     console.error('Get event error:', error);
     res.status(500).json({ error: 'Failed to fetch event' });
@@ -197,7 +205,7 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
 export const updateEvent = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, is_dismissed } = req.body;
+    const { name, description, is_dismissed, is_settled } = req.body;
     const userId = req.user?.id;
 
     // Check if user is creator
@@ -217,6 +225,7 @@ export const updateEvent = async (req: AuthRequest, res: Response) => {
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
     if (is_dismissed !== undefined) updateData.is_dismissed = is_dismissed;
+    if (is_settled !== undefined) updateData.is_settled = is_settled;
 
     // Update event
     const { data: updatedEvent, error } = await db
