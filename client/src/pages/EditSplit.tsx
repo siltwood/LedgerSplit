@@ -204,7 +204,7 @@ export default function EditSplit() {
           <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Split between *
           </label>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {event.participants?.sort((a: any, b: any) => {
               // Current user always first
               if (a.user_id === user?.id) return -1;
@@ -214,43 +214,53 @@ export default function EditSplit() {
               const isSelected = selectedParticipants.includes(p.user_id);
               const isCurrentUser = p.user_id === user?.id;
               return (
-                <label
+                <div
                   key={p.user_id}
+                  onClick={() => {
+                    if (!isCurrentUser) {
+                      if (isSelected) {
+                        setSelectedParticipants(selectedParticipants.filter(id => id !== p.user_id));
+                      } else {
+                        setSelectedParticipants([...selectedParticipants, p.user_id]);
+                      }
+                    }
+                  }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    padding: '12px',
-                    background: isSelected ? colors.purple : colors.surface,
-                    border: `1px solid ${isSelected ? colors.purple : colors.border}`,
-                    borderRadius: '6px',
+                    gap: '12px',
+                    padding: '12px 16px',
+                    background: isSelected ? colors.purple : colors.background,
+                    borderRadius: '8px',
+                    border: `2px solid ${isSelected ? colors.purple : colors.border}`,
                     cursor: isCurrentUser ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s',
-                    opacity: isCurrentUser ? 0.6 : 1
+                    transition: 'all 0.2s ease',
+                    opacity: isCurrentUser ? 0.7 : 1
                   }}
                 >
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    disabled={isCurrentUser}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedParticipants([...selectedParticipants, p.user_id]);
-                      } else {
-                        setSelectedParticipants(selectedParticipants.filter(id => id !== p.user_id));
-                      }
-                    }}
-                    style={{
-                      marginRight: '12px',
-                      width: '20px',
-                      height: '20px',
-                      cursor: isCurrentUser ? 'not-allowed' : 'pointer',
-                      accentColor: colors.purple
-                    }}
-                  />
-                  <span style={{ color: colors.text, fontSize: '20px' }}>
+                  <div style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '4px',
+                    border: `2px solid ${isSelected ? '#fff' : colors.border}`,
+                    background: isSelected ? colors.purple : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    {isSelected && (
+                      <span style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>✓</span>
+                    )}
+                  </div>
+                  <span style={{
+                    fontSize: '20px',
+                    color: isSelected ? '#fff' : colors.text,
+                    fontWeight: isSelected ? '600' : '500'
+                  }}>
                     {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
                   </span>
-                </label>
+                </div>
               );
             })}
           </div>
