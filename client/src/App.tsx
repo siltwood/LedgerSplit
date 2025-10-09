@@ -100,6 +100,9 @@ function App() {
               }
             />
           </Route>
+
+          {/* Catch-all route for 404 */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
