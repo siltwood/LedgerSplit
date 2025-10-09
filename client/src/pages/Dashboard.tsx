@@ -10,6 +10,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState<string | null>(null);
 
   const handleDismiss = async (eventId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -32,6 +33,19 @@ export default function Dashboard() {
       loadData();
     } catch (error) {
       console.error('Failed to undismiss event:', error);
+    }
+  };
+
+  const handleDeleteEvent = async () => {
+    if (!showDeleteModal) return;
+
+    try {
+      await eventsAPI.delete(showDeleteModal);
+      setShowDeleteModal(null);
+      loadData();
+    } catch (error) {
+      console.error('Failed to delete event:', error);
+      alert('Failed to delete event');
     }
   };
 
@@ -135,24 +149,42 @@ export default function Dashboard() {
                   }}
                 >
                   {event.created_by === user?.id && (
-                    <button
-                      onClick={(e) => event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e)}
-                      style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                        padding: '8px 16px',
-                        background: event.is_dismissed ? colors.primary : colors.cadetGray2,
-                        color: '#000',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '20px',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {event.is_dismissed ? 'Restore' : 'Dismiss'}
-                    </button>
+                    <div style={{ position: 'absolute', top: '12px', right: '12px', display: 'flex', gap: '8px' }}>
+                      <button
+                        onClick={(e) => event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e)}
+                        style={{
+                          padding: '8px 16px',
+                          background: event.is_dismissed ? colors.primary : colors.cadetGray2,
+                          color: '#000',
+                          border: 'none',
+                          borderRadius: '4px',
+                          fontSize: '20px',
+                          fontWeight: '600',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {event.is_dismissed ? 'Restore' : 'Dismiss'}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowDeleteModal(event.event_id);
+                        }}
+                        style={{
+                          padding: '8px 16px',
+                          background: colors.error,
+                          color: '#000',
+                          border: 'none',
+                          borderRadius: '4px',
+                          fontSize: '20px',
+                          fontWeight: '600',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   )}
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
@@ -194,6 +226,67 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: colors.surface,
+            padding: '24px',
+            borderRadius: '8px',
+            border: `1px solid ${colors.border}`,
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>Delete Event?</h3>
+            <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
+              This will permanently delete the event and all associated bills. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
+              <button
+                onClick={() => setShowDeleteModal(null)}
+                style={{
+                  padding: '12px 24px',
+                  background: colors.secondary,
+                  color: colors.text,
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '20px'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteEvent}
+                style={{
+                  padding: '12px 24px',
+                  background: colors.error,
+                  color: colors.text,
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '20px',
+                  fontWeight: '600'
+                }}
+              >
+                Delete Event
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

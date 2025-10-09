@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { eventsAPI, splitsAPI, paymentsAPI, settledAPI } from '../services/api';
 import type { Event, Split, EventSettledConfirmation } from '../types/index';
 import { colors } from '../styles/colors';
@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
   const [splits, setSplits] = useState<Split[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
@@ -17,6 +18,7 @@ export default function EventDetail() {
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; splitId: string | null }>({ show: false, splitId: null });
   const [showAllBalances, setShowAllBalances] = useState(false);
   const [settledConfirmations, setSettledConfirmations] = useState<EventSettledConfirmation[]>([]);
+  const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -131,6 +133,18 @@ export default function EventDetail() {
     } catch (error) {
       console.error('Failed to record payment:', error);
       alert('Failed to record payment');
+    }
+  };
+
+  const handleDeleteEvent = async () => {
+    if (!id) return;
+
+    try {
+      await eventsAPI.delete(id);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Failed to delete event:', error);
+      alert('Failed to delete event');
     }
   };
 
@@ -294,10 +308,18 @@ export default function EventDetail() {
         <button onClick={handleCopyShareLink} style={buttonStyles.secondary}>
           Share Invite Link
         </button>
+        {event.created_by === user?.id && (
+          <button
+            onClick={() => setShowDeleteEventModal(true)}
+            style={{ ...buttonStyles.secondary, background: colors.error, border: 'none' }}
+          >
+            Delete Event
+          </button>
+        )}
       </div>
 
       {/* Settling Vote Section */}
-      {event.participants && event.participants.length > 0 && splits.length > 0 && (
+      {event.participants && event.participants.length > 0 && splits.length > 0 && !event.is_settled && (
         <div style={{
           background: colors.surface,
           padding: '20px',
@@ -774,6 +796,50 @@ export default function EventDetail() {
                 style={{ ...buttonStyles.danger, border: 'none' }}
               >
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Event Confirmation Modal */}
+      {showDeleteEventModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: colors.surface,
+            padding: '24px',
+            borderRadius: '8px',
+            border: `1px solid ${colors.border}`,
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>Delete Event?</h3>
+            <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
+              This will permanently delete the event and all associated bills. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
+              <button
+                onClick={() => setShowDeleteEventModal(false)}
+                style={buttonStyles.secondary}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteEvent}
+                style={{ ...buttonStyles.danger, border: 'none' }}
+              >
+                Delete Event
               </button>
             </div>
           </div>
