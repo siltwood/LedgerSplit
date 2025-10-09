@@ -201,18 +201,6 @@ export default function Dashboard() {
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                       <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
-                      {event.isSettled && (
-                        <span style={{
-                          padding: '4px 12px',
-                          background: colors.purple,
-                          color: '#fff',
-                          borderRadius: '16px',
-                          fontSize: '14px',
-                          fontWeight: '600'
-                        }}>
-                          ✓ Settled
-                        </span>
-                      )}
                     </div>
                     <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
                       {new Date(event.created_at).toLocaleDateString('en-US', {
@@ -229,14 +217,6 @@ export default function Dashboard() {
                     {event.participants && (
                       <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7 }}>
                         {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
-                      </div>
-                    )}
-                  </div>
-
-                  <div style={{ textAlign: 'right' }}>
-                    {event.totalAmount !== undefined && event.totalAmount > 0 && (
-                      <div style={{ fontSize: '28px', fontWeight: 'bold', color: colors.purple }}>
-                        ${event.totalAmount.toFixed(2)}
                       </div>
                     )}
                   </div>
