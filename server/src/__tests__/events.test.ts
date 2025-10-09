@@ -128,24 +128,66 @@ describe('Events API', () => {
     it('should return only events user is part of', async () => {
       const { db } = require('../config/database');
 
-      db.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            is: jest.fn().mockResolvedValue({
-              data: [
-                { events: { event_id: 'event-123', name: 'Vegas Trip' } },
-                { events: { event_id: 'event-456', name: 'Concert' } },
-              ],
-              error: null,
+      db.from.mockImplementation((table: string) => {
+        if (table === 'event_participants' && db.from.mock.calls.length === 1) {
+          // First call: Get events
+          return {
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                is: jest.fn().mockResolvedValue({
+                  data: [
+                    { events: { event_id: 'event-123', name: 'Vegas Trip', created_at: new Date().toISOString(), is_settled: false } },
+                    { events: { event_id: 'event-456', name: 'Concert', created_at: new Date().toISOString(), is_settled: false } },
+                  ],
+                  error: null,
+                }),
+              }),
             }),
-          }),
-        }),
+          };
+        } else if (table === 'user_event_preferences') {
+          // Second call: Get user preferences
+          return {
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                in: jest.fn().mockResolvedValue({
+                  data: [],
+                  error: null,
+                }),
+              }),
+            }),
+          };
+        } else if (table === 'event_participants') {
+          // Third call: Get all participants
+          return {
+            select: jest.fn().mockReturnValue({
+              in: jest.fn().mockResolvedValue({
+                data: [
+                  {
+                    event_id: 'event-123',
+                    user_id: 'test-user-id',
+                    joined_at: new Date().toISOString(),
+                    users: { user_id: 'test-user-id', name: 'Test User', email: 'test@example.com', avatar_url: null }
+                  },
+                  {
+                    event_id: 'event-456',
+                    user_id: 'test-user-id',
+                    joined_at: new Date().toISOString(),
+                    users: { user_id: 'test-user-id', name: 'Test User', email: 'test@example.com', avatar_url: null }
+                  },
+                ],
+                error: null,
+              }),
+            }),
+          };
+        }
       });
 
       const response = await request(app).get('/events');
 
       expect(response.status).toBe(200);
       expect(response.body.events).toHaveLength(2);
+      expect(response.body.events[0]).toHaveProperty('participants');
+      expect(response.body.events[0]).toHaveProperty('is_dismissed');
     });
   });
 
@@ -833,6 +875,15 @@ describe('Events API', () => {
                   }),
                 })),
               })),
+            })),
+          };
+        } else if (table === 'event_settled_confirmations') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn().mockResolvedValue({
+                data: [],
+                error: null,
+              }),
             })),
           };
         }

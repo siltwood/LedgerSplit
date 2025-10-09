@@ -1,12 +1,18 @@
 import { Response } from 'express';
 import { db } from '../config/database';
 import { AuthRequest } from '../middleware/auth';
+import { isValidUUID } from '../utils/validation';
 
 // Toggle user's settled confirmation for an event
 export const toggleSettledConfirmation = async (req: AuthRequest, res: Response) => {
   try {
     const { eventId } = req.params;
     const userId = req.user?.id;
+
+    // Validate eventId as UUID
+    if (!isValidUUID(eventId)) {
+      return res.status(400).json({ error: 'Invalid event ID' });
+    }
 
     // Check if user is participant
     const { data: participation } = await db
@@ -87,6 +93,11 @@ export const getSettledConfirmations = async (req: AuthRequest, res: Response) =
   try {
     const { eventId } = req.params;
     const userId = req.user?.id;
+
+    // Validate eventId as UUID
+    if (!isValidUUID(eventId)) {
+      return res.status(400).json({ error: 'Invalid event ID' });
+    }
 
     // Check if user is participant
     const { data: participation } = await db
