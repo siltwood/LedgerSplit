@@ -126,7 +126,7 @@ export default function Dashboard() {
             fontSize: '22px',
             fontWeight: 'bold'
           }}>
-            + New Event
+            + Add New Event
           </button>
         </Link>
       </div>
