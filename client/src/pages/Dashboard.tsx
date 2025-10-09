@@ -11,6 +11,7 @@ export default function Dashboard() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleDismiss = async (eventId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -79,6 +80,48 @@ export default function Dashboard() {
     return <div style={{ padding: '20px' }}></div>;
   }
 
+  // Color palette for participants (same as EventDetail)
+  const participantColors = [
+    colors.powderBlue,
+    colors.columbiaBlue,
+    colors.dustyBlue,
+    colors.lightBlue,
+    colors.skyBlue,
+    colors.steelBlue,
+    colors.cadetGray,
+    colors.stormGray,
+    colors.cadetGray2,
+    colors.cadetGray3,
+    colors.slateGray,
+  ];
+
+  const getParticipantColor = (event: Event, userId: string) => {
+    if (!event.participants) return colors.surface;
+    const index = event.participants.findIndex(p => p.user_id === userId);
+    return index !== -1 ? participantColors[index % participantColors.length] : colors.surface;
+  };
+
+  // Filter events based on search query
+  const filteredEvents = events.filter(event => {
+    if (!searchQuery.trim()) return true;
+
+    const query = searchQuery.toLowerCase();
+
+    // Search event name
+    if (event.name.toLowerCase().includes(query)) return true;
+
+    // Search event description
+    if (event.description?.toLowerCase().includes(query)) return true;
+
+    // Search participant names/emails
+    if (event.participants?.some(p =>
+      (p.user?.name?.toLowerCase().includes(query)) ||
+      (p.user?.email?.toLowerCase().includes(query))
+    )) return true;
+
+    return false;
+  });
+
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ color: colors.text, marginBottom: '20px' }}>Dashboard</h1>
@@ -101,6 +144,26 @@ export default function Dashboard() {
         </Link>
       </div>
 
+      {/* Search Bar */}
+      <div style={{ marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Search events or participants..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            fontSize: '20px',
+            border: `2px solid ${colors.border}`,
+            borderRadius: '8px',
+            background: colors.surface,
+            color: colors.text,
+            outline: 'none'
+          }}
+        />
+      </div>
+
       {/* Events */}
       <div>
         <h2 style={{ color: colors.text, marginBottom: '20px' }}>Your Events</h2>
@@ -116,9 +179,21 @@ export default function Dashboard() {
           }}>
             No events yet. Create one to get started!
           </div>
+        ) : filteredEvents.length === 0 ? (
+          <div style={{
+            padding: '40px',
+            background: colors.surface,
+            border: `1px solid ${colors.border}`,
+            borderRadius: '8px',
+            textAlign: 'center',
+            color: colors.text,
+            fontSize: '20px'
+          }}>
+            No events found matching "{searchQuery}"
+          </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {events
+            {filteredEvents
               .sort((a, b) => {
                 // Sort: active events first, then dismissed events
                 if (a.is_dismissed && !b.is_dismissed) return 1;
@@ -214,9 +289,24 @@ export default function Dashboard() {
                         {event.description}
                       </div>
                     )}
-                    {event.participants && (
-                      <div style={{ fontSize: '20px', color: colors.text, opacity: 0.7 }}>
-                        {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
+                    {event.participants && event.participants.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                        {event.participants.map((p) => (
+                          <span
+                            key={p.user_id}
+                            style={{
+                              padding: '4px 10px',
+                              background: getParticipantColor(event, p.user_id),
+                              borderRadius: '6px',
+                              fontSize: '18px',
+                              color: '#000',
+                              fontWeight: '500',
+                              wordBreak: 'break-word'
+                            }}
+                          >
+                            {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
+                          </span>
+                        ))}
                       </div>
                     )}
                   </div>

@@ -40,14 +40,44 @@ export const getEvents = async (req: AuthRequest, res: Response) => {
       .eq('user_id', userId)
       .in('event_id', eventIds);
 
-    // Merge preferences into events
+    // Get participants for all events
+    const { data: allParticipants } = await db
+      .from('event_participants')
+      .select(`
+        event_id,
+        user_id,
+        joined_at,
+        users (
+          user_id,
+          name,
+          email,
+          avatar_url
+        )
+      `)
+      .in('event_id', eventIds);
+
+    // Group participants by event_id
+    const participantsMap = new Map<string, any[]>();
+    allParticipants?.forEach((p: any) => {
+      if (!participantsMap.has(p.event_id)) {
+        participantsMap.set(p.event_id, []);
+      }
+      participantsMap.get(p.event_id)!.push({
+        user_id: p.user_id,
+        joined_at: p.joined_at,
+        user: p.users
+      });
+    });
+
+    // Merge preferences and participants into events
     const prefsMap = new Map(preferences?.map(p => [p.event_id, p.is_dismissed]) || []);
-    const eventsWithPrefs = events.map((event: any) => ({
+    const eventsWithData = events.map((event: any) => ({
       ...event,
-      is_dismissed: prefsMap.get(event.event_id) || false
+      is_dismissed: prefsMap.get(event.event_id) || false,
+      participants: participantsMap.get(event.event_id) || []
     }));
 
-    res.json({ events: eventsWithPrefs });
+    res.json({ events: eventsWithData });
   } catch (error) {
     console.error('Get events error:', error);
     res.status(500).json({ error: 'Failed to fetch events' });
