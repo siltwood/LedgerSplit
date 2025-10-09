@@ -85,13 +85,35 @@ export default function EventDetail() {
   };
 
   const handleToggleSettledConfirmation = async () => {
-    if (!id) return;
+    if (!id || !user) return;
 
+    const isCurrentlyConfirmed = settledConfirmations.some(c => c.user_id === user.id);
+
+    // Optimistically update UI
+    if (isCurrentlyConfirmed) {
+      setSettledConfirmations(settledConfirmations.filter(c => c.user_id !== user.id));
+      if (event) {
+        setEvent({ ...event, is_settled: false });
+      }
+    } else {
+      setSettledConfirmations([...settledConfirmations, { event_id: id, user_id: user.id, confirmed_at: new Date().toISOString() }]);
+
+      // Check if this completes all confirmations
+      if (event && event.participants) {
+        const newConfirmationCount = settledConfirmations.length + 1;
+        if (newConfirmationCount === event.participants.length) {
+          setEvent({ ...event, is_settled: true });
+        }
+      }
+    }
+
+    // Make API call in background
     try {
       await settledAPI.toggleConfirmation(id);
-      loadData();
     } catch (error) {
       console.error('Failed to toggle settled confirmation:', error);
+      // Reload on error to get correct state
+      loadData();
     }
   };
 
@@ -355,7 +377,7 @@ export default function EventDetail() {
                   {hasConfirmed && (
                     <span style={{
                       marginLeft: 'auto',
-                      fontSize: '16px',
+                      fontSize: '20px',
                       color: '#fff',
                       opacity: 0.9
                     }}>
@@ -369,7 +391,7 @@ export default function EventDetail() {
 
           <div style={{
             marginTop: '16px',
-            fontSize: '16px',
+            fontSize: '20px',
             color: colors.text,
             opacity: 0.7,
             textAlign: 'center'
@@ -563,7 +585,7 @@ export default function EventDetail() {
                       })()}
                     </div>
                     <div style={{ fontSize: '20px', color: '#000', opacity: 0.9, marginBottom: '8px' }}>
-                      <div>Purchased by {split.paid_by === user?.id ? 'you' : (split.paid_by_user.name || split.paid_by_user.email)}</div>
+                      <div>Paid for by {split.paid_by === user?.id ? 'you' : (split.paid_by_user.name || split.paid_by_user.email)}</div>
                       <div>Total: ${split.amount.toFixed(2)}</div>
                       {split.split_participants && split.split_participants.length > 0 && (
                         <div>Split between {split.split_participants.length} {split.split_participants.length === 1 ? 'person' : 'people'}</div>

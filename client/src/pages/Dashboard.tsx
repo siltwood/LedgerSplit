@@ -146,7 +146,7 @@ export default function Dashboard() {
                         color: '#000',
                         border: 'none',
                         borderRadius: '4px',
-                        fontSize: '16px',
+                        fontSize: '20px',
                         fontWeight: '600',
                         cursor: 'pointer'
                       }}
@@ -163,14 +163,14 @@ export default function Dashboard() {
                           background: colors.purple,
                           color: '#fff',
                           borderRadius: '16px',
-                          fontSize: '16px',
+                          fontSize: '20px',
                           fontWeight: '600'
                         }}>
                           ✓ Settled
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
+                    <div style={{ fontSize: '20px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
                       {new Date(event.created_at).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
@@ -183,7 +183,7 @@ export default function Dashboard() {
                       </div>
                     )}
                     {event.participants && (
-                      <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7 }}>
+                      <div style={{ fontSize: '20px', color: colors.text, opacity: 0.7 }}>
                         {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
                       </div>
                     )}
