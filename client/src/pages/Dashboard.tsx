@@ -312,8 +312,8 @@ export default function Dashboard() {
             <Link to="/events/new">
               <button style={{
                 padding: '12px 24px',
-                background: colors.primary,
-                color: colors.text,
+                background: colors.purple,
+                color: '#fff',
                 border: 'none',
                 borderRadius: '8px',
                 cursor: 'pointer',
