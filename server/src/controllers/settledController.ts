@@ -11,7 +11,7 @@ export const toggleSettledConfirmation = async (req: AuthRequest, res: Response)
 
     // Validate eventId as UUID
     if (!isValidUUID(eventId)) {
-      return res.status(400).json({ error: 'Invalid event ID' });
+      return res.status(400).json({ error: 'Invalid event ID.' });
     }
 
     // Check if user is participant
@@ -23,7 +23,7 @@ export const toggleSettledConfirmation = async (req: AuthRequest, res: Response)
       .single();
 
     if (!participation) {
-      return res.status(403).json({ error: 'Not a participant of this event' });
+      return res.status(403).json({ error: 'Not a participant of this event.' });
     }
 
     // Check if user already confirmed
@@ -84,7 +84,7 @@ export const toggleSettledConfirmation = async (req: AuthRequest, res: Response)
     }
   } catch (error) {
     console.error('Toggle settled confirmation error:', error);
-    res.status(500).json({ error: 'Failed to update settled confirmation' });
+    res.status(500).json({ error: 'Failed to update settled confirmation.' });
   }
 };
 
@@ -96,7 +96,7 @@ export const getSettledConfirmations = async (req: AuthRequest, res: Response) =
 
     // Validate eventId as UUID
     if (!isValidUUID(eventId)) {
-      return res.status(400).json({ error: 'Invalid event ID' });
+      return res.status(400).json({ error: 'Invalid event ID.' });
     }
 
     // Check if user is participant
@@ -108,7 +108,7 @@ export const getSettledConfirmations = async (req: AuthRequest, res: Response) =
       .single();
 
     if (!participation) {
-      return res.status(403).json({ error: 'Not a participant of this event' });
+      return res.status(403).json({ error: 'Not a participant of this event.' });
     }
 
     // Get all confirmations
@@ -120,6 +120,6 @@ export const getSettledConfirmations = async (req: AuthRequest, res: Response) =
     res.json({ confirmations: confirmations || [] });
   } catch (error) {
     console.error('Get settled confirmations error:', error);
-    res.status(500).json({ error: 'Failed to fetch settled confirmations' });
+    res.status(500).json({ error: 'Failed to fetch settled confirmations.' });
   }
 };

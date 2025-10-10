@@ -43,7 +43,7 @@ export default function Login() {
       const response = await authAPI.getGoogleAuthUrl();
       window.location.href = response.data.url;
     } catch (err) {
-      setError('Failed to get Google login URL');
+      setError('Failed to get Google login URL.');
     }
   };
 

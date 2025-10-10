@@ -58,7 +58,7 @@ export default function EditSplit() {
           setSelectedParticipants([user.id]);
         }
       } else {
-        setError('Bill not found');
+        setError('Bill not found.');
       }
     } catch (error) {
       console.error('Failed to load data:', error);
@@ -73,12 +73,12 @@ export default function EditSplit() {
     setError('');
 
     if (!eventIdFromParams || !splitId) {
-      setError('Missing required information');
+      setError('Missing required information.');
       return;
     }
 
     if (!user) {
-      setError('User not found');
+      setError('User not found.');
       return;
     }
 

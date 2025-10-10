@@ -22,7 +22,7 @@ export default function AcceptInvite() {
 
   useEffect(() => {
     if (!token) {
-      setError('Invalid invite link');
+      setError('Invalid invite link.');
       setLoading(false);
       return;
     }
@@ -112,7 +112,7 @@ export default function AcceptInvite() {
       sessionStorage.setItem('invite_token', token || '');
       window.location.href = response.data.url;
     } catch (err) {
-      setError('Failed to get Google login URL');
+      setError('Failed to get Google login URL.');
     }
   };
 

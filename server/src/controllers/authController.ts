@@ -100,7 +100,7 @@ export const register = async (req: AuthRequest, res: Response) => {
 
     // Validate email
     if (!email || !isValidEmail(email)) {
-      return res.status(400).json({ error: 'Valid email is required' });
+      return res.status(400).json({ error: 'Valid email is required.' });
     }
 
     // Validate password
@@ -123,7 +123,7 @@ export const register = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (existingUser) {
-      return res.status(400).json({ error: 'Email already registered' });
+      return res.status(400).json({ error: 'Email already registered.' });
     }
 
     // Hash password
@@ -143,14 +143,14 @@ export const register = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to create user' });
+      return res.status(500).json({ error: 'Failed to create user.' });
     }
 
     // Regenerate session to prevent fixation
     req.session.regenerate((err) => {
       if (err) {
         console.error('Session regeneration error:', err);
-        return res.status(500).json({ error: 'Session error' });
+        return res.status(500).json({ error: 'Session error.' });
       }
 
       // Set session
@@ -164,7 +164,7 @@ export const register = async (req: AuthRequest, res: Response) => {
       req.session.save(async (saveErr) => {
         if (saveErr) {
           console.error('Session save error:', saveErr);
-          return res.status(500).json({ error: 'Session error' });
+          return res.status(500).json({ error: 'Session error.' });
         }
 
         // Auto-accept any pending email invites
@@ -178,7 +178,7 @@ export const register = async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Registration failed' });
+    res.status(500).json({ error: 'Registration failed.' });
   }
 };
 
@@ -192,7 +192,7 @@ export const login = async (req: AuthRequest, res: Response) => {
 
     // Validate email format
     if (!email || !isValidEmail(email)) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
     // Find user
@@ -203,26 +203,26 @@ export const login = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (error || !user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
     // Check if user registered with Google
     if (!user.password_hash) {
-      return res.status(400).json({ error: 'Please login with Google' });
+      return res.status(400).json({ error: 'Please login with Google.' });
     }
 
     // Verify password
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
     // Regenerate session to prevent fixation
     req.session.regenerate((err) => {
       if (err) {
         console.error('Session regeneration error:', err);
-        return res.status(500).json({ error: 'Session error' });
+        return res.status(500).json({ error: 'Session error.' });
       }
 
       // Set session
@@ -236,7 +236,7 @@ export const login = async (req: AuthRequest, res: Response) => {
       req.session.save((saveErr) => {
         if (saveErr) {
           console.error('Session save error:', saveErr);
-          return res.status(500).json({ error: 'Session error' });
+          return res.status(500).json({ error: 'Session error.' });
         }
 
         res.json({
@@ -247,7 +247,7 @@ export const login = async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Login failed' });
+    res.status(500).json({ error: 'Login failed.' });
   }
 };
 
@@ -276,12 +276,12 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
   const { code, state } = req.query;
 
   if (!code || typeof code !== 'string') {
-    return res.status(400).json({ error: 'Authorization code missing' });
+    return res.status(400).json({ error: 'Authorization code missing.' });
   }
 
   // Verify state parameter to prevent CSRF
   if (!state || state !== req.session.oauthState) {
-    return res.status(403).json({ error: 'Invalid state parameter' });
+    return res.status(403).json({ error: 'Invalid state parameter.' });
   }
 
   // Clear state from session
@@ -298,7 +298,7 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
 
     const payload = ticket.getPayload();
     if (!payload) {
-      return res.status(400).json({ error: 'Failed to get user info' });
+      return res.status(400).json({ error: 'Failed to get user info.' });
     }
 
     // Check if user exists by email
@@ -340,7 +340,7 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
 
       if (insertError) {
         console.error('Supabase error:', insertError);
-        return res.status(500).json({ error: 'Failed to create user' });
+        return res.status(500).json({ error: 'Failed to create user.' });
       }
       user = newUser;
     }
@@ -349,7 +349,7 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
     req.session.regenerate((err) => {
       if (err) {
         console.error('Session regeneration error:', err);
-        return res.status(500).json({ error: 'Session error' });
+        return res.status(500).json({ error: 'Session error.' });
       }
 
       // Set session
@@ -369,7 +369,7 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
       req.session.save((saveErr) => {
         if (saveErr) {
           console.error('Session save error:', saveErr);
-          return res.status(500).json({ error: 'Session error' });
+          return res.status(500).json({ error: 'Session error.' });
         }
 
         // Redirect to client with success
@@ -379,7 +379,7 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     console.error('Google auth error:', error);
-    res.status(500).json({ error: 'Authentication failed' });
+    res.status(500).json({ error: 'Authentication failed.' });
   }
 };
 
@@ -392,7 +392,7 @@ export const getCurrentUser = (req: AuthRequest, res: Response) => {
 export const logout = (req: AuthRequest, res: Response) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).json({ error: 'Failed to logout' });
+      return res.status(500).json({ error: 'Failed to logout.' });
     }
     res.json({ message: 'Logged out successfully' });
   });
@@ -436,7 +436,7 @@ export const requestPasswordReset = async (req: AuthRequest, res: Response) => {
 
     if (tokenError) {
       console.error('Token error:', tokenError);
-      return res.status(500).json({ error: 'Failed to create reset token' });
+      return res.status(500).json({ error: 'Failed to create reset token.' });
     }
 
     // Send email
@@ -446,7 +446,7 @@ export const requestPasswordReset = async (req: AuthRequest, res: Response) => {
     res.json({ message: 'If that email exists, a reset link has been sent' });
   } catch (error) {
     console.error('Password reset request error:', error);
-    res.status(500).json({ error: 'Failed to process request' });
+    res.status(500).json({ error: 'Failed to process request.' });
   }
 };
 
@@ -465,7 +465,7 @@ export const resetPassword = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (tokenError || !resetToken) {
-      return res.status(400).json({ error: 'Invalid or expired reset token' });
+      return res.status(400).json({ error: 'Invalid or expired reset token.' });
     }
 
     // Hash new password
@@ -479,7 +479,7 @@ export const resetPassword = async (req: AuthRequest, res: Response) => {
 
     if (updateError) {
       console.error('Update error:', updateError);
-      return res.status(500).json({ error: 'Failed to reset password' });
+      return res.status(500).json({ error: 'Failed to reset password.' });
     }
 
     // Mark token as used
@@ -491,7 +491,7 @@ export const resetPassword = async (req: AuthRequest, res: Response) => {
     res.json({ message: 'Password reset successfully' });
   } catch (error) {
     console.error('Password reset error:', error);
-    res.status(500).json({ error: 'Failed to reset password' });
+    res.status(500).json({ error: 'Failed to reset password.' });
   }
 };
 
@@ -508,12 +508,12 @@ export const requestPasswordChange = async (req: AuthRequest, res: Response) => 
       .single();
 
     if (error || !user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'User not found.' });
     }
 
     // Don't allow password change for Google-only accounts
     if (user.google_id) {
-      return res.status(400).json({ error: 'Google accounts cannot change password this way' });
+      return res.status(400).json({ error: 'Google accounts cannot change password this way.' });
     }
 
     // Create reset token
@@ -532,7 +532,7 @@ export const requestPasswordChange = async (req: AuthRequest, res: Response) => 
 
     if (tokenError) {
       console.error('Token error:', tokenError);
-      return res.status(500).json({ error: 'Failed to create reset token' });
+      return res.status(500).json({ error: 'Failed to create reset token.' });
     }
 
     // Send email
@@ -542,7 +542,7 @@ export const requestPasswordChange = async (req: AuthRequest, res: Response) => 
     res.json({ message: 'Password change link sent to your email' });
   } catch (error) {
     console.error('Password change request error:', error);
-    res.status(500).json({ error: 'Failed to process request' });
+    res.status(500).json({ error: 'Failed to process request.' });
   }
 };
 
@@ -559,7 +559,7 @@ export const deleteAccount = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Delete error:', error);
-      return res.status(500).json({ error: 'Failed to delete account' });
+      return res.status(500).json({ error: 'Failed to delete account.' });
     }
 
     // Destroy session
@@ -572,6 +572,6 @@ export const deleteAccount = async (req: AuthRequest, res: Response) => {
     res.json({ message: 'Account deleted successfully' });
   } catch (error) {
     console.error('Delete account error:', error);
-    res.status(500).json({ error: 'Failed to delete account' });
+    res.status(500).json({ error: 'Failed to delete account.' });
   }
 };

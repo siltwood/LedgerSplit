@@ -53,12 +53,12 @@ export default function CreateSplit() {
     setError('');
 
     if (!eventIdFromParams) {
-      setError('Event ID not found');
+      setError('Event ID not found.');
       return;
     }
 
     if (!user) {
-      setError('User not found');
+      setError('User not found.');
       return;
     }
 

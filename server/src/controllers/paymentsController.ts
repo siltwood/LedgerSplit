@@ -9,7 +9,7 @@ export const getPayments = async (req: AuthRequest, res: Response) => {
     const userId = req.user?.id;
 
     if (!event_id) {
-      return res.status(400).json({ error: 'Event ID is required' });
+      return res.status(400).json({ error: 'Event ID is required.' });
     }
 
     // Check if user is participant of the event
@@ -21,7 +21,7 @@ export const getPayments = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!participation) {
-      return res.status(403).json({ error: 'Not a participant of this event' });
+      return res.status(403).json({ error: 'Not a participant of this event.' });
     }
 
     // Get all payments for this event
@@ -48,13 +48,13 @@ export const getPayments = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to fetch payments' });
+      return res.status(500).json({ error: 'Failed to fetch payments.' });
     }
 
     res.json({ payments });
   } catch (error) {
     console.error('Get payments error:', error);
-    res.status(500).json({ error: 'Failed to fetch payments' });
+    res.status(500).json({ error: 'Failed to fetch payments.' });
   }
 };
 
@@ -74,13 +74,13 @@ export const createPayment = async (req: AuthRequest, res: Response) => {
     // Validate required fields
     if (!event_id || !from_user_id || !to_user_id || !amount) {
       return res.status(400).json({
-        error: 'Event ID, from_user_id, to_user_id, and amount are required',
+        error: 'Event ID, from_user_id, to_user_id, and amount are required.',
       });
     }
 
     // Validate amount
     if (isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
-      return res.status(400).json({ error: 'Invalid amount' });
+      return res.status(400).json({ error: 'Invalid amount.' });
     }
 
     // Check if user is participant of the event
@@ -92,7 +92,7 @@ export const createPayment = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!participation) {
-      return res.status(403).json({ error: 'Not a participant of this event' });
+      return res.status(403).json({ error: 'Not a participant of this event.' });
     }
 
     // Verify both users are participants
@@ -111,7 +111,7 @@ export const createPayment = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!fromParticipation || !toParticipation) {
-      return res.status(400).json({ error: 'Both users must be participants of the event' });
+      return res.status(400).json({ error: 'Both users must be participants of the event.' });
     }
 
     // Create payment
@@ -131,13 +131,13 @@ export const createPayment = async (req: AuthRequest, res: Response) => {
 
     if (paymentError) {
       console.error('Database error:', paymentError);
-      return res.status(500).json({ error: 'Failed to create payment' });
+      return res.status(500).json({ error: 'Failed to create payment.' });
     }
 
     res.status(201).json({ payment });
   } catch (error) {
     console.error('Create payment error:', error);
-    res.status(500).json({ error: 'Failed to create payment' });
+    res.status(500).json({ error: 'Failed to create payment.' });
   }
 };
 
@@ -156,7 +156,7 @@ export const deletePayment = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!payment) {
-      return res.status(404).json({ error: 'Payment not found' });
+      return res.status(404).json({ error: 'Payment not found.' });
     }
 
     // Check if user is creator OR check if user is participant of the event
@@ -168,7 +168,7 @@ export const deletePayment = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!participation) {
-      return res.status(403).json({ error: 'Not authorized to delete this payment' });
+      return res.status(403).json({ error: 'Not authorized to delete this payment.' });
     }
 
     // Soft delete payment
@@ -179,12 +179,12 @@ export const deletePayment = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to delete payment' });
+      return res.status(500).json({ error: 'Failed to delete payment.' });
     }
 
     res.json({ message: 'Payment deleted successfully' });
   } catch (error) {
     console.error('Delete payment error:', error);
-    res.status(500).json({ error: 'Failed to delete payment' });
+    res.status(500).json({ error: 'Failed to delete payment.' });
   }
 };

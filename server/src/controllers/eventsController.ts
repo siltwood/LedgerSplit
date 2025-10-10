@@ -24,7 +24,7 @@ export const getEvents = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to fetch events' });
+      return res.status(500).json({ error: 'Failed to fetch events.' });
     }
 
     // Extract events from the nested structure
@@ -80,7 +80,7 @@ export const getEvents = async (req: AuthRequest, res: Response) => {
     res.json({ events: eventsWithData });
   } catch (error) {
     console.error('Get events error:', error);
-    res.status(500).json({ error: 'Failed to fetch events' });
+    res.status(500).json({ error: 'Failed to fetch events.' });
   }
 };
 
@@ -99,7 +99,7 @@ export const getEventById = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!participation) {
-      return res.status(403).json({ error: 'Not a participant of this event' });
+      return res.status(403).json({ error: 'Not a participant of this event.' });
     }
 
     // Get event details
@@ -111,7 +111,7 @@ export const getEventById = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (error || !event) {
-      return res.status(404).json({ error: 'Event not found' });
+      return res.status(404).json({ error: 'Event not found.' });
     }
 
     // Get all participants
@@ -138,7 +138,7 @@ export const getEventById = async (req: AuthRequest, res: Response) => {
     res.json({ event, participants, settled_confirmations: settledConfirmations || [] });
   } catch (error) {
     console.error('Get event error:', error);
-    res.status(500).json({ error: 'Failed to fetch event' });
+    res.status(500).json({ error: 'Failed to fetch event.' });
   }
 };
 
@@ -152,7 +152,7 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
     const { sanitizeText, isValidUUID } = await import('../utils/validation');
 
     if (!name) {
-      return res.status(400).json({ error: 'Event name is required' });
+      return res.status(400).json({ error: 'Event name is required.' });
     }
 
     // Validate and sanitize name
@@ -172,7 +172,7 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
     if (participant_ids && participant_ids.length > 0) {
       for (const id of participant_ids) {
         if (!isValidUUID(id)) {
-          return res.status(400).json({ error: 'Invalid participant ID format' });
+          return res.status(400).json({ error: 'Invalid participant ID format.' });
         }
 
         // Verify participant exists and is not the creator
@@ -203,7 +203,7 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
 
     if (eventError) {
       console.error('Database error:', eventError);
-      return res.status(500).json({ error: 'Failed to create event' });
+      return res.status(500).json({ error: 'Failed to create event.' });
     }
 
     // Add creator and verified participants
@@ -220,7 +220,7 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
 
     if (participantError) {
       console.error('Database error:', participantError);
-      return res.status(500).json({ error: 'Failed to add participants' });
+      return res.status(500).json({ error: 'Failed to add participants.' });
     }
 
     // Get participants with user details
@@ -241,7 +241,7 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
     res.status(201).json({ event, participants });
   } catch (error) {
     console.error('Create event error:', error);
-    res.status(500).json({ error: 'Failed to create event' });
+    res.status(500).json({ error: 'Failed to create event.' });
   }
 };
 
@@ -292,7 +292,7 @@ export const updateEvent = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!event || event.created_by !== userId) {
-      return res.status(403).json({ error: 'Only event creator can update' });
+      return res.status(403).json({ error: 'Only event creator can update.' });
     }
 
     // Build update object (no longer includes is_dismissed)
@@ -311,13 +311,13 @@ export const updateEvent = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to update event' });
+      return res.status(500).json({ error: 'Failed to update event.' });
     }
 
     res.json({ event: updatedEvent });
   } catch (error) {
     console.error('Update event error:', error);
-    res.status(500).json({ error: 'Failed to update event' });
+    res.status(500).json({ error: 'Failed to update event.' });
   }
 };
 
@@ -336,7 +336,7 @@ export const deleteEvent = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!event || event.created_by !== userId) {
-      return res.status(403).json({ error: 'Only event creator can delete' });
+      return res.status(403).json({ error: 'Only event creator can delete.' });
     }
 
     // Soft delete event
@@ -347,13 +347,13 @@ export const deleteEvent = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to delete event' });
+      return res.status(500).json({ error: 'Failed to delete event.' });
     }
 
     res.json({ message: 'Event deleted successfully' });
   } catch (error) {
     console.error('Delete event error:', error);
-    res.status(500).json({ error: 'Failed to delete event' });
+    res.status(500).json({ error: 'Failed to delete event.' });
   }
 };
 
@@ -366,7 +366,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
 
     // Must provide either user_id or email
     if (!user_id && !email) {
-      return res.status(400).json({ error: 'User ID or email is required' });
+      return res.status(400).json({ error: 'User ID or email is required.' });
     }
 
     // Check if current user is participant
@@ -378,7 +378,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!participation) {
-      return res.status(403).json({ error: 'Not a participant of this event' });
+      return res.status(403).json({ error: 'Not a participant of this event.' });
     }
 
     // Get event details for email
@@ -408,7 +408,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
         .single();
 
       if (userError || !invitedUser) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: 'User not found.' });
       }
 
       // Check if already a participant
@@ -420,7 +420,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
         .single();
 
       if (existingParticipant) {
-        return res.status(400).json({ error: 'User already in event' });
+        return res.status(400).json({ error: 'User already in event.' });
       }
 
       // Check for existing pending invite
@@ -433,7 +433,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
         .single();
 
       if (existingInvite) {
-        return res.status(400).json({ error: 'Invite already sent' });
+        return res.status(400).json({ error: 'Invite already sent.' });
       }
 
       inviteData = {
@@ -462,7 +462,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
           .single();
 
         if (existingParticipant) {
-          return res.status(400).json({ error: 'User already in event' });
+          return res.status(400).json({ error: 'User already in event.' });
         }
 
         // Check for existing pending invite
@@ -475,7 +475,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
           .single();
 
         if (existingInvite) {
-          return res.status(400).json({ error: 'Invite already sent' });
+          return res.status(400).json({ error: 'Invite already sent.' });
         }
 
         // Invite by user_id
@@ -497,7 +497,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
           .single();
 
         if (existingInvite) {
-          return res.status(400).json({ error: 'Invite already sent to this email' });
+          return res.status(400).json({ error: 'Invite already sent to this email.' });
         }
 
         inviteData = {
@@ -521,7 +521,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
 
     if (inviteError) {
       console.error('Database error:', inviteError);
-      return res.status(500).json({ error: 'Failed to send invite' });
+      return res.status(500).json({ error: 'Failed to send invite.' });
     }
 
     // Send email for email invites
@@ -543,7 +543,7 @@ export const inviteToEvent = async (req: AuthRequest, res: Response) => {
     res.status(201).json({ message: 'Invite sent successfully', invite });
   } catch (error) {
     console.error('Invite error:', error);
-    res.status(500).json({ error: 'Failed to send invite' });
+    res.status(500).json({ error: 'Failed to send invite.' });
   }
 };
 
@@ -577,13 +577,13 @@ export const getMyInvites = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to fetch invites' });
+      return res.status(500).json({ error: 'Failed to fetch invites.' });
     }
 
     res.json({ invites });
   } catch (error) {
     console.error('Get invites error:', error);
-    res.status(500).json({ error: 'Failed to fetch invites' });
+    res.status(500).json({ error: 'Failed to fetch invites.' });
   }
 };
 
@@ -603,7 +603,7 @@ export const acceptInvite = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (inviteError || !invite) {
-      return res.status(404).json({ error: 'Invite not found' });
+      return res.status(404).json({ error: 'Invite not found.' });
     }
 
     // Add user to event
@@ -616,7 +616,7 @@ export const acceptInvite = async (req: AuthRequest, res: Response) => {
 
     if (participantError) {
       console.error('Database error:', participantError);
-      return res.status(500).json({ error: 'Failed to join event' });
+      return res.status(500).json({ error: 'Failed to join event.' });
     }
 
     // Get all existing splits in this event
@@ -672,7 +672,7 @@ export const acceptInvite = async (req: AuthRequest, res: Response) => {
     res.json({ message: 'Invite accepted successfully' });
   } catch (error) {
     console.error('Accept invite error:', error);
-    res.status(500).json({ error: 'Failed to accept invite' });
+    res.status(500).json({ error: 'Failed to accept invite.' });
   }
 };
 
@@ -692,7 +692,7 @@ export const declineInvite = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (inviteError || !invite) {
-      return res.status(404).json({ error: 'Invite not found' });
+      return res.status(404).json({ error: 'Invite not found.' });
     }
 
     // Update invite status
@@ -707,7 +707,7 @@ export const declineInvite = async (req: AuthRequest, res: Response) => {
     res.json({ message: 'Invite declined' });
   } catch (error) {
     console.error('Decline invite error:', error);
-    res.status(500).json({ error: 'Failed to decline invite' });
+    res.status(500).json({ error: 'Failed to decline invite.' });
   }
 };
 
@@ -718,7 +718,7 @@ export const acceptInviteByToken = async (req: AuthRequest, res: Response) => {
     const userId = req.user?.id;
 
     if (!userId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      return res.status(401).json({ error: 'Authentication required.' });
     }
 
     // Get invite by token
@@ -730,7 +730,7 @@ export const acceptInviteByToken = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (inviteError || !invite) {
-      return res.status(404).json({ error: 'Invite not found or already used' });
+      return res.status(404).json({ error: 'Invite not found or already used.' });
     }
 
     // Check if this is an email invite and matches current user
@@ -743,7 +743,7 @@ export const acceptInviteByToken = async (req: AuthRequest, res: Response) => {
 
       if (!user || user.email.toLowerCase() !== invite.invited_email.toLowerCase()) {
         return res.status(403).json({
-          error: 'This invite was sent to a different email address'
+          error: 'This invite was sent to a different email address.'
         });
       }
 
@@ -754,7 +754,7 @@ export const acceptInviteByToken = async (req: AuthRequest, res: Response) => {
         .eq('invite_id', invite.invite_id);
     } else if (invite.invited_user && invite.invited_user !== userId) {
       // User-based invite for different user
-      return res.status(403).json({ error: 'This invite is for a different user' });
+      return res.status(403).json({ error: 'This invite is for a different user.' });
     }
 
     // Check if already a participant
@@ -788,7 +788,7 @@ export const acceptInviteByToken = async (req: AuthRequest, res: Response) => {
 
     if (participantError) {
       console.error('Database error:', participantError);
-      return res.status(500).json({ error: 'Failed to join event' });
+      return res.status(500).json({ error: 'Failed to join event.' });
     }
 
     // Get all existing splits in this event
@@ -844,7 +844,7 @@ export const acceptInviteByToken = async (req: AuthRequest, res: Response) => {
     res.json({ message: 'Invite accepted successfully', event_id: invite.event_id });
   } catch (error) {
     console.error('Accept invite by token error:', error);
-    res.status(500).json({ error: 'Failed to accept invite' });
+    res.status(500).json({ error: 'Failed to accept invite.' });
   }
 };
 
@@ -863,12 +863,12 @@ export const removeParticipant = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!event || event.created_by !== currentUserId) {
-      return res.status(403).json({ error: 'Only event creator can remove participants' });
+      return res.status(403).json({ error: 'Only event creator can remove participants.' });
     }
 
     // Can't remove creator
     if (participantUserId === currentUserId) {
-      return res.status(400).json({ error: 'Cannot remove event creator' });
+      return res.status(400).json({ error: 'Cannot remove event creator.' });
     }
 
     // Soft delete all splits in this event created by or paid by this participant
@@ -880,7 +880,7 @@ export const removeParticipant = async (req: AuthRequest, res: Response) => {
 
     if (splitError) {
       console.error('Split deletion error:', splitError);
-      return res.status(500).json({ error: 'Failed to remove participant splits' });
+      return res.status(500).json({ error: 'Failed to remove participant splits.' });
     }
 
     // Remove participant
@@ -892,13 +892,13 @@ export const removeParticipant = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to remove participant' });
+      return res.status(500).json({ error: 'Failed to remove participant.' });
     }
 
     res.json({ message: 'Participant removed successfully (including their splits)' });
   } catch (error) {
     console.error('Remove participant error:', error);
-    res.status(500).json({ error: 'Failed to remove participant' });
+    res.status(500).json({ error: 'Failed to remove participant.' });
   }
 };
 
@@ -915,7 +915,7 @@ export const getEventByShareToken = async (req: Request, res: Response) => {
       .single();
 
     if (error || !event) {
-      return res.status(404).json({ error: 'Event not found' });
+      return res.status(404).json({ error: 'Event not found.' });
     }
 
     // Get creator name
@@ -928,7 +928,7 @@ export const getEventByShareToken = async (req: Request, res: Response) => {
     res.json({ event: { ...event, creator_name: creator?.name } });
   } catch (error) {
     console.error('Get event by share token error:', error);
-    res.status(500).json({ error: 'Failed to fetch event' });
+    res.status(500).json({ error: 'Failed to fetch event.' });
   }
 };
 
@@ -947,7 +947,7 @@ export const joinEventByShareToken = async (req: AuthRequest, res: Response) => 
       .single();
 
     if (eventError || !event) {
-      return res.status(404).json({ error: 'Event not found' });
+      return res.status(404).json({ error: 'Event not found.' });
     }
 
     // Check if already a participant
@@ -959,7 +959,7 @@ export const joinEventByShareToken = async (req: AuthRequest, res: Response) => 
       .single();
 
     if (existingParticipant) {
-      return res.status(400).json({ error: 'Already a participant of this event' });
+      return res.status(400).json({ error: 'Already a participant of this event.' });
     }
 
     // Add user as participant
@@ -972,7 +972,7 @@ export const joinEventByShareToken = async (req: AuthRequest, res: Response) => 
 
     if (participantError) {
       console.error('Database error:', participantError);
-      return res.status(500).json({ error: 'Failed to join event' });
+      return res.status(500).json({ error: 'Failed to join event.' });
     }
 
     // Add new participant to ALL existing splits in this event
@@ -1022,6 +1022,6 @@ export const joinEventByShareToken = async (req: AuthRequest, res: Response) => 
     });
   } catch (error) {
     console.error('Join event error:', error);
-    res.status(500).json({ error: 'Failed to join event' });
+    res.status(500).json({ error: 'Failed to join event.' });
   }
 };

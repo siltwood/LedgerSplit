@@ -20,10 +20,10 @@ export const isValidUUID = (id: string): boolean => {
 // Sanitize and validate password
 export const validatePassword = (password: string): { valid: boolean; error?: string } => {
   if (!password || password.length < 8) {
-    return { valid: false, error: 'Password must be at least 8 characters' };
+    return { valid: false, error: 'Password must be at least 8 characters.' };
   }
   if (password.length > 128) {
-    return { valid: false, error: 'Password must be less than 128 characters' };
+    return { valid: false, error: 'Password must be less than 128 characters.' };
   }
   return { valid: true };
 };
@@ -33,11 +33,11 @@ export const validateName = (name: string): { valid: boolean; sanitized: string;
   const sanitized = sanitizeString(name);
 
   if (!sanitized || sanitized.length === 0) {
-    return { valid: false, sanitized: '', error: 'Name is required' };
+    return { valid: false, sanitized: '', error: 'Name is required.' };
   }
 
   if (sanitized.length > 100) {
-    return { valid: false, sanitized: '', error: 'Name must be less than 100 characters' };
+    return { valid: false, sanitized: '', error: 'Name must be less than 100 characters.' };
   }
 
   return { valid: true, sanitized };
@@ -48,11 +48,11 @@ export const validateAmount = (amount: any): { valid: boolean; value?: number; e
   const parsed = parseFloat(amount);
 
   if (isNaN(parsed) || parsed <= 0) {
-    return { valid: false, error: 'Amount must be a positive number' };
+    return { valid: false, error: 'Amount must be a positive number.' };
   }
 
   if (parsed > 1000000) {
-    return { valid: false, error: 'Amount must be less than 1,000,000' };
+    return { valid: false, error: 'Amount must be less than 1,000,000.' };
   }
 
   return { valid: true, value: parsed };

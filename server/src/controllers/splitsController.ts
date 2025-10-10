@@ -58,7 +58,7 @@ export const getSplits = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to fetch splits' });
+      return res.status(500).json({ error: 'Failed to fetch splits.' });
     }
 
     // Auto-fix any splits that are missing split_participants
@@ -99,7 +99,7 @@ export const getSplits = async (req: AuthRequest, res: Response) => {
     res.json({ splits });
   } catch (error) {
     console.error('Get splits error:', error);
-    res.status(500).json({ error: 'Failed to fetch splits' });
+    res.status(500).json({ error: 'Failed to fetch splits.' });
   }
 };
 
@@ -135,7 +135,7 @@ export const getSplitById = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (splitError || !split) {
-      return res.status(404).json({ error: 'Split not found' });
+      return res.status(404).json({ error: 'Split not found.' });
     }
 
     // Check if user is participant of the event
@@ -147,7 +147,7 @@ export const getSplitById = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!participation) {
-      return res.status(403).json({ error: 'Not a participant of this event' });
+      return res.status(403).json({ error: 'Not a participant of this event.' });
     }
 
     // Get split participants
@@ -168,7 +168,7 @@ export const getSplitById = async (req: AuthRequest, res: Response) => {
     res.json({ split, participants });
   } catch (error) {
     console.error('Get split error:', error);
-    res.status(500).json({ error: 'Failed to fetch split' });
+    res.status(500).json({ error: 'Failed to fetch split.' });
   }
 };
 
@@ -193,16 +193,16 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
     // Validate required fields
     if (!event_id || !title || !amount || !paid_by) {
       return res.status(400).json({
-        error: 'Event ID, title, amount, and paid_by are required',
+        error: 'Event ID, title, amount, and paid_by are required.',
       });
     }
 
     // Validate UUIDs
     if (!isValidUUID(event_id)) {
-      return res.status(400).json({ error: 'Invalid event ID' });
+      return res.status(400).json({ error: 'Invalid event ID.' });
     }
     if (!isValidUUID(paid_by)) {
-      return res.status(400).json({ error: 'Invalid paid_by user ID' });
+      return res.status(400).json({ error: 'Invalid paid_by user ID.' });
     }
 
     // Validate and sanitize title
@@ -232,7 +232,7 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!participation) {
-      return res.status(403).json({ error: 'Not a participant of this event' });
+      return res.status(403).json({ error: 'Not a participant of this event.' });
     }
 
     // Verify paid_by user is participant
@@ -244,7 +244,7 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!payerParticipation) {
-      return res.status(400).json({ error: 'Payer must be a participant of the event' });
+      return res.status(400).json({ error: 'Payer must be a participant of the event.' });
     }
 
     // Use provided participant_ids or default to ALL event participants
@@ -258,7 +258,7 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
         .eq('event_id', event_id);
 
       if (participantsError || !eventParticipants || eventParticipants.length === 0) {
-        return res.status(400).json({ error: 'No participants found for this event' });
+        return res.status(400).json({ error: 'No participants found for this event.' });
       }
 
       finalParticipantIds = eventParticipants.map(p => p.user_id);
@@ -301,7 +301,7 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
 
     if (splitError) {
       console.error('Database error:', splitError);
-      return res.status(500).json({ error: 'Failed to create split' });
+      return res.status(500).json({ error: 'Failed to create split.' });
     }
 
     // Add split participants
@@ -319,13 +319,13 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       console.error('Database error:', participantError);
       // Rollback: delete the split
       await db.from('splits').delete().eq('split_id', split.split_id);
-      return res.status(500).json({ error: 'Failed to add split participants' });
+      return res.status(500).json({ error: 'Failed to add split participants.' });
     }
 
     res.status(201).json({ split });
   } catch (error) {
     console.error('Create split error:', error);
-    res.status(500).json({ error: 'Failed to create split' });
+    res.status(500).json({ error: 'Failed to create split.' });
   }
 };
 
@@ -353,12 +353,12 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (fetchError || !existingSplit) {
-      return res.status(404).json({ error: 'Split not found' });
+      return res.status(404).json({ error: 'Split not found.' });
     }
 
     // Check if user is creator of the split
     if (existingSplit.created_by !== userId) {
-      return res.status(403).json({ error: 'Only split creator can update' });
+      return res.status(403).json({ error: 'Only split creator can update.' });
     }
 
     // Build update object with only provided fields
@@ -379,7 +379,7 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
         .single();
 
       if (!payerParticipation) {
-        return res.status(400).json({ error: 'Payer must be a participant of the event' });
+        return res.status(400).json({ error: 'Payer must be a participant of the event.' });
       }
       updateData.paid_by = paid_by;
     }
@@ -396,7 +396,7 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
 
     if (updateError) {
       console.error('Database error:', updateError);
-      return res.status(500).json({ error: 'Failed to update split' });
+      return res.status(500).json({ error: 'Failed to update split.' });
     }
 
     // If participant_ids or amount changed, update split_participants
@@ -439,7 +439,7 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
 
         if (participantError) {
           console.error('Database error:', participantError);
-          return res.status(500).json({ error: 'Failed to update split participants' });
+          return res.status(500).json({ error: 'Failed to update split participants.' });
         }
       }
     }
@@ -447,7 +447,7 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
     res.json({ split: updatedSplit });
   } catch (error) {
     console.error('Update split error:', error);
-    res.status(500).json({ error: 'Failed to update split' });
+    res.status(500).json({ error: 'Failed to update split.' });
   }
 };
 
@@ -466,12 +466,12 @@ export const deleteSplit = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!split) {
-      return res.status(404).json({ error: 'Split not found' });
+      return res.status(404).json({ error: 'Split not found.' });
     }
 
     // Check if user is creator
     if (split.created_by !== userId) {
-      return res.status(403).json({ error: 'Only split creator can delete' });
+      return res.status(403).json({ error: 'Only split creator can delete.' });
     }
 
     // Soft delete split
@@ -482,12 +482,12 @@ export const deleteSplit = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to delete split' });
+      return res.status(500).json({ error: 'Failed to delete split.' });
     }
 
     res.json({ message: 'Split deleted successfully' });
   } catch (error) {
     console.error('Delete split error:', error);
-    res.status(500).json({ error: 'Failed to delete split' });
+    res.status(500).json({ error: 'Failed to delete split.' });
   }
 };

@@ -15,7 +15,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     if (!token) {
-      setError('Invalid reset link');
+      setError('Invalid reset link.');
     }
   }, [token]);
 
@@ -24,17 +24,17 @@ export default function ResetPassword() {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Passwords do not match.');
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError('Password must be at least 6 characters.');
       return;
     }
 
     if (!token) {
-      setError('Invalid reset link');
+      setError('Invalid reset link.');
       return;
     }
 

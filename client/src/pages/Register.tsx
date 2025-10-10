@@ -22,13 +22,13 @@ export default function Register() {
     setLoading(true);
 
     if (password !== confirmPassword) {
-      setPasswordError('Passwords do not match');
+      setPasswordError('Passwords do not match.');
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
+      setPasswordError('Password must be at least 6 characters.');
       setLoading(false);
       return;
     }
@@ -48,7 +48,7 @@ export default function Register() {
       const response = await authAPI.getGoogleAuthUrl();
       window.location.href = response.data.url;
     } catch (err) {
-      setError('Failed to get Google signup URL');
+      setError('Failed to get Google signup URL.');
     }
   };
 

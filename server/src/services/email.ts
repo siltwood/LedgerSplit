@@ -34,7 +34,8 @@ export const sendPasswordResetEmail = async (
           .header { background: #bcd4de; padding: 30px 20px; text-align: center; }
           .header h1 { margin: 0; color: #000000; font-size: 24px; }
           .content { padding: 30px 20px; }
-          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
+          a { color: #000000; }
+          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000 !important; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
           .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; background: #f9f9f9; }
         </style>
       </head>
@@ -88,7 +89,8 @@ export const sendFriendInviteEmail = async (
           .header { background: #bcd4de; padding: 30px 20px; text-align: center; }
           .header h1 { margin: 0; color: #000000; font-size: 24px; }
           .content { padding: 30px 20px; }
-          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
+          a { color: #000000; }
+          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000 !important; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
           .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; background: #f9f9f9; }
           .highlight { color: #a5ccd1; font-weight: bold; }
         </style>
@@ -148,7 +150,8 @@ export const sendEventInviteEmail = async (
           .header { background: #bcd4de; padding: 30px 20px; text-align: center; }
           .header h1 { margin: 0; color: #000000; font-size: 24px; }
           .content { padding: 30px 20px; }
-          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
+          a { color: #000000; }
+          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000 !important; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
           .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; background: #f9f9f9; }
           .event-name { background: #f0f8fa; padding: 15px; border-left: 4px solid #a5ccd1; margin: 20px 0; }
           .info-box { background: #f9f9f9; padding: 15px; border-radius: 4px; margin: 20px 0; }
