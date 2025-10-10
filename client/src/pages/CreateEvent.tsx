@@ -100,6 +100,7 @@ export default function CreateEvent() {
             disabled={loading}
             style={{
               width: '100%',
+              maxWidth: '400px',
               padding: '10px 20px',
               fontSize: '18px',
               background: colors.primary,
@@ -117,6 +118,7 @@ export default function CreateEvent() {
             onClick={() => navigate('/dashboard')}
             style={{
               width: '100%',
+              maxWidth: '400px',
               padding: '10px 20px',
               fontSize: '18px',
               background: colors.textSecondary,

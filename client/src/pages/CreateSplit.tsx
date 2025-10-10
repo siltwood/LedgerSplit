@@ -260,6 +260,7 @@ export default function CreateSplit() {
             disabled={loading}
             style={{
               width: '100%',
+              maxWidth: '400px',
               padding: '10px 20px',
               fontSize: '18px',
               background: colors.primary,
@@ -277,6 +278,7 @@ export default function CreateSplit() {
             onClick={() => navigate(`/events/${eventIdFromParams}`)}
             style={{
               width: '100%',
+              maxWidth: '400px',
               padding: '10px 20px',
               fontSize: '18px',
               background: colors.textSecondary,
