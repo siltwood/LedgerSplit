@@ -1,11 +1,11 @@
 export const UI_CONSTANTS = {
-  // Font sizes
+  // Font sizes - MINIMUM 18px for all text
   fontSize: {
-    input: '16px',
-    button: '16px',
-    label: '16px',
-    body: '16px',
-    small: '14px',
+    input: '18px',
+    button: '18px',
+    label: '20px',
+    body: '18px',
+    small: '18px',
   },
 
   // Input styles
@@ -23,7 +23,7 @@ export const UI_CONSTANTS = {
   // Modal styles
   modal: {
     buttonPadding: '10px 20px',
-    fontSize: '16px',
-    textFontSize: '16px',
+    fontSize: '18px',
+    textFontSize: '18px',
   },
 } as const;

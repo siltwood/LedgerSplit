@@ -97,7 +97,7 @@ export default function CreateSplit() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px'
+          fontSize: '18px'
         }}>
           {error || 'Event not found'}
         </div>
@@ -110,7 +110,7 @@ export default function CreateSplit() {
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '18px'
           }}
         >
           Back to Dashboard
@@ -130,7 +130,7 @@ export default function CreateSplit() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '16px'
+          fontSize: '18px'
         }}>
           {error}
         </div>
@@ -151,7 +151,7 @@ export default function CreateSplit() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '16px',
+              fontSize: '18px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -174,7 +174,7 @@ export default function CreateSplit() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '16px',
+              fontSize: '18px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -237,7 +237,7 @@ export default function CreateSplit() {
                     )}
                   </div>
                   <span style={{
-                    fontSize: '16px',
+                    fontSize: '18px',
                     color: isSelected ? '#fff' : colors.text,
                     fontWeight: isSelected ? '600' : '500'
                   }}>
@@ -248,7 +248,7 @@ export default function CreateSplit() {
             })}
           </div>
           {selectedParticipants.length > 0 && (
-            <div style={{ marginTop: '8px', fontSize: '16px', color: colors.text, opacity: 0.7 }}>
+            <div style={{ marginTop: '8px', fontSize: '18px', color: colors.text, opacity: 0.7 }}>
               ${parseFloat(amount || '0').toFixed(2)} ÷ {selectedParticipants.length} = ${(parseFloat(amount || '0') / selectedParticipants.length).toFixed(2)} per person
             </div>
           )}
@@ -261,7 +261,7 @@ export default function CreateSplit() {
             style={{
               width: '100%',
               padding: '10px 20px',
-              fontSize: '16px',
+              fontSize: '18px',
               background: colors.primary,
               color: colors.text,
               border: 'none',
@@ -278,7 +278,7 @@ export default function CreateSplit() {
             style={{
               width: '100%',
               padding: '10px 20px',
-              fontSize: '16px',
+              fontSize: '18px',
               background: colors.textSecondary,
               color: colors.text,
               border: 'none',

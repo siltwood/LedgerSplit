@@ -29,7 +29,7 @@ export default function ForgotPassword() {
   return (
     <div style={{ maxWidth: '400px', margin: '30px auto', padding: '15px' }}>
       <h1 style={{ color: colors.text, marginBottom: '15px' }}>Forgot Password</h1>
-      <p style={{ color: colors.text, fontSize: '16px', marginBottom: '12px' }}>
+      <p style={{ color: colors.text, fontSize: '18px', marginBottom: '12px' }}>
         Enter your email address and we'll send you a link to reset your password.
       </p>
 
@@ -40,7 +40,7 @@ export default function ForgotPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '12px',
-          fontSize: '16px'
+          fontSize: '18px'
         }}>
           {error}
         </div>
@@ -53,7 +53,7 @@ export default function ForgotPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '12px',
-          fontSize: '16px'
+          fontSize: '18px'
         }}>
           {message}
         </div>
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
             style={{
               width: '100%',
               padding: '6px',
-              fontSize: '16px',
+              fontSize: '18px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               color: colors.text
@@ -99,7 +99,7 @@ export default function ForgotPassword() {
       </form>
 
       <div style={{ marginTop: '12px', textAlign: 'center' }}>
-        <Link to="/login" style={{ color: colors.text, fontSize: '16px' }}>
+        <Link to="/login" style={{ color: colors.text, fontSize: '18px' }}>
           Back to Login
         </Link>
       </div>

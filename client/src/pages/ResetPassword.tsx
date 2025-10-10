@@ -62,7 +62,7 @@ export default function ResetPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '12px',
-          fontSize: '16px',
+          fontSize: '18px',
           textAlign: 'center'
         }}>
           Password reset successful! Redirecting to login...
@@ -76,7 +76,7 @@ export default function ResetPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '12px',
-          fontSize: '16px'
+          fontSize: '18px'
         }}>
           {error}
         </div>
@@ -97,7 +97,7 @@ export default function ResetPassword() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: '16px',
+                fontSize: '18px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -118,7 +118,7 @@ export default function ResetPassword() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: '16px',
+                fontSize: '18px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -145,15 +145,15 @@ export default function ResetPassword() {
         </form>
       ) : (
         <div>
-          <p style={{ color: colors.text, fontSize: '16px', marginBottom: '8px' }}>Invalid or missing reset token.</p>
-          <Link to="/forgot-password" style={{ color: colors.text, fontSize: '16px' }}>
+          <p style={{ color: colors.text, fontSize: '18px', marginBottom: '8px' }}>Invalid or missing reset token.</p>
+          <Link to="/forgot-password" style={{ color: colors.text, fontSize: '18px' }}>
             Request a new reset link
           </Link>
         </div>
       )}
 
       <div style={{ marginTop: '12px', textAlign: 'center' }}>
-        <Link to="/login" style={{ color: colors.text, fontSize: '16px' }}>
+        <Link to="/login" style={{ color: colors.text, fontSize: '18px' }}>
           Back to Login
         </Link>
       </div>

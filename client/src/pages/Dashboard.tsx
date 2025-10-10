@@ -136,7 +136,7 @@ export default function Dashboard() {
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px',
+            fontSize: '18px',
             fontWeight: 'bold',
             width: '100%',
             maxWidth: '100%'
@@ -156,7 +156,7 @@ export default function Dashboard() {
           style={{
             width: '100%',
             padding: '10px 12px',
-            fontSize: '16px',
+            fontSize: '18px',
             border: `2px solid ${colors.border}`,
             borderRadius: '8px',
             background: colors.surface,
@@ -341,8 +341,8 @@ export default function Dashboard() {
             maxWidth: '400px',
             width: '90%'
           }}>
-            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '16px' }}>Delete Event?</h3>
-            <p style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '16px', opacity: 0.9 }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '18px' }}>Delete Event?</h3>
+            <p style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '18px', opacity: 0.9 }}>
               This will permanently delete the event and all associated bills. This action cannot be undone.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -356,7 +356,7 @@ export default function Dashboard() {
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '16px',
+                  fontSize: '18px',
                   fontWeight: '600'
                 }}
               >
@@ -372,7 +372,7 @@ export default function Dashboard() {
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '16px'
+                  fontSize: '18px'
                 }}
               >
                 Cancel

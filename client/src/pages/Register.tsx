@@ -80,7 +80,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: '16px',
+                fontSize: '18px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -98,7 +98,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: '16px',
+                fontSize: '18px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -117,7 +117,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: '16px',
+                fontSize: '18px',
                 border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -136,14 +136,14 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: '16px',
+                fontSize: '18px',
                 border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
               }}
             />
             {passwordError && (
-              <div style={{ color: '#ff6b6b', fontSize: '16px', marginTop: '4px' }}>
+              <div style={{ color: '#ff6b6b', fontSize: '18px', marginTop: '4px' }}>
                 {passwordError}
               </div>
             )}
@@ -167,7 +167,7 @@ export default function Register() {
           </button>
         </form>
 
-        <div style={{ margin: '12px 0', textAlign: 'center', color: colors.text, fontSize: '16px' }}>
+        <div style={{ margin: '12px 0', textAlign: 'center', color: colors.text, fontSize: '18px' }}>
           <span>or</span>
         </div>
 
@@ -198,7 +198,7 @@ export default function Register() {
         textAlign: 'center',
         borderTop: `1px solid ${colors.border}`
       }}>
-        <div style={{ color: colors.text, fontSize: '16px' }}>
+        <div style={{ color: colors.text, fontSize: '18px' }}>
           Need help? Contact us at{' '}
           <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
             hello@ledgersplit.com

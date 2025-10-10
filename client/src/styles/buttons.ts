@@ -8,7 +8,7 @@ export const buttonStyles = {
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '18px',
     fontWeight: '500',
     width: '100%' as const,
     maxWidth: '100%',
@@ -21,7 +21,7 @@ export const buttonStyles = {
     border: `1px solid ${colors.border}`,
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '18px',
     fontWeight: '500',
     width: '100%' as const,
     maxWidth: '100%',
@@ -34,7 +34,7 @@ export const buttonStyles = {
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '18px',
     fontWeight: '500',
     width: '100%' as const,
     maxWidth: '100%',
@@ -47,7 +47,7 @@ export const buttonStyles = {
     border: `1px solid ${colors.border}`,
     borderRadius: '4px',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '18px',
     fontWeight: '500'
   }
 } as const;

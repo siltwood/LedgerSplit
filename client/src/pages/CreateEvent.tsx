@@ -43,7 +43,7 @@ export default function CreateEvent() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '12px',
-          fontSize: '16px'
+          fontSize: '18px'
         }}>
           {error}
         </div>
@@ -63,7 +63,7 @@ export default function CreateEvent() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '16px',
+              fontSize: '18px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -84,7 +84,7 @@ export default function CreateEvent() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '16px',
+              fontSize: '18px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -101,7 +101,7 @@ export default function CreateEvent() {
             style={{
               width: '100%',
               padding: '10px 20px',
-              fontSize: '16px',
+              fontSize: '18px',
               background: colors.primary,
               color: colors.text,
               border: 'none',
@@ -118,7 +118,7 @@ export default function CreateEvent() {
             style={{
               width: '100%',
               padding: '10px 20px',
-              fontSize: '16px',
+              fontSize: '18px',
               background: colors.textSecondary,
               color: colors.text,
               border: 'none',
