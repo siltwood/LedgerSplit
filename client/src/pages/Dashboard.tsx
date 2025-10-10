@@ -200,8 +200,8 @@ export default function Dashboard() {
         />
 
         {/* Filter and Sort Controls */}
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          <div>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', width: '100%' }}>
+          <div style={{ flex: '1', minWidth: '200px' }}>
             <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px' }}>
               Filter
             </label>
@@ -209,6 +209,7 @@ export default function Dashboard() {
               value={filterBy}
               onChange={(e) => setFilterBy(e.target.value as FilterOption)}
               style={{
+                width: '100%',
                 padding: '8px 12px',
                 fontSize: '18px',
                 border: `2px solid ${colors.border}`,
@@ -225,7 +226,7 @@ export default function Dashboard() {
             </select>
           </div>
 
-          <div>
+          <div style={{ flex: '1', minWidth: '200px' }}>
             <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px' }}>
               Sort By
             </label>
@@ -233,6 +234,7 @@ export default function Dashboard() {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               style={{
+                width: '100%',
                 padding: '8px 12px',
                 fontSize: '18px',
                 border: `2px solid ${colors.border}`,
