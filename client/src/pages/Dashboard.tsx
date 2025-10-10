@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [filterBy, setFilterBy] = useState<FilterOption>('all');
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleDismiss = async (eventId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -151,12 +152,62 @@ export default function Dashboard() {
   const activeEvents = events.filter(e => !e.is_dismissed && !e.is_settled).length;
   const settledEvents = events.filter(e => e.is_settled).length;
 
+  // Format number with k suffix for 1000+
+  const formatCount = (num: number): string => {
+    if (num >= 1000) {
+      const thousands = num / 1000;
+      return thousands % 1 === 0 ? `${thousands}k` : `${thousands.toFixed(1)}k`;
+    }
+    return num.toString();
+  };
+
+  // Get search suggestions from events
+  const getSuggestions = () => {
+    if (!searchQuery.trim()) return [];
+
+    const suggestions: Array<{ text: string; type: 'event' | 'participant' }> = [];
+    const query = searchQuery.toLowerCase();
+    const seen = new Set<string>();
+
+    events.forEach(event => {
+      // Event names
+      if (event.name.toLowerCase().includes(query) && !seen.has(event.name)) {
+        suggestions.push({ text: event.name, type: 'event' });
+        seen.add(event.name);
+      }
+
+      // Event descriptions
+      if (event.description?.toLowerCase().includes(query) && !seen.has(event.description)) {
+        suggestions.push({ text: event.description, type: 'event' });
+        seen.add(event.description);
+      }
+
+      // Participant names
+      event.participants?.forEach(p => {
+        const name = p.user?.name;
+        const email = p.user?.email;
+        if (name && name.toLowerCase().includes(query) && !seen.has(name)) {
+          suggestions.push({ text: name, type: 'participant' });
+          seen.add(name);
+        }
+        if (email && email.toLowerCase().includes(query) && !seen.has(email)) {
+          suggestions.push({ text: email, type: 'participant' });
+          seen.add(email);
+        }
+      });
+    });
+
+    return suggestions.slice(0, 5); // Limit to 5 suggestions
+  };
+
+  const suggestions = getSuggestions();
+
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Dashboard</h1>
+    <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
+      <h1 style={{ color: colors.text, marginBottom: '12px' }}>Dashboard</h1>
 
       {/* Quick Actions */}
-      <div style={{ marginBottom: '30px' }}>
+      <div style={{ marginBottom: '16px' }}>
         <Link to="/events/new">
           <button style={{
             padding: '10px 20px',
@@ -176,28 +227,81 @@ export default function Dashboard() {
       </div>
 
       {/* Search and Filter */}
-      <div style={{ marginBottom: '24px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+      <div style={{ marginBottom: '16px', position: 'relative' }}>
+        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '18px' }}>
           Search Events and Participants
         </label>
         <input
           type="text"
           placeholder=""
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setShowSuggestions(e.target.value.trim().length > 0);
+          }}
+          onFocus={() => setShowSuggestions(searchQuery.trim().length > 0)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           style={{
             width: '100%',
             maxWidth: '600px',
-            padding: '10px 12px',
+            padding: '8px 12px',
             fontSize: '18px',
             border: `2px solid ${colors.border}`,
             borderRadius: '8px',
             background: colors.surface,
             color: colors.text,
             outline: 'none',
-            marginBottom: '12px'
+            marginBottom: '8px'
           }}
         />
+
+        {/* Autocomplete Suggestions */}
+        {showSuggestions && suggestions.length > 0 && (
+          <div style={{
+            position: 'absolute',
+            top: 'calc(100% - 8px)',
+            left: 0,
+            right: 0,
+            maxWidth: '600px',
+            background: colors.surface,
+            border: `2px solid ${colors.border}`,
+            borderTop: 'none',
+            borderRadius: '0 0 8px 8px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            zIndex: 10
+          }}>
+            {suggestions.map((suggestion, idx) => (
+              <div
+                key={idx}
+                onClick={() => {
+                  setSearchQuery(suggestion.text);
+                  setShowSuggestions(false);
+                }}
+                style={{
+                  padding: '8px 12px',
+                  cursor: 'pointer',
+                  borderBottom: idx < suggestions.length - 1 ? `1px solid ${colors.border}` : 'none',
+                  background: colors.surface,
+                  transition: 'background 0.15s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = colors.background;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = colors.surface;
+                }}
+              >
+                <div style={{
+                  fontSize: '18px',
+                  color: colors.text,
+                  opacity: 0.6
+                }}>
+                  {suggestion.text}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Filter and Sort Controls */}
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', width: '100%' }}>
@@ -254,44 +358,46 @@ export default function Dashboard() {
 
       {/* Events */}
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-          <h2 style={{ color: colors.text, margin: 0 }}>Your Events</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+          <h2 style={{ color: colors.text, margin: 0, fontSize: '20px' }}>Your Events</h2>
 
           {/* Event Count Badges */}
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{
-              padding: '4px 12px',
-              background: colors.primary,
-              color: '#000',
-              borderRadius: '16px',
-              fontSize: '18px',
-              fontWeight: '600'
-            }}>
-              {filteredEvents.length} shown
-            </span>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {filteredEvents.length > 0 && (
+              <span style={{
+                padding: '4px 10px',
+                background: colors.primary,
+                color: '#000',
+                borderRadius: '12px',
+                fontSize: '18px',
+                fontWeight: '600'
+              }}>
+                {formatCount(filteredEvents.length)}
+              </span>
+            )}
             {activeEvents > 0 && (
               <span style={{
-                padding: '4px 12px',
+                padding: '4px 10px',
                 background: colors.surface,
                 color: colors.text,
                 border: `2px solid ${colors.border}`,
-                borderRadius: '16px',
+                borderRadius: '12px',
                 fontSize: '18px',
                 fontWeight: '500'
               }}>
-                {activeEvents} active
+                {formatCount(activeEvents)} active
               </span>
             )}
             {settledEvents > 0 && (
               <span style={{
-                padding: '4px 12px',
+                padding: '4px 10px',
                 background: colors.purple,
                 color: '#fff',
-                borderRadius: '16px',
+                borderRadius: '12px',
                 fontSize: '18px',
                 fontWeight: '500'
               }}>
-                {settledEvents} settled
+                {formatCount(settledEvents)} settled
               </span>
             )}
           </div>
