@@ -96,8 +96,8 @@ export default function Login() {
         </div>
       )}
 
-      <div style={{ flex: 1, maxWidth: '400px', margin: '15px auto 0', padding: '15px', width: '100%' }}>
-        <h1 style={{ color: colors.text, marginBottom: '15px' }}>Login</h1>
+      <div style={{ flex: 1, maxWidth: '400px', margin: '10px auto 0', padding: '10px', width: '100%' }}>
+        <h1 style={{ color: colors.text, marginBottom: '12px' }}>Login</h1>
 
         {error && (
         <div style={{
@@ -190,14 +190,14 @@ export default function Login() {
         Continue with Google
       </button>
 
-        <p style={{ marginTop: '12px', textAlign: 'center', color: colors.text, fontSize: '16px' }}>
+        <p style={{ marginTop: '12px', textAlign: 'center', color: colors.text, fontSize: '18px' }}>
           Don't have an account? <Link to="/register" style={{ color: colors.text }}>Register</Link>
         </p>
       </div>
 
       <footer style={{
         background: colors.surface,
-        padding: '12px 15px',
+        padding: '10px',
         textAlign: 'center',
         borderTop: `1px solid ${colors.border}`
       }}>
