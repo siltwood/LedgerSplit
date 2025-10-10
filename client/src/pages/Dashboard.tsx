@@ -139,7 +139,7 @@ export default function Dashboard() {
             fontSize: '18px',
             fontWeight: 'bold',
             width: '100%',
-            maxWidth: '100%'
+            maxWidth: '300px'
           }}>
             Add New Event
           </button>
@@ -148,13 +148,17 @@ export default function Dashboard() {
 
       {/* Search Bar */}
       <div style={{ marginBottom: '20px' }}>
+        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          Search Events and Participants
+        </label>
         <input
           type="text"
-          placeholder="Search events or participants..."
+          placeholder=""
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{
             width: '100%',
+            maxWidth: '600px',
             padding: '10px 12px',
             fontSize: '18px',
             border: `2px solid ${colors.border}`,
@@ -211,31 +215,79 @@ export default function Dashboard() {
               >
                 <div
                   style={{
-                    padding: '24px',
+                    padding: '20px',
                     background: event.is_dismissed ? colors.cadetGray2 : colors.surface,
                     border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
                     borderRadius: '12px',
                     cursor: 'pointer',
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    flexWrap: 'wrap',
-                    gap: '16px',
+                    flexDirection: 'column',
+                    gap: '12px',
                     opacity: event.is_dismissed ? 0.6 : 1,
-                    position: 'relative',
                   }}
                 >
-                  <div style={{ position: 'absolute', top: '12px', right: '12px', display: 'flex', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                    <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
+                    {event.is_settled && (
+                      <span style={{
+                        padding: '6px 12px',
+                        background: colors.purple,
+                        color: '#fff',
+                        borderRadius: '16px',
+                        fontSize: '18px',
+                        fontWeight: '600'
+                      }}>
+                        ✓ Settled
+                      </span>
+                    )}
+                  </div>
+
+                  <div style={{ fontSize: '18px', color: colors.text, opacity: 0.7 }}>
+                    {new Date(event.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </div>
+
+                  {event.description && (
+                    <div style={{ fontSize: '18px', color: colors.text, opacity: 0.8 }}>
+                      {event.description}
+                    </div>
+                  )}
+
+                  {event.participants && event.participants.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {event.participants.map((p) => (
+                        <span
+                          key={p.user_id}
+                          style={{
+                            padding: '4px 10px',
+                            background: getParticipantColor(event, p.user_id),
+                            borderRadius: '6px',
+                            fontSize: '18px',
+                            color: '#000',
+                            fontWeight: '500',
+                            wordBreak: 'break-word'
+                          }}
+                        >
+                          {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                     <button
                       onClick={(e) => event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e)}
                       style={{
-                        padding: '8px 16px',
+                        padding: '6px 12px',
                         background: event.is_dismissed ? colors.primary : colors.cadetGray2,
                         color: '#000',
                         border: 'none',
                         borderRadius: '4px',
-                        fontSize: '20px',
-                        fontWeight: '600',
+                        fontSize: '18px',
+                        fontWeight: '500',
                         cursor: 'pointer'
                       }}
                     >
@@ -249,67 +301,18 @@ export default function Dashboard() {
                           setShowDeleteModal(event.event_id);
                         }}
                         style={{
-                          padding: '8px 16px',
+                          padding: '6px 12px',
                           background: colors.error,
                           color: '#000',
                           border: 'none',
                           borderRadius: '4px',
-                          fontSize: '20px',
-                          fontWeight: '600',
+                          fontSize: '18px',
+                          fontWeight: '500',
                           cursor: 'pointer'
                         }}
                       >
                         Delete
                       </button>
-                    )}
-                  </div>
-                  <div style={{ flex: 1, minWidth: '200px', paddingRight: '180px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                      <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
-                      {event.is_settled && (
-                        <span style={{
-                          padding: '6px 12px',
-                          background: colors.purple,
-                          color: '#fff',
-                          borderRadius: '16px',
-                          fontSize: '20px',
-                          fontWeight: '600'
-                        }}>
-                          ✓ Settled
-                        </span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '20px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
-                      {new Date(event.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </div>
-                    {event.description && (
-                      <div style={{ fontSize: '22px', color: colors.text, marginBottom: '8px', opacity: 0.8 }}>
-                        {event.description}
-                      </div>
-                    )}
-                    {event.participants && event.participants.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
-                        {event.participants.map((p) => (
-                          <span
-                            key={p.user_id}
-                            style={{
-                              padding: '4px 10px',
-                              background: getParticipantColor(event, p.user_id),
-                              borderRadius: '6px',
-                              fontSize: '18px',
-                              color: '#000',
-                              fontWeight: '500',
-                              wordBreak: 'break-word'
-                            }}
-                          >
-                            {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
-                          </span>
-                        ))}
-                      </div>
                     )}
                   </div>
                 </div>
