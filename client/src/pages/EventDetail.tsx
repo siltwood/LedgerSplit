@@ -299,8 +299,8 @@ export default function EventDetail() {
       </div>
 
       {/* Action Buttons */}
-      <div style={{ marginBottom: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-        <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none' }}>
+      <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', width: '100%' }}>
           <button style={buttonStyles.primary}>
             Add Bill
           </button>

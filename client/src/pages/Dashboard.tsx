@@ -130,14 +130,16 @@ export default function Dashboard() {
       <div style={{ marginBottom: '30px' }}>
         <Link to="/events/new">
           <button style={{
-            padding: '12px 24px',
+            padding: '10px 20px',
             background: colors.primary,
             color: colors.text,
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '22px',
-            fontWeight: 'bold'
+            fontSize: '16px',
+            fontWeight: 'bold',
+            width: '100%',
+            maxWidth: '100%'
           }}>
             Add New Event
           </button>
@@ -153,8 +155,8 @@ export default function Dashboard() {
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{
             width: '100%',
-            padding: '12px 16px',
-            fontSize: '20px',
+            padding: '10px 12px',
+            fontSize: '16px',
             border: `2px solid ${colors.border}`,
             borderRadius: '8px',
             background: colors.surface,

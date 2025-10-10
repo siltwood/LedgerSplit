@@ -2,34 +2,43 @@ import { colors } from './colors';
 
 export const buttonStyles = {
   primary: {
-    padding: '12px 24px',
+    padding: '10px 20px',
     background: colors.primary,
     color: colors.text,
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '20px',
-    fontWeight: '500'
+    fontSize: '16px',
+    fontWeight: '500',
+    width: '100%' as const,
+    maxWidth: '100%',
+    display: 'block'
   },
   secondary: {
-    padding: '12px 24px',
+    padding: '10px 20px',
     background: colors.surface,
     color: colors.text,
     border: `1px solid ${colors.border}`,
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '20px',
-    fontWeight: '500'
+    fontSize: '16px',
+    fontWeight: '500',
+    width: '100%' as const,
+    maxWidth: '100%',
+    display: 'block'
   },
   danger: {
-    padding: '12px 24px',
+    padding: '10px 20px',
     background: colors.error,
     color: colors.text,
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '20px',
-    fontWeight: '500'
+    fontSize: '16px',
+    fontWeight: '500',
+    width: '100%' as const,
+    maxWidth: '100%',
+    display: 'block'
   },
   small: {
     padding: '8px 16px',
@@ -38,7 +47,7 @@ export const buttonStyles = {
     border: `1px solid ${colors.border}`,
     borderRadius: '4px',
     cursor: 'pointer',
-    fontSize: '20px',
+    fontSize: '16px',
     fontWeight: '500'
   }
 } as const;

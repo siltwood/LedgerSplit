@@ -94,13 +94,14 @@ export default function CreateEvent() {
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <button
             type="submit"
             disabled={loading}
             style={{
+              width: '100%',
               padding: '8px 16px',
-              fontSize: '18px',
+              fontSize: '16px',
               background: colors.primary,
               color: colors.text,
               border: 'none',
@@ -115,8 +116,9 @@ export default function CreateEvent() {
             type="button"
             onClick={() => navigate('/dashboard')}
             style={{
+              width: '100%',
               padding: '8px 16px',
-              fontSize: '18px',
+              fontSize: '16px',
               background: colors.textSecondary,
               color: colors.text,
               border: 'none',
