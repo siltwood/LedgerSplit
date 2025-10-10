@@ -48,7 +48,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* Modal for email already exists */}
       {showModal && (
         <div style={{
@@ -96,7 +96,7 @@ export default function Login() {
         </div>
       )}
 
-      <div style={{ flex: 1, maxWidth: '400px', margin: '30px auto', padding: '15px' }}>
+      <div style={{ flex: 1, maxWidth: '400px', margin: '15px auto 0', padding: '15px', width: '100%' }}>
         <h1 style={{ color: colors.text, marginBottom: '15px' }}>Login</h1>
 
         {error && (

@@ -53,142 +53,158 @@ export default function Register() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '30px auto', padding: '15px' }}>
-      <h1 style={{ color: colors.text, marginBottom: '15px' }}>Register</h1>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div style={{ flex: 1, maxWidth: '400px', margin: '15px auto 0', padding: '15px', width: '100%' }}>
+        <h1 style={{ color: colors.text, marginBottom: '15px' }}>Register</h1>
 
-      {error && (
-        <div style={{
-          padding: '8px',
-          background: colors.surface,
-          color: colors.text,
-          borderRadius: '4px',
-          marginBottom: '12px'
-        }}>
-          {error}
-        </div>
-      )}
+        {error && (
+          <div style={{
+            padding: '8px',
+            background: colors.surface,
+            color: colors.text,
+            borderRadius: '4px',
+            marginBottom: '12px'
+          }}>
+            {error}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '10px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '6px',
+                fontSize: '16px',
+                border: `1px solid ${colors.border}`,
+                borderRadius: '4px',
+                color: colors.text
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '10px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '6px',
+                fontSize: '16px',
+                border: `1px solid ${colors.border}`,
+                borderRadius: '4px',
+                color: colors.text
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '10px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              style={{
+                width: '100%',
+                padding: '6px',
+                fontSize: '16px',
+                border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
+                borderRadius: '4px',
+                color: colors.text
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={6}
+              style={{
+                width: '100%',
+                padding: '6px',
+                fontSize: '16px',
+                border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
+                borderRadius: '4px',
+                color: colors.text
+              }}
+            />
+            {passwordError && (
+              <div style={{ color: '#ff6b6b', fontSize: '16px', marginTop: '4px' }}>
+                {passwordError}
+              </div>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
             style={{
               width: '100%',
-              padding: '6px',
-              fontSize: '16px',
-              border: `1px solid ${colors.border}`,
+              padding: '8px',
+              fontSize: '18px',
+              background: colors.primary,
+              color: colors.text,
+              border: 'none',
               borderRadius: '4px',
-              color: colors.text
+              cursor: loading ? 'not-allowed' : 'pointer'
             }}
-          />
-        </div>
+          >
+            {loading ? 'Creating account...' : 'Register'}
+          </button>
+        </form>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{
-              width: '100%',
-              padding: '6px',
-              fontSize: '16px',
-              border: `1px solid ${colors.border}`,
-              borderRadius: '4px',
-              color: colors.text
-            }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
-            style={{
-              width: '100%',
-              padding: '6px',
-              fontSize: '16px',
-              border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
-              borderRadius: '4px',
-              color: colors.text
-            }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Confirm Password</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            minLength={6}
-            style={{
-              width: '100%',
-              padding: '6px',
-              fontSize: '16px',
-              border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
-              borderRadius: '4px',
-              color: colors.text
-            }}
-          />
-          {passwordError && (
-            <div style={{ color: '#ff6b6b', fontSize: '16px', marginTop: '4px' }}>
-              {passwordError}
-            </div>
-          )}
+        <div style={{ margin: '12px 0', textAlign: 'center', color: colors.text, fontSize: '16px' }}>
+          <span>or</span>
         </div>
 
         <button
-          type="submit"
-          disabled={loading}
+          onClick={handleGoogleSignup}
           style={{
             width: '100%',
             padding: '8px',
             fontSize: '18px',
-            background: colors.primary,
+            background: colors.surface,
             color: colors.text,
-            border: 'none',
+            border: `1px solid ${colors.border}`,
             borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer'
+            cursor: 'pointer'
           }}
         >
-          {loading ? 'Creating account...' : 'Register'}
+          Continue with Google
         </button>
-      </form>
 
-      <div style={{ margin: '12px 0', textAlign: 'center', color: colors.text, fontSize: '16px' }}>
-        <span>or</span>
+        <p style={{ marginTop: '12px', textAlign: 'center', color: colors.text, fontSize: '16px' }}>
+          Already have an account? <Link to="/login" style={{ color: colors.text }}>Login</Link>
+        </p>
       </div>
 
-      <button
-        onClick={handleGoogleSignup}
-        style={{
-          width: '100%',
-          padding: '8px',
-          fontSize: '18px',
-          background: colors.surface,
-          color: colors.text,
-          border: `1px solid ${colors.border}`,
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        Continue with Google
-      </button>
-
-      <p style={{ marginTop: '12px', textAlign: 'center', color: colors.text, fontSize: '16px' }}>
-        Already have an account? <Link to="/login" style={{ color: colors.text }}>Login</Link>
-      </p>
+      <footer style={{
+        background: colors.surface,
+        padding: '12px 15px',
+        textAlign: 'center',
+        borderTop: `1px solid ${colors.border}`
+      }}>
+        <div style={{ color: colors.text, fontSize: '16px' }}>
+          Need help? Contact us at{' '}
+          <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
+            hello@ledgersplit.com
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
