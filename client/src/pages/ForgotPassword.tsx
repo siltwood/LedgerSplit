@@ -27,20 +27,20 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Forgot Password</h1>
-      <p style={{ color: colors.text, fontSize: '20px' }}>
+    <div style={{ maxWidth: '400px', margin: '30px auto', padding: '15px' }}>
+      <h1 style={{ color: colors.text, marginBottom: '15px' }}>Forgot Password</h1>
+      <p style={{ color: colors.text, fontSize: '16px', marginBottom: '12px' }}>
         Enter your email address and we'll send you a link to reset your password.
       </p>
 
       {error && (
         <div style={{
-          padding: '10px',
+          padding: '8px',
           background: colors.error,
           color: colors.text,
           borderRadius: '4px',
-          marginBottom: '20px',
-          fontSize: '20px'
+          marginBottom: '12px',
+          fontSize: '16px'
         }}>
           {error}
         </div>
@@ -48,20 +48,20 @@ export default function ForgotPassword() {
 
       {message && (
         <div style={{
-          padding: '10px',
+          padding: '8px',
           background: colors.success,
           color: colors.text,
           borderRadius: '4px',
-          marginBottom: '20px',
-          fontSize: '20px'
+          marginBottom: '12px',
+          fontSize: '16px'
         }}>
           {message}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+        <div style={{ marginBottom: '12px' }}>
+          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Email
           </label>
           <input
@@ -71,8 +71,8 @@ export default function ForgotPassword() {
             required
             style={{
               width: '100%',
-              padding: '10px',
-              fontSize: '20px',
+              padding: '6px',
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               color: colors.text
@@ -85,8 +85,8 @@ export default function ForgotPassword() {
           disabled={loading}
           style={{
             width: '100%',
-            padding: '12px',
-            fontSize: '20px',
+            padding: '8px',
+            fontSize: '18px',
             background: colors.primary,
             color: colors.text,
             border: 'none',
@@ -98,8 +98,8 @@ export default function ForgotPassword() {
         </button>
       </form>
 
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <Link to="/login" style={{ color: colors.text, fontSize: '20px' }}>
+      <div style={{ marginTop: '12px', textAlign: 'center' }}>
+        <Link to="/login" style={{ color: colors.text, fontSize: '16px' }}>
           Back to Login
         </Link>
       </div>

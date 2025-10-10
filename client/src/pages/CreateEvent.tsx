@@ -33,25 +33,25 @@ export default function CreateEvent() {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ color: colors.text, marginBottom: '20px' }}>New Event</h1>
+    <div style={{ padding: '15px', maxWidth: '1200px', margin: '0 auto' }}>
+      <h1 style={{ color: colors.text, marginBottom: '15px' }}>New Event</h1>
 
       {error && (
         <div style={{
-          padding: '10px',
+          padding: '8px',
           background: colors.error,
           color: colors.text,
           borderRadius: '4px',
-          marginBottom: '20px',
-          fontSize: '20px'
+          marginBottom: '12px',
+          fontSize: '16px'
         }}>
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+        <div style={{ marginBottom: '10px' }}>
+          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Event Name *
           </label>
           <input
@@ -62,8 +62,8 @@ export default function CreateEvent() {
             placeholder="Weekend Trip, Concert, Dinner Party, etc."
             style={{
               width: '100%',
-              padding: '10px',
-              fontSize: '20px',
+              padding: '6px',
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -72,8 +72,8 @@ export default function CreateEvent() {
           />
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+        <div style={{ marginBottom: '12px' }}>
+          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Description (Optional)
           </label>
           <textarea
@@ -83,8 +83,8 @@ export default function CreateEvent() {
             rows={3}
             style={{
               width: '100%',
-              padding: '10px',
-              fontSize: '20px',
+              padding: '6px',
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -94,13 +94,13 @@ export default function CreateEvent() {
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button
             type="submit"
             disabled={loading}
             style={{
-              padding: '12px 24px',
-              fontSize: '20px',
+              padding: '8px 16px',
+              fontSize: '18px',
               background: colors.primary,
               color: colors.text,
               border: 'none',
@@ -115,8 +115,8 @@ export default function CreateEvent() {
             type="button"
             onClick={() => navigate('/dashboard')}
             style={{
-              padding: '12px 20px',
-              fontSize: '20px',
+              padding: '8px 16px',
+              fontSize: '18px',
               background: colors.textSecondary,
               color: colors.text,
               border: 'none',

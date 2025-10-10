@@ -65,28 +65,28 @@ export default function Login() {
         }}>
           <div style={{
             background: colors.background,
-            padding: '30px',
+            padding: '20px',
             borderRadius: '8px',
             maxWidth: '400px',
             textAlign: 'center',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
           }}>
-            <h2 style={{ color: colors.text, marginBottom: '15px', fontSize: '24px' }}>
+            <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: '20px' }}>
               Email Already Registered
             </h2>
-            <p style={{ color: colors.text, marginBottom: '20px', fontSize: '20px', lineHeight: '1.5' }}>
+            <p style={{ color: colors.text, marginBottom: '15px', fontSize: '16px', lineHeight: '1.5' }}>
               This email is already registered with a password. Please log in with your email and password instead.
             </p>
             <button
               onClick={() => setShowModal(false)}
               style={{
-                padding: '12px 24px',
+                padding: '8px 16px',
                 background: colors.primary,
                 color: colors.text,
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                fontSize: '20px',
+                fontSize: '16px',
                 fontWeight: 'bold'
               }}
             >
@@ -96,24 +96,24 @@ export default function Login() {
         </div>
       )}
 
-      <div style={{ flex: 1, maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-        <h1 style={{ color: colors.text, marginBottom: '20px' }}>Login</h1>
+      <div style={{ flex: 1, maxWidth: '400px', margin: '30px auto', padding: '15px' }}>
+        <h1 style={{ color: colors.text, marginBottom: '15px' }}>Login</h1>
 
         {error && (
         <div style={{
-          padding: '10px',
+          padding: '8px',
           background: colors.surface,
           color: colors.text,
           borderRadius: '4px',
-          marginBottom: '20px'
+          marginBottom: '12px'
         }}>
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', color: colors.text }}>Email</label>
+        <div style={{ marginBottom: '10px' }}>
+          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Email</label>
           <input
             type="email"
             value={email}
@@ -121,16 +121,16 @@ export default function Login() {
             required
             style={{
               width: '100%',
-              padding: '8px',
-              fontSize: '20px',
+              padding: '6px',
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', color: colors.text }}>Password</label>
+        <div style={{ marginBottom: '8px' }}>
+          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Password</label>
           <input
             type="password"
             value={password}
@@ -138,16 +138,16 @@ export default function Login() {
             required
             style={{
               width: '100%',
-              padding: '8px',
-              fontSize: '20px',
+              padding: '6px',
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
           />
         </div>
 
-        <div style={{ marginBottom: '20px', textAlign: 'left' }}>
-          <Link to="/forgot-password" style={{ color: colors.text, fontSize: '20px' }}>
+        <div style={{ marginBottom: '12px', textAlign: 'left' }}>
+          <Link to="/forgot-password" style={{ color: colors.text, fontSize: '16px' }}>
             Forgot password?
           </Link>
         </div>
@@ -157,8 +157,8 @@ export default function Login() {
           disabled={loading}
           style={{
             width: '100%',
-            padding: '10px',
-            fontSize: '22px',
+            padding: '8px',
+            fontSize: '18px',
             background: colors.primary,
             color: colors.text,
             border: 'none',
@@ -170,7 +170,7 @@ export default function Login() {
         </button>
       </form>
 
-      <div style={{ margin: '20px 0', textAlign: 'center', color: colors.text }}>
+      <div style={{ margin: '12px 0', textAlign: 'center', color: colors.text, fontSize: '16px' }}>
         <span>or</span>
       </div>
 
@@ -178,8 +178,8 @@ export default function Login() {
         onClick={handleGoogleLogin}
         style={{
           width: '100%',
-          padding: '10px',
-          fontSize: '22px',
+          padding: '8px',
+          fontSize: '18px',
           background: colors.surface,
           color: colors.text,
           border: `1px solid ${colors.border}`,
@@ -190,18 +190,18 @@ export default function Login() {
         Continue with Google
       </button>
 
-        <p style={{ marginTop: '20px', textAlign: 'center', color: colors.text }}>
+        <p style={{ marginTop: '12px', textAlign: 'center', color: colors.text, fontSize: '16px' }}>
           Don't have an account? <Link to="/register" style={{ color: colors.text }}>Register</Link>
         </p>
       </div>
 
       <footer style={{
         background: colors.surface,
-        padding: '15px 20px',
+        padding: '12px 15px',
         textAlign: 'center',
         borderTop: `1px solid ${colors.border}`
       }}>
-        <div style={{ color: colors.text, fontSize: '20px' }}>
+        <div style={{ color: colors.text, fontSize: '16px' }}>
           Need help? Contact us at{' '}
           <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
             hello@ledgersplit.com
