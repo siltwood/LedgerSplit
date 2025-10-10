@@ -263,7 +263,7 @@ export default function Dashboard() {
                       </button>
                     )}
                   </div>
-                  <div style={{ flex: 1, minWidth: '200px' }}>
+                  <div style={{ flex: 1, minWidth: '200px', paddingRight: '180px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                       <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
                       {event.is_settled && (
