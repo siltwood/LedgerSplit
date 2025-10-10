@@ -19,6 +19,7 @@ export default function EventDetail() {
   const [showAllBalances, setShowAllBalances] = useState(false);
   const [settledConfirmations, setSettledConfirmations] = useState<EventSettledConfirmation[]>([]);
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
+  const [billSearchQuery, setBillSearchQuery] = useState('');
 
   useEffect(() => {
     loadData();
@@ -548,7 +549,50 @@ export default function EventDetail() {
 
       {/* Bills Section */}
       <div>
-        <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>Bills ({splits.length})</h2>
+        <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>
+          Bills ({(() => {
+            const filteredCount = splits.filter(split => {
+              if (!billSearchQuery.trim()) return true;
+              const query = billSearchQuery.toLowerCase();
+              if (split.title.toLowerCase().includes(query)) return true;
+              if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
+              if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
+              if (split.notes?.toLowerCase().includes(query)) return true;
+              if (split.split_participants?.some((p: any) => {
+                const participant = event.participants?.find(ep => ep.user_id === p.user_id);
+                return participant?.user?.name?.toLowerCase().includes(query) ||
+                       participant?.user?.email?.toLowerCase().includes(query);
+              })) return true;
+              return false;
+            }).length;
+            return billSearchQuery.trim() ? `${filteredCount} / ${splits.length}` : splits.length;
+          })()})
+        </h2>
+
+        {/* Bill Search */}
+        {splits.length > 0 && (
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px' }}>
+              Search Bills
+            </label>
+            <input
+              type="text"
+              value={billSearchQuery}
+              onChange={(e) => setBillSearchQuery(e.target.value)}
+              placeholder="Search by description or payer..."
+              style={{
+                width: '100%',
+                padding: '8px 12px',
+                fontSize: '18px',
+                border: `2px solid ${colors.border}`,
+                borderRadius: '8px',
+                background: colors.surface,
+                color: colors.text
+              }}
+            />
+          </div>
+        )}
+
         {splits.length === 0 ? (
           <div style={{
             padding: '48px',
@@ -564,7 +608,30 @@ export default function EventDetail() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {splits.map((split) => (
+            {splits.filter(split => {
+              // Apply search filter
+              if (!billSearchQuery.trim()) return true;
+              const query = billSearchQuery.toLowerCase();
+
+              // Search in title
+              if (split.title.toLowerCase().includes(query)) return true;
+
+              // Search in payer name
+              if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
+              if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
+
+              // Search in notes
+              if (split.notes?.toLowerCase().includes(query)) return true;
+
+              // Search in participant names
+              if (split.split_participants?.some((p: any) => {
+                const participant = event.participants?.find(ep => ep.user_id === p.user_id);
+                return participant?.user?.name?.toLowerCase().includes(query) ||
+                       participant?.user?.email?.toLowerCase().includes(query);
+              })) return true;
+
+              return false;
+            }).map((split) => (
               <div
                 key={split.split_id}
                 style={{
