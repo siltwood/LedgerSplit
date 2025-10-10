@@ -92,25 +92,25 @@ export default function CreateSplit() {
       <div style={{ maxWidth: '700px', margin: '50px auto', padding: '20px' }}>
         <h1 style={{ color: colors.text }}>New Bill</h1>
         <div style={{
-          padding: '20px',
+          padding: '10px',
           background: colors.error,
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '20px'
+          fontSize: '16px'
         }}>
           {error || 'Event not found'}
         </div>
         <button
           onClick={() => navigate('/dashboard')}
           style={{
-            padding: '12px 24px',
+            padding: '10px 20px',
             background: colors.primary,
             color: colors.text,
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '20px'
+            fontSize: '16px'
           }}
         >
           Back to Dashboard
@@ -130,7 +130,7 @@ export default function CreateSplit() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '20px'
+          fontSize: '16px'
         }}>
           {error}
         </div>
@@ -139,7 +139,7 @@ export default function CreateSplit() {
       <form onSubmit={handleSubmit}>
 
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Description *
           </label>
           <input
@@ -147,11 +147,11 @@ export default function CreateSplit() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            placeholder="Dinner, Uber, Concert tickets, etc."
+            placeholder="Dinner, Uber, etc."
             style={{
               width: '100%',
-              padding: '10px',
-              fontSize: '20px',
+              padding: '8px',
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -161,7 +161,7 @@ export default function CreateSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Amount *
           </label>
           <input
@@ -173,8 +173,8 @@ export default function CreateSplit() {
             placeholder="0.00"
             style={{
               width: '100%',
-              padding: '10px',
-              fontSize: '20px',
+              padding: '8px',
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -184,7 +184,7 @@ export default function CreateSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
             Split between *
           </label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -237,7 +237,7 @@ export default function CreateSplit() {
                     )}
                   </div>
                   <span style={{
-                    fontSize: '20px',
+                    fontSize: '16px',
                     color: isSelected ? '#fff' : colors.text,
                     fontWeight: isSelected ? '600' : '500'
                   }}>
@@ -248,19 +248,20 @@ export default function CreateSplit() {
             })}
           </div>
           {selectedParticipants.length > 0 && (
-            <div style={{ marginTop: '8px', fontSize: '20px', color: colors.text, opacity: 0.7 }}>
+            <div style={{ marginTop: '8px', fontSize: '16px', color: colors.text, opacity: 0.7 }}>
               ${parseFloat(amount || '0').toFixed(2)} ÷ {selectedParticipants.length} = ${(parseFloat(amount || '0') / selectedParticipants.length).toFixed(2)} per person
             </div>
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <button
             type="submit"
             disabled={loading}
             style={{
-              padding: '12px 24px',
-              fontSize: '20px',
+              width: '100%',
+              padding: '10px 20px',
+              fontSize: '16px',
               background: colors.primary,
               color: colors.text,
               border: 'none',
@@ -269,14 +270,15 @@ export default function CreateSplit() {
               opacity: loading ? 0.7 : 1
             }}
           >
-            {loading ? 'Adding...' : 'Add Bill'}
+            Add Bill
           </button>
           <button
             type="button"
             onClick={() => navigate(`/events/${eventIdFromParams}`)}
             style={{
-              padding: '12px 20px',
-              fontSize: '20px',
+              width: '100%',
+              padding: '10px 20px',
+              fontSize: '16px',
               background: colors.textSecondary,
               color: colors.text,
               border: 'none',

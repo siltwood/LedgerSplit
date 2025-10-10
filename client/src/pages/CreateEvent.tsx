@@ -59,10 +59,10 @@ export default function CreateEvent() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="Weekend Trip, Concert, Dinner Party, etc."
+            placeholder="Trip, Concert, etc."
             style={{
               width: '100%',
-              padding: '6px',
+              padding: '8px',
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
@@ -79,11 +79,11 @@ export default function CreateEvent() {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Add details about the event..."
+            placeholder="Add details..."
             rows={3}
             style={{
               width: '100%',
-              padding: '6px',
+              padding: '8px',
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
@@ -100,7 +100,7 @@ export default function CreateEvent() {
             disabled={loading}
             style={{
               width: '100%',
-              padding: '8px 16px',
+              padding: '10px 20px',
               fontSize: '16px',
               background: colors.primary,
               color: colors.text,
@@ -110,14 +110,14 @@ export default function CreateEvent() {
               opacity: loading ? 0.7 : 1
             }}
           >
-            {loading ? 'Creating...' : 'Create Event'}
+            Create Event
           </button>
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
             style={{
               width: '100%',
-              padding: '8px 16px',
+              padding: '10px 20px',
               fontSize: '16px',
               background: colors.textSecondary,
               color: colors.text,

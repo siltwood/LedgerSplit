@@ -335,45 +335,47 @@ export default function Dashboard() {
         }}>
           <div style={{
             background: colors.surface,
-            padding: '24px',
+            padding: '20px',
             borderRadius: '8px',
             border: `1px solid ${colors.border}`,
             maxWidth: '400px',
             width: '90%'
           }}>
-            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>Delete Event?</h3>
-            <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '16px' }}>Delete Event?</h3>
+            <p style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '16px', opacity: 0.9 }}>
               This will permanently delete the event and all associated bills. This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
-              <button
-                onClick={() => setShowDeleteModal(null)}
-                style={{
-                  padding: '12px 24px',
-                  background: colors.secondary,
-                  color: colors.text,
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '20px'
-                }}
-              >
-                Cancel
-              </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 onClick={handleDeleteEvent}
                 style={{
-                  padding: '12px 24px',
+                  width: '100%',
+                  padding: '10px 20px',
                   background: colors.error,
                   color: colors.text,
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '20px',
+                  fontSize: '16px',
                   fontWeight: '600'
                 }}
               >
                 Delete Event
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(null)}
+                style={{
+                  width: '100%',
+                  padding: '10px 20px',
+                  background: colors.secondary,
+                  color: colors.text,
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '16px'
+                }}
+              >
+                Cancel
               </button>
             </div>
           </div>
