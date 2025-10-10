@@ -85,7 +85,7 @@ export default function ResetPassword() {
       {token ? (
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
               New Password
             </label>
             <input
@@ -106,7 +106,7 @@ export default function ResetPassword() {
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
               Confirm Password
             </label>
             <input

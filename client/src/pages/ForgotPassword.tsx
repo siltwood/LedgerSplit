@@ -61,7 +61,7 @@ export default function ForgotPassword() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Email
           </label>
           <input

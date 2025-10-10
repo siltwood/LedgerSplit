@@ -139,7 +139,7 @@ export default function CreateSplit() {
       <form onSubmit={handleSubmit}>
 
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Description *
           </label>
           <input
@@ -161,7 +161,7 @@ export default function CreateSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Amount *
           </label>
           <input
@@ -184,7 +184,7 @@ export default function CreateSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
             Split between *
           </label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

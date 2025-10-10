@@ -71,7 +71,7 @@ export default function Register() {
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Name</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '20px' }}>Name</label>
             <input
               type="text"
               value={name}
@@ -89,7 +89,7 @@ export default function Register() {
           </div>
 
           <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Email</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '20px' }}>Email</label>
             <input
               type="email"
               value={email}
@@ -107,7 +107,7 @@ export default function Register() {
           </div>
 
           <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Password</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '20px' }}>Password</label>
             <input
               type="password"
               value={password}
@@ -126,7 +126,7 @@ export default function Register() {
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '16px' }}>Confirm Password</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '20px' }}>Confirm Password</label>
             <input
               type="password"
               value={confirmPassword}
