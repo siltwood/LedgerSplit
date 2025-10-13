@@ -290,40 +290,40 @@ export default function EventDetail() {
       {/* Event Header */}
       <div style={{
         background: colors.surface,
-        padding: '20px',
+        padding: window.innerWidth < 600 ? '12px' : '20px',
         borderRadius: '8px',
         border: `1px solid ${colors.border}`,
-        marginBottom: '24px'
+        marginBottom: window.innerWidth < 600 ? '16px' : '24px'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '8px' : '16px', marginBottom: window.innerWidth < 600 ? '8px' : '16px' }}>
           <div style={{ flex: 1, minWidth: '250px' }}>
-            <h1 style={{ margin: '0 0 8px 0', color: colors.text, fontSize: '28px' }}>{event.name}</h1>
+            <h1 style={{ margin: '0 0 4px 0', color: colors.text, fontSize: window.innerWidth < 600 ? '22px' : '28px' }}>{event.name}</h1>
             {event.description && (
-              <p style={{ color: colors.text, margin: '0', fontSize: '20px', opacity: 0.9 }}>
+              <p style={{ color: colors.text, margin: '0', fontSize: window.innerWidth < 600 ? '16px' : '20px', opacity: 0.9 }}>
                 {event.description}
               </p>
             )}
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: colors.primary }}>
+          <div style={{ fontSize: window.innerWidth < 600 ? '20px' : '24px', fontWeight: 'bold', color: colors.primary }}>
             ${totalAmount.toFixed(2)}
           </div>
         </div>
 
         {/* Participants */}
         {event.participants && event.participants.length > 0 && (
-          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${colors.border}` }}>
-            <div style={{ fontSize: '20px', color: colors.text, opacity: 0.8, marginBottom: '8px' }}>
+          <div style={{ marginTop: window.innerWidth < 600 ? '12px' : '20px', paddingTop: window.innerWidth < 600 ? '12px' : '20px', borderTop: `1px solid ${colors.border}` }}>
+            <div style={{ fontSize: window.innerWidth < 600 ? '16px' : '20px', color: colors.text, opacity: 0.8, marginBottom: window.innerWidth < 600 ? '6px' : '8px' }}>
               {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '6px' : '8px' }}>
               {event.participants.map((p) => (
                 <span
                   key={p.user_id}
                   style={{
-                    padding: '6px 12px',
+                    padding: window.innerWidth < 600 ? '4px 8px' : '6px 12px',
                     background: getParticipantColor(p.user_id),
                     borderRadius: '6px',
-                    fontSize: '20px',
+                    fontSize: window.innerWidth < 600 ? '16px' : '20px',
                     color: '#000',
                     fontWeight: '500',
                     wordBreak: 'break-word'
@@ -338,19 +338,33 @@ export default function EventDetail() {
       </div>
 
       {/* Action Buttons */}
-      <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ marginBottom: window.innerWidth < 600 ? '16px' : '24px', display: 'flex', flexDirection: 'column', gap: window.innerWidth < 600 ? '6px' : '8px' }}>
         <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', width: '100%' }}>
-          <button style={buttonStyles.primary}>
+          <button style={{
+            ...buttonStyles.primary,
+            padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
+            fontSize: window.innerWidth < 600 ? '16px' : '18px'
+          }}>
             Add Bill
           </button>
         </Link>
-        <button onClick={handleCopyShareLink} style={buttonStyles.secondary}>
+        <button onClick={handleCopyShareLink} style={{
+          ...buttonStyles.secondary,
+          padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
+          fontSize: window.innerWidth < 600 ? '16px' : '18px'
+        }}>
           Share Invite Link
         </button>
         {event.created_by === user?.id && (
           <button
             onClick={() => setShowDeleteEventModal(true)}
-            style={{ ...buttonStyles.secondary, background: colors.error, border: 'none' }}
+            style={{
+              ...buttonStyles.secondary,
+              background: colors.error,
+              border: 'none',
+              padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
+              fontSize: window.innerWidth < 600 ? '16px' : '18px'
+            }}
           >
             Delete Event
           </button>
@@ -361,22 +375,22 @@ export default function EventDetail() {
       {event.participants && event.participants.length > 0 && splits.length > 0 && !event.is_settled && (
         <div style={{
           background: colors.surface,
-          padding: '20px',
+          padding: window.innerWidth < 600 ? '12px' : '20px',
           borderRadius: '8px',
           border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
-          marginBottom: '24px'
+          marginBottom: window.innerWidth < 600 ? '16px' : '24px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-            <h3 style={{ margin: 0, color: colors.text, fontSize: '22px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: window.innerWidth < 600 ? '10px' : '16px', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '8px' : '12px' }}>
+            <h3 style={{ margin: 0, color: colors.text, fontSize: window.innerWidth < 600 ? '18px' : '22px' }}>
               {event.is_settled ? '✓ Event Settled!' : 'Settle Event'}
             </h3>
             {event.is_settled && (
               <span style={{
-                padding: '8px 16px',
+                padding: window.innerWidth < 600 ? '6px 12px' : '8px 16px',
                 background: colors.purple,
                 color: '#fff',
                 borderRadius: '20px',
-                fontSize: '18px',
+                fontSize: window.innerWidth < 600 ? '14px' : '18px',
                 fontWeight: '600'
               }}>
                 All settled up!
@@ -384,14 +398,14 @@ export default function EventDetail() {
             )}
           </div>
 
-          <div style={{ fontSize: '18px', color: colors.text, marginBottom: '16px', opacity: 0.9 }}>
+          <div style={{ fontSize: window.innerWidth < 600 ? '14px' : '18px', color: colors.text, marginBottom: window.innerWidth < 600 ? '10px' : '16px', opacity: 0.9 }}>
             {event.is_settled
               ? 'Everyone has confirmed this event is settled.'
               : 'Once all participants confirm, this event will be marked as settled.'}
           </div>
 
           {/* Participant Checkboxes */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: window.innerWidth < 600 ? '8px' : '12px' }}>
             {event.participants.map((participant) => {
               const hasConfirmed = settledConfirmations.some(c => c.user_id === participant.user_id);
               const isCurrentUser = participant.user_id === user?.id;
@@ -403,18 +417,18 @@ export default function EventDetail() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 16px',
+                    gap: window.innerWidth < 600 ? '8px' : '12px',
+                    padding: window.innerWidth < 600 ? '8px 12px' : '12px 16px',
                     background: hasConfirmed ? colors.purple : colors.background,
-                    borderRadius: '8px',
+                    borderRadius: window.innerWidth < 600 ? '6px' : '8px',
                     border: `2px solid ${hasConfirmed ? colors.purple : colors.border}`,
                     cursor: isCurrentUser ? 'pointer' : 'default',
                     transition: 'all 0.2s ease'
                   }}
                 >
                   <div style={{
-                    width: '24px',
-                    height: '24px',
+                    width: window.innerWidth < 600 ? '20px' : '24px',
+                    height: window.innerWidth < 600 ? '20px' : '24px',
                     borderRadius: '4px',
                     border: `2px solid ${hasConfirmed ? '#fff' : colors.border}`,
                     background: hasConfirmed ? colors.purple : 'transparent',
@@ -424,18 +438,18 @@ export default function EventDetail() {
                     flexShrink: 0
                   }}>
                     {hasConfirmed && (
-                      <span style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>✓</span>
+                      <span style={{ color: '#fff', fontSize: window.innerWidth < 600 ? '14px' : '18px', fontWeight: 'bold' }}>✓</span>
                     )}
                   </div>
                   <span style={{
-                    fontSize: '20px',
+                    fontSize: window.innerWidth < 600 ? '16px' : '20px',
                     color: hasConfirmed ? '#fff' : colors.text,
                     fontWeight: hasConfirmed ? '600' : '500'
                   }}>
                     {participant.user?.name || participant.user?.email}
                     {isCurrentUser && ' (you)'}
                   </span>
-                  {hasConfirmed && (
+                  {hasConfirmed && window.innerWidth >= 600 && (
                     <span style={{
                       marginLeft: 'auto',
                       fontSize: '20px',
@@ -451,8 +465,8 @@ export default function EventDetail() {
           </div>
 
           <div style={{
-            marginTop: '16px',
-            fontSize: '20px',
+            marginTop: window.innerWidth < 600 ? '10px' : '16px',
+            fontSize: window.innerWidth < 600 ? '14px' : '20px',
             color: colors.text,
             opacity: 0.7,
             textAlign: 'center'
@@ -589,23 +603,7 @@ export default function EventDetail() {
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
           <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>
-            Bills ({(() => {
-              const filteredCount = splits.filter(split => {
-                if (!billSearchQuery.trim()) return true;
-                const query = billSearchQuery.toLowerCase();
-                if (split.title.toLowerCase().includes(query)) return true;
-                if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
-                if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
-                if (split.notes?.toLowerCase().includes(query)) return true;
-                if (split.split_participants?.some((p: any) => {
-                  const participant = event.participants?.find(ep => ep.user_id === p.user_id);
-                  return participant?.user?.name?.toLowerCase().includes(query) ||
-                         participant?.user?.email?.toLowerCase().includes(query);
-                })) return true;
-                return false;
-              }).length;
-              return billSearchQuery.trim() ? `${filteredCount} / ${splits.length}` : splits.length;
-            })()})
+            Bills
           </h2>
           {splits.length > 0 && (
             <button
