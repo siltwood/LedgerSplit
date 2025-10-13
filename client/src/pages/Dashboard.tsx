@@ -493,7 +493,7 @@ export default function Dashboard() {
                             ✓
                           </span>
                         )}
-                        <span style={{ fontSize: '14px', color: colors.text, opacity: 0.6, flexShrink: 0 }}>
+                        <span style={{ fontSize: '16px', color: colors.text, opacity: 0.6, flexShrink: 0 }}>
                           {new Date(event.created_at).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -501,7 +501,7 @@ export default function Dashboard() {
                           })}
                         </span>
                         <span style={{ fontSize: '16px', color: colors.text, opacity: 0.6, flexShrink: 0 }}>
-                          {event.participants?.length || 0} people
+                          {event.participants?.length || 0} {(event.participants?.length || 0) === 1 ? 'person' : 'people'}
                         </span>
                       </div>
                       <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0 }}>↓</div>

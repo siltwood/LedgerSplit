@@ -390,7 +390,7 @@ export default function EventDetail() {
                 background: colors.purple,
                 color: '#fff',
                 borderRadius: '20px',
-                fontSize: window.innerWidth < 600 ? '14px' : '18px',
+                fontSize: window.innerWidth < 600 ? '16px' : '18px',
                 fontWeight: '600'
               }}>
                 All settled up!
@@ -398,7 +398,7 @@ export default function EventDetail() {
             )}
           </div>
 
-          <div style={{ fontSize: window.innerWidth < 600 ? '14px' : '18px', color: colors.text, marginBottom: window.innerWidth < 600 ? '10px' : '16px', opacity: 0.9 }}>
+          <div style={{ fontSize: window.innerWidth < 600 ? '16px' : '18px', color: colors.text, marginBottom: window.innerWidth < 600 ? '10px' : '16px', opacity: 0.9 }}>
             {event.is_settled
               ? 'Everyone has confirmed this event is settled.'
               : 'Once all participants confirm, this event will be marked as settled.'}
@@ -438,7 +438,7 @@ export default function EventDetail() {
                     flexShrink: 0
                   }}>
                     {hasConfirmed && (
-                      <span style={{ color: '#fff', fontSize: window.innerWidth < 600 ? '14px' : '18px', fontWeight: 'bold' }}>✓</span>
+                      <span style={{ color: '#fff', fontSize: window.innerWidth < 600 ? '16px' : '18px', fontWeight: 'bold' }}>✓</span>
                     )}
                   </div>
                   <span style={{
@@ -466,7 +466,7 @@ export default function EventDetail() {
 
           <div style={{
             marginTop: window.innerWidth < 600 ? '10px' : '16px',
-            fontSize: window.innerWidth < 600 ? '14px' : '20px',
+            fontSize: window.innerWidth < 600 ? '16px' : '20px',
             color: colors.text,
             opacity: 0.7,
             textAlign: 'center'
