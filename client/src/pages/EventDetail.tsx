@@ -20,6 +20,7 @@ export default function EventDetail() {
   const [settledConfirmations, setSettledConfirmations] = useState<EventSettledConfirmation[]>([]);
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
   const [billSearchQuery, setBillSearchQuery] = useState('');
+  const [expandedBills, setExpandedBills] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadData();
@@ -146,6 +147,43 @@ export default function EventDetail() {
     } catch (error) {
       console.error('Failed to delete event:', error);
       alert('Failed to delete event');
+    }
+  };
+
+  const toggleBillExpanded = (billId: string) => {
+    setExpandedBills(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(billId)) {
+        newSet.delete(billId);
+      } else {
+        newSet.add(billId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleAllBills = () => {
+    const filteredBills = splits.filter(split => {
+      if (!billSearchQuery.trim()) return true;
+      const query = billSearchQuery.toLowerCase();
+      if (split.title.toLowerCase().includes(query)) return true;
+      if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
+      if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
+      if (split.notes?.toLowerCase().includes(query)) return true;
+      if (event && split.split_participants?.some((p: any) => {
+        const participant = event.participants?.find(ep => ep.user_id === p.user_id);
+        return participant?.user?.name?.toLowerCase().includes(query) ||
+               participant?.user?.email?.toLowerCase().includes(query);
+      })) return true;
+      return false;
+    });
+
+    if (expandedBills.size === filteredBills.length) {
+      // All expanded, collapse all
+      setExpandedBills(new Set());
+    } else {
+      // Some or none expanded, expand all
+      setExpandedBills(new Set(filteredBills.map(s => s.split_id)));
     }
   };
 
@@ -549,25 +587,57 @@ export default function EventDetail() {
 
       {/* Bills Section */}
       <div>
-        <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>
-          Bills ({(() => {
-            const filteredCount = splits.filter(split => {
-              if (!billSearchQuery.trim()) return true;
-              const query = billSearchQuery.toLowerCase();
-              if (split.title.toLowerCase().includes(query)) return true;
-              if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
-              if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
-              if (split.notes?.toLowerCase().includes(query)) return true;
-              if (split.split_participants?.some((p: any) => {
-                const participant = event.participants?.find(ep => ep.user_id === p.user_id);
-                return participant?.user?.name?.toLowerCase().includes(query) ||
-                       participant?.user?.email?.toLowerCase().includes(query);
-              })) return true;
-              return false;
-            }).length;
-            return billSearchQuery.trim() ? `${filteredCount} / ${splits.length}` : splits.length;
-          })()})
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>
+            Bills ({(() => {
+              const filteredCount = splits.filter(split => {
+                if (!billSearchQuery.trim()) return true;
+                const query = billSearchQuery.toLowerCase();
+                if (split.title.toLowerCase().includes(query)) return true;
+                if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
+                if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
+                if (split.notes?.toLowerCase().includes(query)) return true;
+                if (split.split_participants?.some((p: any) => {
+                  const participant = event.participants?.find(ep => ep.user_id === p.user_id);
+                  return participant?.user?.name?.toLowerCase().includes(query) ||
+                         participant?.user?.email?.toLowerCase().includes(query);
+                })) return true;
+                return false;
+              }).length;
+              return billSearchQuery.trim() ? `${filteredCount} / ${splits.length}` : splits.length;
+            })()})
+          </h2>
+          {splits.length > 0 && (
+            <button
+              onClick={toggleAllBills}
+              style={{
+                padding: '4px 10px',
+                background: colors.surface,
+                color: colors.text,
+                border: `2px solid ${colors.border}`,
+                borderRadius: '6px',
+                fontSize: '16px',
+                cursor: 'pointer',
+                fontWeight: '500'
+              }}
+            >
+              {expandedBills.size === splits.filter(split => {
+                if (!billSearchQuery.trim()) return true;
+                const query = billSearchQuery.toLowerCase();
+                if (split.title.toLowerCase().includes(query)) return true;
+                if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
+                if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
+                if (split.notes?.toLowerCase().includes(query)) return true;
+                if (split.split_participants?.some((p: any) => {
+                  const participant = event.participants?.find(ep => ep.user_id === p.user_id);
+                  return participant?.user?.name?.toLowerCase().includes(query) ||
+                         participant?.user?.email?.toLowerCase().includes(query);
+                })) return true;
+                return false;
+              }).length ? 'Collapse All' : 'Expand All'}
+            </button>
+          )}
+        </div>
 
         {/* Bill Search */}
         {splits.length > 0 && (
@@ -607,7 +677,7 @@ export default function EventDetail() {
             No bills yet. Add one to get started!
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {splits.filter(split => {
               // Apply search filter
               if (!billSearchQuery.trim()) return true;
@@ -631,20 +701,70 @@ export default function EventDetail() {
               })) return true;
 
               return false;
-            }).map((split) => (
+            }).map((split) => {
+              const isExpanded = expandedBills.has(split.split_id);
+              const payerName = split.paid_by === user?.id ? 'you' : (split.paid_by_user?.name || split.paid_by_user?.email);
+
+              return (
               <div
                 key={split.split_id}
                 style={{
-                  padding: '16px',
                   background: getParticipantColor(split.paid_by),
                   border: `1px solid ${colors.border}`,
-                  borderRadius: '8px'
+                  borderRadius: '8px',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>
-                  <div style={{ flex: 1, minWidth: '250px' }}>
+                {/* Collapsed View */}
+                {!isExpanded && (
+                  <div
+                    onClick={() => toggleBillExpanded(split.split_id)}
+                    style={{
+                      padding: '12px 16px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      justifyContent: 'space-between'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
+                      <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#000', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {split.title}
+                      </span>
+                      <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#000', opacity: 0.8, flexShrink: 0 }}>
+                        ${split.amount.toFixed(2)}
+                      </span>
+                      <span style={{ fontSize: '14px', color: '#000', opacity: 0.6, flexShrink: 0 }}>
+                        by {payerName}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '20px', color: '#000', flexShrink: 0 }}>↑</div>
+                  </div>
+                )}
+
+                {/* Expanded View */}
+                {isExpanded && (
+                  <div style={{ padding: '16px' }}>
+                    <div
+                      onClick={() => toggleBillExpanded(split.split_id)}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '12px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                        <strong style={{ fontSize: '20px', color: '#000' }}>{split.title}</strong>
+                      </div>
+                      <div style={{ fontSize: '20px', color: '#000', flexShrink: 0 }}>↓</div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>
+                      <div style={{ flex: 1, minWidth: '250px' }}>
                     <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                      <strong style={{ fontSize: '22px', color: '#000' }}>{split.title}</strong>
                       {(() => {
                         // Check if this split is settled for the current user
                         const perPersonAmount = split.split_participants && split.split_participants.length > 0
@@ -767,8 +887,11 @@ export default function EventDetail() {
                   )}
                 </div>
               </div>
-            ))}
+            )}
           </div>
+          );
+        })}
+      </div>
         )}
       </div>
 

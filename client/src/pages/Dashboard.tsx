@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [filterBy, setFilterBy] = useState<FilterOption>('all');
+  const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
 
   const handleDismiss = async (eventId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -52,6 +53,28 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Failed to delete event:', error);
       alert('Failed to delete event');
+    }
+  };
+
+  const toggleEventExpanded = (eventId: string) => {
+    setExpandedEvents(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(eventId)) {
+        newSet.delete(eventId);
+      } else {
+        newSet.add(eventId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleAllEvents = () => {
+    if (expandedEvents.size === filteredEvents.length) {
+      // All expanded, collapse all
+      setExpandedEvents(new Set());
+    } else {
+      // Some or none expanded, expand all
+      setExpandedEvents(new Set(filteredEvents.map(e => e.event_id)));
     }
   };
 
@@ -319,7 +342,26 @@ export default function Dashboard() {
       {/* Events */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
-          <h2 style={{ color: colors.text, margin: 0, fontSize: '20px' }}>Your Events</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h2 style={{ color: colors.text, margin: 0, fontSize: '20px' }}>Your Events</h2>
+            {filteredEvents.length > 0 && (
+              <button
+                onClick={toggleAllEvents}
+                style={{
+                  padding: '4px 10px',
+                  background: colors.surface,
+                  color: colors.text,
+                  border: `2px solid ${colors.border}`,
+                  borderRadius: '6px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}
+              >
+                {expandedEvents.size === filteredEvents.length ? 'Collapse All' : 'Expand All'}
+              </button>
+            )}
+          </div>
 
           {/* Event Count Badges */}
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
@@ -400,131 +442,193 @@ export default function Dashboard() {
           </div>
         ) : (
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 500px), 1fr))',
-            gap: '16px'
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px'
           }}>
-            {filteredEvents.map((event) => (
-              <Link
-                key={event.event_id}
-                to={`/events/${event.event_id}`}
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
+            {filteredEvents.map((event) => {
+              const isExpanded = expandedEvents.has(event.event_id);
+
+              return (
                 <div
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.15)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-                  }}
+                  key={event.event_id}
                   style={{
-                    padding: '20px',
                     background: event.is_dismissed ? colors.cadetGray2 : colors.surface,
                     border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '12px',
+                    borderRadius: '8px',
                     opacity: event.is_dismissed ? 0.6 : 1,
-                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                    transition: 'all 0.2s ease'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                    <h3 style={{ margin: 0, color: colors.text, fontSize: '24px' }}>{event.name}</h3>
-                    {event.is_settled && (
-                      <span style={{
-                        padding: '6px 12px',
-                        background: colors.purple,
-                        color: '#fff',
-                        borderRadius: '16px',
-                        fontSize: '18px',
-                        fontWeight: '600'
-                      }}>
-                        ✓ Settled
-                      </span>
-                    )}
-                  </div>
-
-                  <div style={{ fontSize: '18px', color: colors.text, opacity: 0.7 }}>
-                    {new Date(event.created_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </div>
-
-                  {event.description && (
-                    <div style={{ fontSize: '18px', color: colors.text, opacity: 0.8 }}>
-                      {event.description}
-                    </div>
-                  )}
-
-                  {event.participants && event.participants.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                      {event.participants.map((p) => (
-                        <span
-                          key={p.user_id}
-                          style={{
-                            padding: '4px 10px',
-                            background: getParticipantColor(event, p.user_id),
-                            borderRadius: '6px',
-                            fontSize: '18px',
-                            color: '#000',
-                            fontWeight: '500',
-                            wordBreak: 'break-word'
-                          }}
-                        >
-                          {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                    <button
-                      onClick={(e) => event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e)}
+                  {/* Collapsed View */}
+                  {!isExpanded && (
+                    <div
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toggleEventExpanded(event.event_id);
+                      }}
                       style={{
-                        padding: '6px 12px',
-                        background: event.is_dismissed ? colors.primary : colors.cadetGray2,
-                        color: '#000',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '18px',
-                        fontWeight: '500',
-                        cursor: 'pointer'
+                        padding: '12px 16px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        justifyContent: 'space-between'
                       }}
                     >
-                      {event.is_dismissed ? 'Restore' : 'Dismiss'}
-                    </button>
-                    {event.created_by === user?.id && (
-                      <button
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
+                        <span style={{ fontSize: '20px', fontWeight: 'bold', color: colors.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {event.name}
+                        </span>
+                        {event.is_settled && (
+                          <span style={{
+                            padding: '4px 8px',
+                            background: colors.purple,
+                            color: '#fff',
+                            borderRadius: '12px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            flexShrink: 0
+                          }}>
+                            ✓
+                          </span>
+                        )}
+                        <span style={{ fontSize: '16px', color: colors.text, opacity: 0.6, flexShrink: 0 }}>
+                          {event.participants?.length || 0} people
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0 }}>↑</div>
+                    </div>
+                  )}
+
+                  {/* Expanded View */}
+                  {isExpanded && (
+                    <div style={{ padding: '16px' }}>
+                      <div
                         onClick={(e) => {
                           e.preventDefault();
-                          e.stopPropagation();
-                          setShowDeleteModal(event.event_id);
+                          toggleEventExpanded(event.event_id);
                         }}
                         style={{
-                          padding: '6px 12px',
-                          background: colors.error,
-                          color: '#000',
-                          border: 'none',
-                          borderRadius: '4px',
-                          fontSize: '18px',
-                          fontWeight: '500',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '12px',
                           cursor: 'pointer'
                         }}
                       >
-                        Delete
-                      </button>
-                    )}
-                  </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                          <h3 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>{event.name}</h3>
+                          {event.is_settled && (
+                            <span style={{
+                              padding: '4px 10px',
+                              background: colors.purple,
+                              color: '#fff',
+                              borderRadius: '12px',
+                              fontSize: '16px',
+                              fontWeight: '600'
+                            }}>
+                              ✓ Settled
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0 }}>↓</div>
+                      </div>
+
+                      <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
+                        {new Date(event.created_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </div>
+
+                      {event.description && (
+                        <div style={{ fontSize: '16px', color: colors.text, opacity: 0.8, marginBottom: '12px' }}>
+                          {event.description}
+                        </div>
+                      )}
+
+                      {event.participants && event.participants.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
+                          {event.participants.map((p) => (
+                            <span
+                              key={p.user_id}
+                              style={{
+                                padding: '4px 8px',
+                                background: getParticipantColor(event, p.user_id),
+                                borderRadius: '6px',
+                                fontSize: '16px',
+                                color: '#000',
+                                fontWeight: '500',
+                                wordBreak: 'break-word'
+                              }}
+                            >
+                              {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <Link to={`/events/${event.event_id}`} style={{ textDecoration: 'none' }}>
+                          <button style={{
+                            padding: '6px 12px',
+                            background: colors.primary,
+                            color: '#000',
+                            border: 'none',
+                            borderRadius: '4px',
+                            fontSize: '16px',
+                            fontWeight: '500',
+                            cursor: 'pointer'
+                          }}>
+                            View Details
+                          </button>
+                        </Link>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e);
+                          }}
+                          style={{
+                            padding: '6px 12px',
+                            background: event.is_dismissed ? colors.primary : colors.cadetGray2,
+                            color: '#000',
+                            border: 'none',
+                            borderRadius: '4px',
+                            fontSize: '16px',
+                            fontWeight: '500',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {event.is_dismissed ? 'Restore' : 'Dismiss'}
+                        </button>
+                        {event.created_by === user?.id && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowDeleteModal(event.event_id);
+                            }}
+                            style={{
+                              padding: '6px 12px',
+                              background: colors.error,
+                              color: '#000',
+                              border: 'none',
+                              borderRadius: '4px',
+                              fontSize: '16px',
+                              fontWeight: '500',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
