@@ -739,7 +739,7 @@ export default function EventDetail() {
                         by {payerName}
                       </span>
                     </div>
-                    <div style={{ fontSize: '20px', color: '#000', flexShrink: 0 }}>↑</div>
+                    <div style={{ fontSize: '20px', color: '#000', flexShrink: 0 }}>↓</div>
                   </div>
                 )}
 
@@ -759,7 +759,7 @@ export default function EventDetail() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                         <strong style={{ fontSize: '20px', color: '#000' }}>{split.title}</strong>
                       </div>
-                      <div style={{ fontSize: '20px', color: '#000', flexShrink: 0 }}>↓</div>
+                      <div style={{ fontSize: '20px', color: '#000', flexShrink: 0 }}>↑</div>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>

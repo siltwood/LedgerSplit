@@ -493,11 +493,18 @@ export default function Dashboard() {
                             ✓
                           </span>
                         )}
+                        <span style={{ fontSize: '14px', color: colors.text, opacity: 0.6, flexShrink: 0 }}>
+                          {new Date(event.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </span>
                         <span style={{ fontSize: '16px', color: colors.text, opacity: 0.6, flexShrink: 0 }}>
                           {event.participants?.length || 0} people
                         </span>
                       </div>
-                      <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0 }}>↑</div>
+                      <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0 }}>↓</div>
                     </div>
                   )}
 
@@ -532,7 +539,7 @@ export default function Dashboard() {
                             </span>
                           )}
                         </div>
-                        <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0 }}>↓</div>
+                        <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0 }}>↑</div>
                       </div>
 
                       <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
