@@ -298,12 +298,12 @@ export default function EventDetail() {
                           background: 'transparent',
                           border: 'none',
                           cursor: 'pointer',
-                          fontSize: '16px',
+                          fontSize: '14px',
                           color: '#000',
                           fontWeight: 'bold',
                           padding: '2px',
                           position: 'absolute',
-                          top: '2px',
+                          top: '0px',
                           right: '2px',
                           lineHeight: 1
                         }}
