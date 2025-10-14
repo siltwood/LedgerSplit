@@ -41,17 +41,18 @@ export default function Layout() {
                   background: 'transparent',
                   border: `2px solid ${colors.slateGray}`,
                   borderRadius: '6px',
-                  color: colors.text,
-                  fontSize: '24px',
                   cursor: 'pointer',
-                  padding: '5px 10px',
-                  lineHeight: '1',
+                  padding: '8px 10px',
+                  flexDirection: 'column',
+                  gap: '4px',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
                 className="mobile-menu-button"
               >
-                ☰
+                <div style={{ width: '20px', height: '2px', background: colors.text }} />
+                <div style={{ width: '20px', height: '2px', background: colors.text }} />
+                <div style={{ width: '20px', height: '2px', background: colors.text }} />
               </button>
 
               {/* Desktop navigation */}
@@ -92,16 +93,41 @@ export default function Layout() {
           )}
         </div>
 
-        {/* Mobile navigation menu */}
-        {user && mobileMenuOpen && (
+      </nav>
+
+      {/* Mobile navigation menu overlay */}
+      {user && mobileMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              display: 'none',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 998
+            }}
+            className="mobile-nav-backdrop"
+          />
+          {/* Menu */}
           <div style={{
             display: 'none',
-            width: '100%',
+            position: 'fixed',
+            top: '60px',
+            right: '10px',
+            width: '250px',
             flexDirection: 'column',
             gap: '10px',
-            marginTop: '15px',
-            paddingTop: '15px',
-            borderTop: `1px solid ${colors.border}`,
+            padding: '15px',
+            background: colors.primary,
+            border: `2px solid ${colors.border}`,
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+            zIndex: 999
           }} className="mobile-nav">
             <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{
               color: colors.text,
@@ -121,7 +147,7 @@ export default function Layout() {
             }}>
               Settings
             </Link>
-            <div style={{ padding: '10px', color: colors.text, fontSize: '20px', fontWeight: 'bold' }}>
+            <div style={{ padding: '10px', color: colors.text, fontSize: '20px', fontWeight: 'bold', borderTop: `1px solid ${colors.border}`, marginTop: '5px', paddingTop: '15px' }}>
               {user.name}
             </div>
             <button
@@ -143,8 +169,8 @@ export default function Layout() {
               Logout
             </button>
           </div>
-        )}
-      </nav>
+        </>
+      )}
 
       <style>{`
         @media (max-width: 768px) {
@@ -156,6 +182,9 @@ export default function Layout() {
           }
           .mobile-nav {
             display: flex !important;
+          }
+          .mobile-nav-backdrop {
+            display: block !important;
           }
         }
       `}</style>
