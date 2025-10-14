@@ -520,18 +520,46 @@ export default function EventDetail() {
                   const toUser = event.participants?.find(p => p.user_id === settlement.to);
                   const isUserPaying = settlement.from === user?.id;
 
+                  // Check if this settlement has been marked as paid
+                  const hasPayment = payments.some((payment: any) =>
+                    payment.from_user_id === settlement.from &&
+                    payment.to_user_id === settlement.to &&
+                    Math.abs(payment.amount - settlement.amount) < 0.01
+                  );
+
                   return (
-                    <div key={idx} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '14px',
-                      background: colors.background,
-                      borderRadius: '6px',
-                      border: `1px solid ${colors.border}`,
-                      flexWrap: 'wrap'
-                    }}>
-                      <div style={{ flex: 1, fontSize: '20px', color: '#000', fontWeight: '600', wordBreak: 'break-word', minWidth: '150px' }}>
+                    <div
+                      key={idx}
+                      onClick={() => !hasPayment && handleMarkAsPaid(settlement)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        padding: '14px',
+                        background: hasPayment ? colors.purple : colors.background,
+                        borderRadius: '6px',
+                        border: `2px solid ${hasPayment ? colors.purple : colors.border}`,
+                        cursor: hasPayment ? 'default' : 'pointer',
+                        transition: 'all 0.2s ease',
+                        width: '100%'
+                      }}
+                    >
+                      <div style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '4px',
+                        border: `2px solid ${hasPayment ? '#fff' : colors.border}`,
+                        background: hasPayment ? colors.purple : 'transparent',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        {hasPayment && (
+                          <span style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>✓</span>
+                        )}
+                      </div>
+                      <div style={{ flex: 1, fontSize: '20px', color: hasPayment ? '#fff' : '#000', fontWeight: '600', wordBreak: 'break-word' }}>
                         {isUserPaying ? (
                           <>Pay {toUser?.user?.name || toUser?.user?.email}</>
                         ) : (
@@ -541,28 +569,11 @@ export default function EventDetail() {
                       <div style={{
                         fontSize: '22px',
                         fontWeight: 'bold',
-                        color: colors.purple,
-                        minWidth: '70px',
-                        textAlign: 'right',
+                        color: hasPayment ? '#fff' : colors.purple,
                         flexShrink: 0
                       }}>
                         ${settlement.amount.toFixed(2)}
                       </div>
-                      <button
-                        onClick={() => handleMarkAsPaid(settlement)}
-                        style={{
-                          ...buttonStyles.small,
-                          background: colors.primary,
-                          color: '#000',
-                          border: 'none',
-                          borderRadius: '6px',
-                          fontWeight: '600',
-                          whiteSpace: 'nowrap',
-                          flexShrink: 0
-                        }}
-                      >
-                        Mark as Paid
-                      </button>
                     </div>
                   );
                 })}
@@ -575,37 +586,40 @@ export default function EventDetail() {
 
       {/* Bills Section */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
-          <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>
-            Bills
-          </h2>
-          <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', display: 'inline-block' }}>
-            <button style={{
-              padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
-              fontSize: window.innerWidth < 600 ? '16px' : '18px',
-              background: colors.purple,
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}>
-              Add Bill
-            </button>
-          </Link>
-        </div>
+        <h2 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>
+          Bills
+        </h2>
+
+        <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', display: 'block', marginBottom: '16px' }}>
+          <button style={{
+            padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
+            fontSize: window.innerWidth < 600 ? '16px' : '18px',
+            background: colors.purple,
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            width: '100%'
+          }}>
+            Add Bill
+          </button>
+        </Link>
 
         {/* Bill Search */}
         {splits.length > 0 && (
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px', fontWeight: 'normal' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px', fontWeight: 'bold' }}>
               Search Bills
             </label>
+            <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '4px' }}>
+              Search by description or payer...
+            </div>
             <input
               type="text"
               value={billSearchQuery}
               onChange={(e) => setBillSearchQuery(e.target.value)}
-              placeholder="Search by description or payer..."
+              placeholder=""
               style={{
                 width: '100%',
                 padding: '8px 12px',
