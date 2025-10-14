@@ -162,31 +162,6 @@ export default function EventDetail() {
     });
   };
 
-  const toggleAllBills = () => {
-    const filteredBills = splits.filter(split => {
-      if (!billSearchQuery.trim()) return true;
-      const query = billSearchQuery.toLowerCase();
-      if (split.title.toLowerCase().includes(query)) return true;
-      if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
-      if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
-      if (split.notes?.toLowerCase().includes(query)) return true;
-      if (event && split.split_participants?.some((p: any) => {
-        const participant = event.participants?.find(ep => ep.user_id === p.user_id);
-        return participant?.user?.name?.toLowerCase().includes(query) ||
-               participant?.user?.email?.toLowerCase().includes(query);
-      })) return true;
-      return false;
-    });
-
-    if (expandedBills.size === filteredBills.length) {
-      // All expanded, collapse all
-      setExpandedBills(new Set());
-    } else {
-      // Some or none expanded, expand all
-      setExpandedBills(new Set(filteredBills.map(s => s.split_id)));
-    }
-  };
-
   if (loading) return <div style={{ padding: '20px' }}></div>;
   if (!event) return <div style={{ padding: '20px', color: colors.text, fontSize: '20px' }}>Event not found</div>;
 
@@ -598,57 +573,26 @@ export default function EventDetail() {
         );
       })()}
 
-      {/* Add Bill Button */}
-      <div style={{ marginBottom: window.innerWidth < 600 ? '16px' : '24px' }}>
-        <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', display: 'inline-block', width: window.innerWidth < 600 ? '100%' : 'auto' }}>
-          <button style={{
-            ...buttonStyles.primary,
-            padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
-            fontSize: window.innerWidth < 600 ? '16px' : '18px',
-            width: window.innerWidth < 600 ? '100%' : 'auto',
-            maxWidth: window.innerWidth >= 600 ? '300px' : '100%'
-          }}>
-            Add Bill
-          </button>
-        </Link>
-      </div>
-
       {/* Bills Section */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
           <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>
             Bills
           </h2>
-          {splits.length > 0 && (
-            <button
-              onClick={toggleAllBills}
-              style={{
-                padding: '4px 10px',
-                background: colors.surface,
-                color: colors.text,
-                border: `2px solid ${colors.border}`,
-                borderRadius: '6px',
-                fontSize: '16px',
-                cursor: 'pointer',
-                fontWeight: '500'
-              }}
-            >
-              {expandedBills.size === splits.filter(split => {
-                if (!billSearchQuery.trim()) return true;
-                const query = billSearchQuery.toLowerCase();
-                if (split.title.toLowerCase().includes(query)) return true;
-                if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
-                if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
-                if (split.notes?.toLowerCase().includes(query)) return true;
-                if (split.split_participants?.some((p: any) => {
-                  const participant = event.participants?.find(ep => ep.user_id === p.user_id);
-                  return participant?.user?.name?.toLowerCase().includes(query) ||
-                         participant?.user?.email?.toLowerCase().includes(query);
-                })) return true;
-                return false;
-              }).length ? 'Collapse All' : 'Expand All'}
+          <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', display: 'inline-block' }}>
+            <button style={{
+              padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
+              fontSize: window.innerWidth < 600 ? '16px' : '18px',
+              background: colors.purple,
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: '600'
+            }}>
+              Add Bill
             </button>
-          )}
+          </Link>
         </div>
 
         {/* Bill Search */}
@@ -694,6 +638,11 @@ export default function EventDetail() {
               // Apply search filter
               if (!billSearchQuery.trim()) return true;
               const query = billSearchQuery.toLowerCase();
+
+              // Check for "me", "you", "my bills" keywords to show user's bills
+              if (query === 'me' || query === 'you' || query === 'my bills') {
+                return split.created_by === user?.id;
+              }
 
               // Search in title
               if (split.title.toLowerCase().includes(query)) return true;

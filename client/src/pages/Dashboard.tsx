@@ -142,6 +142,11 @@ export default function Dashboard() {
 
       const query = searchQuery.toLowerCase();
 
+      // Check for "me", "you", "my events" keywords to show user's events
+      if (query === 'me' || query === 'you' || query === 'my events') {
+        return event.created_by === user?.id;
+      }
+
       // Search event name
       if (event.name.toLowerCase().includes(query)) return true;
 
