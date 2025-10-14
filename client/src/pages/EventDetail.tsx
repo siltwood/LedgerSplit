@@ -382,8 +382,8 @@ export default function EventDetail() {
           border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
           marginBottom: window.innerWidth < 600 ? '16px' : '24px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: window.innerWidth < 600 ? '10px' : '16px', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '8px' : '12px', minHeight: window.innerWidth < 600 ? '32px' : '38px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ marginBottom: window.innerWidth < 600 ? '10px' : '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: window.innerWidth < 600 && event.is_settled ? '8px' : '0' }}>
               <h3 style={{ margin: 0, color: colors.text, fontSize: window.innerWidth < 600 ? '18px' : '22px' }}>
                 Settle Event
               </h3>
@@ -400,18 +400,40 @@ export default function EventDetail() {
                   ✓
                 </span>
               )}
+              {!isMobile && (
+                <span style={{
+                  padding: '8px 16px',
+                  background: event.is_settled ? colors.purple : 'transparent',
+                  color: event.is_settled ? '#fff' : 'transparent',
+                  borderRadius: '20px',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  visibility: event.is_settled ? 'visible' : 'hidden',
+                  marginLeft: 'auto'
+                }}>
+                  All settled up!
+                </span>
+              )}
             </div>
-            <span style={{
-              padding: window.innerWidth < 600 ? '6px 12px' : '8px 16px',
-              background: event.is_settled ? colors.purple : 'transparent',
-              color: event.is_settled ? '#fff' : 'transparent',
-              borderRadius: '20px',
-              fontSize: window.innerWidth < 600 ? '16px' : '18px',
-              fontWeight: '600',
-              visibility: event.is_settled ? 'visible' : 'hidden'
-            }}>
-              All settled up!
-            </span>
+            {isMobile && (
+              <div style={{
+                height: event.is_settled ? 'auto' : '0',
+                overflow: 'hidden',
+                transition: 'height 0.2s ease'
+              }}>
+                <span style={{
+                  padding: '6px 12px',
+                  background: colors.purple,
+                  color: '#fff',
+                  borderRadius: '20px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  display: 'inline-block'
+                }}>
+                  All settled up!
+                </span>
+              </div>
+            )}
           </div>
 
           <div style={{ fontSize: window.innerWidth < 600 ? '16px' : '18px', color: colors.text, marginBottom: window.innerWidth < 600 ? '10px' : '16px', opacity: 0.9 }}>
