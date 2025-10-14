@@ -173,6 +173,16 @@ export default function EventDetail() {
     });
   };
 
+  const toggleAllBills = () => {
+    if (expandedBills.size === splits.length) {
+      // All expanded, collapse all
+      setExpandedBills(new Set());
+    } else {
+      // Some or none expanded, expand all
+      setExpandedBills(new Set(splits.map(s => s.split_id)));
+    }
+  };
+
   if (loading) return <div style={{ padding: '20px' }}></div>;
   if (!event) return <div style={{ padding: '20px', color: colors.text, fontSize: '20px' }}>Event not found</div>;
 
@@ -569,28 +579,24 @@ export default function EventDetail() {
             Bills
           </h2>
           {splits.length > 0 && (
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                onClick={() => setExpandedBills(new Set(splits.map(s => s.split_id)))}
-                style={{
-                  ...buttonStyles.small,
-                  padding: isMobile ? '6px 12px' : '8px 16px',
-                  fontSize: isMobile ? '14px' : '16px'
-                }}
-              >
-                Expand All
-              </button>
-              <button
-                onClick={() => setExpandedBills(new Set())}
-                style={{
-                  ...buttonStyles.small,
-                  padding: isMobile ? '6px 12px' : '8px 16px',
-                  fontSize: isMobile ? '14px' : '16px'
-                }}
-              >
-                Collapse All
-              </button>
-            </div>
+            <button
+              onClick={toggleAllBills}
+              style={{
+                padding: '6px 12px',
+                background: colors.purple,
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '16px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              {expandedBills.size === splits.length ? '▲' : '▼'}
+            </button>
           )}
         </div>
 

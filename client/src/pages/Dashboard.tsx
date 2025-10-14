@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { eventsAPI } from '../services/api';
 import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
+import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 
 type SortOption = 'newest' | 'oldest' | 'name';
 type FilterOption = 'all' | 'active' | 'settled' | 'dismissed';
@@ -18,6 +19,7 @@ export default function Dashboard() {
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [filterBy, setFilterBy] = useState<FilterOption>('all');
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   const handleDismiss = async (eventId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -77,6 +79,14 @@ export default function Dashboard() {
       setExpandedEvents(new Set(filteredEvents.map(e => e.event_id)));
     }
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     // Check for pending invite token (from Google OAuth redirect)
@@ -226,16 +236,8 @@ export default function Dashboard() {
       <div style={{ marginBottom: '16px' }}>
         <Link to="/events/new">
           <button style={{
-            padding: '10px 20px',
-            background: colors.primary,
-            color: colors.text,
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            width: '100%',
-            maxWidth: '300px'
+            ...buttonStyles.primary,
+            ...getResponsiveButtonWidth(isMobile)
           }}>
             Add New Event
           </button>
@@ -353,17 +355,20 @@ export default function Dashboard() {
               <button
                 onClick={toggleAllEvents}
                 style={{
-                  padding: '4px 10px',
-                  background: colors.surface,
-                  color: colors.text,
-                  border: `2px solid ${colors.border}`,
+                  padding: '6px 12px',
+                  background: colors.purple,
+                  color: '#fff',
+                  border: 'none',
                   borderRadius: '6px',
                   fontSize: '16px',
                   cursor: 'pointer',
-                  fontWeight: '500'
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
                 }}
               >
-                {expandedEvents.size === filteredEvents.length ? 'Collapse All' : 'Expand All'}
+                {expandedEvents.size === filteredEvents.length ? '▲' : '▼'}
               </button>
             )}
           </div>
@@ -414,14 +419,8 @@ export default function Dashboard() {
             </div>
             <Link to="/events/new">
               <button style={{
-                padding: '12px 24px',
-                background: colors.purple,
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '18px',
-                fontWeight: 'bold'
+                ...buttonStyles.primary,
+                ...getResponsiveButtonWidth(isMobile)
               }}>
                 Create Event
               </button>
@@ -585,14 +584,9 @@ export default function Dashboard() {
                       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                         <Link to={`/events/${event.event_id}`} style={{ textDecoration: 'none' }}>
                           <button style={{
+                            ...buttonStyles.small,
                             padding: '6px 12px',
-                            background: colors.purple,
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '4px',
-                            fontSize: '16px',
-                            fontWeight: '500',
-                            cursor: 'pointer'
+                            fontSize: '16px'
                           }}>
                             View Details
                           </button>
@@ -603,14 +597,11 @@ export default function Dashboard() {
                             event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e);
                           }}
                           style={{
+                            ...buttonStyles.small,
                             padding: '6px 12px',
-                            background: event.is_dismissed ? colors.primary : colors.cadetGray2,
-                            color: '#000',
-                            border: 'none',
-                            borderRadius: '4px',
                             fontSize: '16px',
-                            fontWeight: '500',
-                            cursor: 'pointer'
+                            background: event.is_dismissed ? colors.purple : colors.cadetGray2,
+                            color: event.is_dismissed ? '#fff' : '#000'
                           }}
                         >
                           {event.is_dismissed ? 'Restore' : 'Dismiss'}
@@ -622,14 +613,11 @@ export default function Dashboard() {
                               setShowDeleteModal(event.event_id);
                             }}
                             style={{
+                              ...buttonStyles.small,
                               padding: '6px 12px',
-                              background: colors.error,
-                              color: '#000',
-                              border: 'none',
-                              borderRadius: '4px',
                               fontSize: '16px',
-                              fontWeight: '500',
-                              cursor: 'pointer'
+                              background: colors.error,
+                              color: '#000'
                             }}
                           >
                             Delete
@@ -675,15 +663,9 @@ export default function Dashboard() {
               <button
                 onClick={handleDeleteEvent}
                 style={{
-                  width: '100%',
-                  padding: '10px 20px',
+                  ...buttonStyles.primary,
                   background: colors.error,
-                  color: colors.text,
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '18px',
-                  fontWeight: '600'
+                  color: '#000'
                 }}
               >
                 Delete Event
@@ -691,14 +673,7 @@ export default function Dashboard() {
               <button
                 onClick={() => setShowDeleteModal(null)}
                 style={{
-                  width: '100%',
-                  padding: '10px 20px',
-                  background: colors.secondary,
-                  color: colors.text,
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '18px'
+                  ...buttonStyles.secondary
                 }}
               >
                 Cancel

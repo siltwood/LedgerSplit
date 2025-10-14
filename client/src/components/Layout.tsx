@@ -2,6 +2,7 @@ import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../styles/colors';
+import { buttonStyles } from '../styles/buttons';
 
 export default function Layout() {
   const { user, logout } = useAuth();
@@ -38,8 +39,8 @@ export default function Layout() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 style={{
                   display: 'none',
-                  background: 'transparent',
-                  border: `2px solid ${colors.slateGray}`,
+                  background: colors.purple,
+                  border: 'none',
                   borderRadius: '6px',
                   cursor: 'pointer',
                   padding: '8px 10px',
@@ -50,9 +51,9 @@ export default function Layout() {
                 }}
                 className="mobile-menu-button"
               >
-                <div style={{ width: '20px', height: '2px', background: colors.text }} />
-                <div style={{ width: '20px', height: '2px', background: colors.text }} />
-                <div style={{ width: '20px', height: '2px', background: colors.text }} />
+                <div style={{ width: '20px', height: '2px', background: '#fff' }} />
+                <div style={{ width: '20px', height: '2px', background: '#fff' }} />
+                <div style={{ width: '20px', height: '2px', background: '#fff' }} />
               </button>
 
               {/* Desktop navigation */}
@@ -77,13 +78,9 @@ export default function Layout() {
                 <button
                   onClick={handleLogout}
                   style={{
+                    ...buttonStyles.small,
                     padding: '8px 16px',
-                    background: colors.background,
-                    color: colors.text,
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '20px'
+                    fontSize: '18px'
                   }}
                 >
                   Logout
@@ -156,13 +153,9 @@ export default function Layout() {
                 setMobileMenuOpen(false);
               }}
               style={{
+                ...buttonStyles.small,
                 padding: '10px 16px',
-                background: colors.purple,
-                color: colors.text,
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '20px',
+                fontSize: '18px',
                 textAlign: 'center'
               }}
             >
