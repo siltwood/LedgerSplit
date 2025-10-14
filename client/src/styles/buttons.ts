@@ -51,3 +51,17 @@ export const buttonStyles = {
     fontWeight: '500'
   }
 } as const;
+
+// Helper function to get responsive button width styling
+// Desktop: 250px max-width, Mobile: full width
+export const getResponsiveButtonWidth = (isMobile: boolean) => ({
+  width: isMobile ? '100%' : 'auto',
+  maxWidth: isMobile ? '100%' : '250px'
+});
+
+// Helper function for responsive checkbox/card width
+// Desktop: 300px max-width, Mobile: full width
+export const getResponsiveCardWidth = (isMobile: boolean) => ({
+  width: isMobile ? '100%' : 'auto',
+  maxWidth: isMobile ? '100%' : '300px'
+});

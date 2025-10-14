@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { eventsAPI, splitsAPI, paymentsAPI, settledAPI } from '../services/api';
 import type { Event, Split, EventSettledConfirmation } from '../types/index';
 import { colors } from '../styles/colors';
-import { buttonStyles } from '../styles/buttons';
+import { buttonStyles, getResponsiveButtonWidth, getResponsiveCardWidth } from '../styles/buttons';
 import { useAuth } from '../context/AuthContext';
 
 export default function EventDetail() {
@@ -165,6 +165,7 @@ export default function EventDetail() {
   if (loading) return <div style={{ padding: '20px' }}></div>;
   if (!event) return <div style={{ padding: '20px', color: colors.text, fontSize: '20px' }}>Event not found</div>;
 
+  const isMobile = window.innerWidth < 600;
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
 
   // Calculate balances (who owes whom)
@@ -311,43 +312,44 @@ export default function EventDetail() {
           </div>
         )}
 
-        {/* Share Invite Link Button */}
-        <div style={{ marginTop: window.innerWidth < 600 ? '12px' : '20px', paddingTop: window.innerWidth < 600 ? '12px' : '20px', borderTop: `1px solid ${colors.border}` }}>
+        {/* Share Invite Link and Delete Event Buttons */}
+        <div style={{
+          marginTop: isMobile ? '12px' : '20px',
+          paddingTop: isMobile ? '12px' : '20px',
+          borderTop: `1px solid ${colors.border}`,
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: '12px'
+        }}>
           <button onClick={handleCopyShareLink} style={{
-            padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
-            fontSize: window.innerWidth < 600 ? '16px' : '18px',
+            padding: isMobile ? '8px 16px' : '10px 20px',
+            fontSize: isMobile ? '16px' : '18px',
             background: colors.purple,
             color: '#fff',
             border: 'none',
             borderRadius: '6px',
             cursor: 'pointer',
             fontWeight: '600',
-            width: window.innerWidth < 600 ? '100%' : 'auto',
-            maxWidth: window.innerWidth >= 600 ? '250px' : '100%'
+            ...getResponsiveButtonWidth(isMobile)
           }}>
             Share Invite Link
           </button>
-        </div>
-
-        {/* Delete Event Button */}
-        {event.created_by === user?.id && (
-          <div style={{ marginTop: window.innerWidth < 600 ? '12px' : '20px', paddingTop: window.innerWidth < 600 ? '12px' : '20px', borderTop: `1px solid ${colors.border}` }}>
+          {event.created_by === user?.id && (
             <button
               onClick={() => setShowDeleteEventModal(true)}
               style={{
                 ...buttonStyles.secondary,
                 background: colors.error,
                 border: 'none',
-                padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
-                fontSize: window.innerWidth < 600 ? '16px' : '18px',
-                width: window.innerWidth < 600 ? '100%' : 'auto',
-                maxWidth: window.innerWidth >= 600 ? '250px' : '100%'
+                padding: isMobile ? '8px 16px' : '10px 20px',
+                fontSize: isMobile ? '16px' : '18px',
+                ...getResponsiveButtonWidth(isMobile)
               }}
             >
               Delete Event
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Settling Vote Section */}
@@ -384,8 +386,15 @@ export default function EventDetail() {
           </div>
 
           {/* Participant Checkboxes */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: window.innerWidth < 600 ? '8px' : '12px' }}>
-            {event.participants.map((participant) => {
+          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '8px' : '12px' }}>
+            {[...event.participants]
+              .sort((a, b) => {
+                // Sort so current user appears first
+                if (a.user_id === user?.id) return -1;
+                if (b.user_id === user?.id) return 1;
+                return 0;
+              })
+              .map((participant) => {
               const hasConfirmed = settledConfirmations.some(c => c.user_id === participant.user_id);
               const isCurrentUser = participant.user_id === user?.id;
 
@@ -396,18 +405,19 @@ export default function EventDetail() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: window.innerWidth < 600 ? '8px' : '12px',
-                    padding: window.innerWidth < 600 ? '8px 12px' : '12px 16px',
+                    gap: isMobile ? '8px' : '12px',
+                    padding: isMobile ? '8px 12px' : '12px 16px',
                     background: hasConfirmed ? colors.purple : colors.background,
-                    borderRadius: window.innerWidth < 600 ? '6px' : '8px',
+                    borderRadius: isMobile ? '6px' : '8px',
                     border: `2px solid ${hasConfirmed ? colors.purple : colors.border}`,
                     cursor: isCurrentUser ? 'pointer' : 'default',
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.2s ease',
+                    ...getResponsiveCardWidth(isMobile)
                   }}
                 >
                   <div style={{
-                    width: window.innerWidth < 600 ? '20px' : '24px',
-                    height: window.innerWidth < 600 ? '20px' : '24px',
+                    width: isMobile ? '20px' : '24px',
+                    height: isMobile ? '20px' : '24px',
                     borderRadius: '4px',
                     border: `2px solid ${hasConfirmed ? '#fff' : colors.border}`,
                     background: hasConfirmed ? colors.purple : 'transparent',
@@ -417,23 +427,27 @@ export default function EventDetail() {
                     flexShrink: 0
                   }}>
                     {hasConfirmed && (
-                      <span style={{ color: '#fff', fontSize: window.innerWidth < 600 ? '16px' : '18px', fontWeight: 'bold' }}>✓</span>
+                      <span style={{ color: '#fff', fontSize: isMobile ? '16px' : '18px', fontWeight: 'bold' }}>✓</span>
                     )}
                   </div>
                   <span style={{
-                    fontSize: window.innerWidth < 600 ? '16px' : '20px',
+                    fontSize: isMobile ? '16px' : '20px',
                     color: hasConfirmed ? '#fff' : colors.text,
-                    fontWeight: hasConfirmed ? '600' : '500'
+                    fontWeight: hasConfirmed ? '600' : '500',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    flex: 1
                   }}>
                     {participant.user?.name || participant.user?.email}
                     {isCurrentUser && ' (you)'}
                   </span>
-                  {hasConfirmed && window.innerWidth >= 600 && (
+                  {hasConfirmed && !isMobile && (
                     <span style={{
-                      marginLeft: 'auto',
                       fontSize: '20px',
                       color: '#fff',
-                      opacity: 0.9
+                      opacity: 0.9,
+                      flexShrink: 0
                     }}>
                       Confirmed
                     </span>
@@ -597,15 +611,15 @@ export default function EventDetail() {
 
         <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', display: 'block', marginBottom: '16px' }}>
           <button style={{
-            padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
-            fontSize: window.innerWidth < 600 ? '16px' : '18px',
+            padding: isMobile ? '8px 16px' : '10px 20px',
+            fontSize: isMobile ? '16px' : '18px',
             background: colors.purple,
             color: '#fff',
             border: 'none',
             borderRadius: '6px',
             cursor: 'pointer',
             fontWeight: '600',
-            width: '100%'
+            ...getResponsiveButtonWidth(isMobile)
           }}>
             Add Bill
           </button>
