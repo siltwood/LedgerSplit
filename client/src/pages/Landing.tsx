@@ -43,7 +43,8 @@ export default function Landing() {
               fontSize: 'clamp(16px, 3vw, 18px)',
               flex: '1 1 140px',
               minWidth: '120px',
-              maxWidth: '100%'
+              maxWidth: '100%',
+              whiteSpace: 'nowrap'
             }}
           >
             Login
@@ -56,7 +57,8 @@ export default function Landing() {
               fontSize: 'clamp(16px, 3vw, 18px)',
               flex: '1 1 140px',
               minWidth: '120px',
-              maxWidth: '100%'
+              maxWidth: '100%',
+              whiteSpace: 'nowrap'
             }}
           >
             Sign Up
