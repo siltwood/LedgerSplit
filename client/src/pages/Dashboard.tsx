@@ -421,14 +421,16 @@ export default function Dashboard() {
             <div style={{ fontSize: '18px', opacity: 0.7, marginBottom: '24px' }}>
               Create your first event to start tracking shared expenses with friends and family
             </div>
-            <Link to="/events/new">
-              <button style={{
-                ...buttonStyles.primary,
-                ...getResponsiveButtonWidth(isMobile)
-              }}>
-                Create Event
-              </button>
-            </Link>
+            <div style={{ display: 'flex', justifyContent: isMobile ? 'flex-start' : 'center' }}>
+              <Link to="/events/new" style={{ textDecoration: 'none' }}>
+                <button style={{
+                  ...buttonStyles.primary,
+                  ...getResponsiveButtonWidth(isMobile)
+                }}>
+                  Create Event
+                </button>
+              </Link>
+            </div>
           </div>
         ) : filteredEvents.length === 0 ? (
           <div style={{
