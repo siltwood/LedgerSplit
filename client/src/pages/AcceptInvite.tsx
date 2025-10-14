@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
+import { buttonStyles } from '../styles/buttons';
 import axios from 'axios';
 
 export default function AcceptInvite() {
@@ -320,13 +321,9 @@ export default function AcceptInvite() {
                   type="submit"
                   disabled={submitting}
                   style={{
-                    width: '100%',
+                    ...buttonStyles.primary,
                     padding: isMobile ? '8px' : '10px',
                     fontSize: isMobile ? '16px' : '18px',
-                    background: colors.columbiaBlue,
-                    color: colors.text,
-                    border: `1px solid ${colors.border}`,
-                    borderRadius: '4px',
                     cursor: submitting ? 'not-allowed' : 'pointer',
                     marginBottom: isMobile ? '10px' : '12px'
                   }}
@@ -342,14 +339,9 @@ export default function AcceptInvite() {
                   type="button"
                   onClick={handleGoogleLogin}
                   style={{
-                    width: '100%',
+                    ...buttonStyles.primary,
                     padding: isMobile ? '8px' : '10px',
                     fontSize: isMobile ? '16px' : '18px',
-                    background: colors.columbiaBlue,
-                    color: colors.text,
-                    border: `1px solid ${colors.border}`,
-                    borderRadius: '4px',
-                    cursor: 'pointer',
                     marginBottom: isMobile ? '10px' : '14px'
                   }}
                 >
@@ -361,14 +353,9 @@ export default function AcceptInvite() {
                     type="button"
                     onClick={() => setShowRegister(false)}
                     style={{
-                      width: '100%',
+                      ...buttonStyles.primary,
                       padding: isMobile ? '8px' : '10px',
-                      fontSize: isMobile ? '16px' : '18px',
-                      background: colors.columbiaBlue,
-                      color: colors.text,
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: '4px',
-                      cursor: 'pointer'
+                      fontSize: isMobile ? '16px' : '18px'
                     }}
                   >
                     Already have an account? Sign in
@@ -432,13 +419,9 @@ export default function AcceptInvite() {
                   type="submit"
                   disabled={submitting}
                   style={{
-                    width: '100%',
+                    ...buttonStyles.primary,
                     padding: isMobile ? '8px' : '10px',
                     fontSize: isMobile ? '16px' : '18px',
-                    background: colors.columbiaBlue,
-                    color: colors.text,
-                    border: `1px solid ${colors.border}`,
-                    borderRadius: '4px',
                     cursor: submitting ? 'not-allowed' : 'pointer',
                     marginBottom: isMobile ? '8px' : '10px'
                   }}
@@ -460,14 +443,9 @@ export default function AcceptInvite() {
                   type="button"
                   onClick={handleGoogleLogin}
                   style={{
-                    width: '100%',
+                    ...buttonStyles.primary,
                     padding: isMobile ? '8px' : '10px',
                     fontSize: isMobile ? '16px' : '18px',
-                    background: colors.columbiaBlue,
-                    color: colors.text,
-                    border: `1px solid ${colors.border}`,
-                    borderRadius: '4px',
-                    cursor: 'pointer',
                     marginBottom: isMobile ? '10px' : '14px'
                   }}
                 >
@@ -479,14 +457,9 @@ export default function AcceptInvite() {
                     type="button"
                     onClick={() => setShowRegister(true)}
                     style={{
-                      width: '100%',
+                      ...buttonStyles.primary,
                       padding: isMobile ? '8px' : '10px',
-                      fontSize: isMobile ? '16px' : '18px',
-                      background: colors.columbiaBlue,
-                      color: colors.text,
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: '4px',
-                      cursor: 'pointer'
+                      fontSize: isMobile ? '16px' : '18px'
                     }}
                   >
                     Don't have an account? Create one

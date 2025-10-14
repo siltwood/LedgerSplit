@@ -187,14 +187,9 @@ export default function Login() {
       <button
         onClick={handleGoogleLogin}
         style={{
-          width: '100%',
+          ...buttonStyles.primary,
           padding: isMobile ? '8px' : '10px',
-          fontSize: isMobile ? '16px' : '18px',
-          background: colors.surface,
-          color: colors.text,
-          border: `1px solid ${colors.border}`,
-          borderRadius: '4px',
-          cursor: 'pointer'
+          fontSize: isMobile ? '16px' : '18px'
         }}
       >
         Continue with Google

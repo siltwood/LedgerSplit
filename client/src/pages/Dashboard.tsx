@@ -172,7 +172,11 @@ export default function Dashboard() {
       return false;
     })
     .sort((a, b) => {
-      // Apply sort
+      // First sort: dismissed events always go to bottom
+      if (a.is_dismissed && !b.is_dismissed) return 1;
+      if (!a.is_dismissed && b.is_dismissed) return -1;
+
+      // Then apply regular sort for events with same dismissed status
       if (sortBy === 'newest') {
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       }
@@ -582,30 +586,49 @@ export default function Dashboard() {
                       )}
 
                       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                        <Link to={`/events/${event.event_id}`} style={{ textDecoration: 'none' }}>
-                          <button style={{
-                            ...buttonStyles.small,
-                            padding: '6px 12px',
-                            fontSize: '16px'
-                          }}>
-                            View Details
+                        {!event.is_dismissed && (
+                          <Link to={`/events/${event.event_id}`} style={{ textDecoration: 'none' }}>
+                            <button style={{
+                              ...buttonStyles.small,
+                              padding: '6px 12px',
+                              fontSize: '16px'
+                            }}>
+                              View Details
+                            </button>
+                          </Link>
+                        )}
+                        {!event.is_dismissed && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDismiss(event.event_id, e);
+                            }}
+                            style={{
+                              ...buttonStyles.small,
+                              padding: '6px 12px',
+                              fontSize: '16px',
+                              background: colors.cadetGray2,
+                              color: '#000'
+                            }}
+                          >
+                            Dismiss
                           </button>
-                        </Link>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            event.is_dismissed ? handleUndismiss(event.event_id, e) : handleDismiss(event.event_id, e);
-                          }}
-                          style={{
-                            ...buttonStyles.small,
-                            padding: '6px 12px',
-                            fontSize: '16px',
-                            background: event.is_dismissed ? colors.purple : colors.cadetGray2,
-                            color: event.is_dismissed ? '#fff' : '#000'
-                          }}
-                        >
-                          {event.is_dismissed ? 'Restore' : 'Dismiss'}
-                        </button>
+                        )}
+                        {event.is_dismissed && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUndismiss(event.event_id, e);
+                            }}
+                            style={{
+                              ...buttonStyles.small,
+                              padding: '6px 12px',
+                              fontSize: '16px'
+                            }}
+                          >
+                            Restore
+                          </button>
+                        )}
                         {event.created_by === user?.id && (
                           <button
                             onClick={(e) => {

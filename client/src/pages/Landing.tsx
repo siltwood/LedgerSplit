@@ -45,7 +45,8 @@ export default function Landing() {
               fontWeight: '600',
               flex: '1 1 140px',
               textAlign: 'center',
-              minWidth: '120px'
+              minWidth: '120px',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
             }}
           >
             Login
@@ -63,7 +64,8 @@ export default function Landing() {
               fontWeight: '600',
               flex: '1 1 140px',
               textAlign: 'center',
-              minWidth: '120px'
+              minWidth: '120px',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
             }}
           >
             Sign Up
