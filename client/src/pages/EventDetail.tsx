@@ -362,8 +362,6 @@ export default function EventDetail() {
               onClick={() => setShowDeleteEventModal(true)}
               style={{
                 ...buttonStyles.secondary,
-                background: colors.error,
-                border: 'none',
                 padding: isMobile ? '8px 16px' : '10px 20px',
                 fontSize: isMobile ? '16px' : '18px',
                 ...getResponsiveButtonWidth(isMobile)
@@ -865,7 +863,7 @@ export default function EventDetail() {
                       </Link>
                       <button
                         onClick={() => setDeleteModal({ show: true, splitId: split.split_id })}
-                        style={{ ...buttonStyles.small, background: colors.error, border: 'none' }}
+                        style={buttonStyles.small}
                       >
                         Delete
                       </button>
@@ -917,7 +915,7 @@ export default function EventDetail() {
               </button>
               <button
                 onClick={handleDeleteSplit}
-                style={{ ...buttonStyles.danger, border: 'none' }}
+                style={buttonStyles.secondary}
               >
                 Delete
               </button>
@@ -961,7 +959,7 @@ export default function EventDetail() {
               </button>
               <button
                 onClick={handleDeleteEvent}
-                style={{ ...buttonStyles.danger, border: 'none' }}
+                style={buttonStyles.secondary}
               >
                 Delete Event
               </button>
@@ -1005,7 +1003,7 @@ export default function EventDetail() {
               </button>
               <button
                 onClick={handleLeaveEvent}
-                style={{ ...buttonStyles.danger, border: 'none' }}
+                style={buttonStyles.secondary}
               >
                 Leave Event
               </button>
@@ -1049,7 +1047,7 @@ export default function EventDetail() {
               </button>
               <button
                 onClick={handleRemoveParticipant}
-                style={{ ...buttonStyles.danger, border: 'none' }}
+                style={buttonStyles.secondary}
               >
                 Remove Participant
               </button>

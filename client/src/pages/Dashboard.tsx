@@ -606,9 +606,7 @@ export default function Dashboard() {
                             style={{
                               ...buttonStyles.small,
                               padding: '6px 12px',
-                              fontSize: '16px',
-                              background: colors.cadetGray2,
-                              color: '#000'
+                              fontSize: '16px'
                             }}
                           >
                             Dismiss
@@ -638,9 +636,7 @@ export default function Dashboard() {
                             style={{
                               ...buttonStyles.small,
                               padding: '6px 12px',
-                              fontSize: '16px',
-                              background: colors.error,
-                              color: '#000'
+                              fontSize: '16px'
                             }}
                           >
                             Delete
@@ -685,19 +681,13 @@ export default function Dashboard() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 onClick={handleDeleteEvent}
-                style={{
-                  ...buttonStyles.primary,
-                  background: colors.error,
-                  color: '#000'
-                }}
+                style={buttonStyles.primary}
               >
                 Delete Event
               </button>
               <button
                 onClick={() => setShowDeleteModal(null)}
-                style={{
-                  ...buttonStyles.secondary
-                }}
+                style={buttonStyles.secondary}
               >
                 Cancel
               </button>
