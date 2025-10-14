@@ -157,13 +157,13 @@ export default function Layout() {
               }}
               style={{
                 padding: '10px 16px',
-                background: colors.background,
+                background: colors.purple,
                 color: colors.text,
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '20px',
-                textAlign: 'left'
+                textAlign: 'center'
               }}
             >
               Logout
