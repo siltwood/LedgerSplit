@@ -574,47 +574,48 @@ export default function EventDetail() {
 
       {/* Bills Section */}
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '12px' }}>
-          <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>
+        <div style={{ marginBottom: '12px' }}>
+          <h2 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>
             Bills
           </h2>
-          {splits.length > 0 && (
-            <button
-              onClick={toggleAllBills}
-              style={{
-                padding: '6px 12px',
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', flex: isMobile ? '1' : '0' }}>
+              <button style={{
+                padding: isMobile ? '8px 16px' : '10px 20px',
+                fontSize: isMobile ? '16px' : '18px',
                 background: colors.purple,
                 color: '#fff',
                 border: 'none',
                 borderRadius: '6px',
-                fontSize: '16px',
                 cursor: 'pointer',
                 fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-            >
-              {expandedBills.size === splits.length ? '▲' : '▼'}
-            </button>
-          )}
+                ...getResponsiveButtonWidth(isMobile)
+              }}>
+                Add Bill
+              </button>
+            </Link>
+            {splits.length > 0 && (
+              <button
+                onClick={toggleAllBills}
+                style={{
+                  padding: '6px 12px',
+                  background: colors.purple,
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                {expandedBills.size === splits.length ? '▲' : '▼'}
+              </button>
+            )}
+          </div>
         </div>
-
-        <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', display: 'block', marginBottom: '16px' }}>
-          <button style={{
-            padding: isMobile ? '8px 16px' : '10px 20px',
-            fontSize: isMobile ? '16px' : '18px',
-            background: colors.purple,
-            color: '#fff',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontWeight: '600',
-            ...getResponsiveButtonWidth(isMobile)
-          }}>
-            Add Bill
-          </button>
-        </Link>
 
         {/* Bill Search */}
         {splits.length > 0 && (

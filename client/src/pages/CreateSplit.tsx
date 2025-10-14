@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { splitsAPI, eventsAPI } from '../services/api';
 import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
+import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 
 export default function CreateSplit() {
   const { user } = useAuth();
@@ -16,6 +17,15 @@ export default function CreateSplit() {
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (eventIdFromParams) {
@@ -104,13 +114,8 @@ export default function CreateSplit() {
         <button
           onClick={() => navigate('/dashboard')}
           style={{
-            padding: '10px 20px',
-            background: colors.primary,
-            color: colors.text,
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '18px'
+            ...buttonStyles.primary,
+            ...getResponsiveButtonWidth(isMobile)
           }}
         >
           Back to Dashboard
@@ -259,14 +264,8 @@ export default function CreateSplit() {
             type="submit"
             disabled={loading}
             style={{
-              width: '100%',
-              maxWidth: '400px',
-              padding: '10px 20px',
-              fontSize: '18px',
-              background: colors.primary,
-              color: colors.text,
-              border: 'none',
-              borderRadius: '4px',
+              ...buttonStyles.primary,
+              ...getResponsiveButtonWidth(isMobile),
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1
             }}
@@ -277,15 +276,8 @@ export default function CreateSplit() {
             type="button"
             onClick={() => navigate(`/events/${eventIdFromParams}`)}
             style={{
-              width: '100%',
-              maxWidth: '400px',
-              padding: '10px 20px',
-              fontSize: '18px',
-              background: colors.textSecondary,
-              color: colors.text,
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
+              ...buttonStyles.secondary,
+              ...getResponsiveButtonWidth(isMobile)
             }}
           >
             Cancel
