@@ -314,11 +314,16 @@ export default function EventDetail() {
         {/* Share Invite Link Button */}
         <div style={{ marginTop: window.innerWidth < 600 ? '12px' : '20px', paddingTop: window.innerWidth < 600 ? '12px' : '20px', borderTop: `1px solid ${colors.border}` }}>
           <button onClick={handleCopyShareLink} style={{
-            ...buttonStyles.secondary,
             padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
             fontSize: window.innerWidth < 600 ? '16px' : '18px',
+            background: colors.purple,
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: '600',
             width: window.innerWidth < 600 ? '100%' : 'auto',
-            maxWidth: window.innerWidth >= 600 ? '300px' : '100%'
+            maxWidth: window.innerWidth >= 600 ? '250px' : '100%'
           }}>
             Share Invite Link
           </button>
@@ -336,7 +341,7 @@ export default function EventDetail() {
                 padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
                 fontSize: window.innerWidth < 600 ? '16px' : '18px',
                 width: window.innerWidth < 600 ? '100%' : 'auto',
-                maxWidth: window.innerWidth >= 600 ? '300px' : '100%'
+                maxWidth: window.innerWidth >= 600 ? '250px' : '100%'
               }}
             >
               Delete Event

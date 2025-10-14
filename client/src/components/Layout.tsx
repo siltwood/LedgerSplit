@@ -39,11 +39,12 @@ export default function Layout() {
                 style={{
                   display: 'none',
                   background: 'transparent',
-                  border: 'none',
+                  border: `2px solid ${colors.slateGray}`,
+                  borderRadius: '6px',
                   color: colors.text,
                   fontSize: '24px',
                   cursor: 'pointer',
-                  padding: '5px',
+                  padding: '5px 10px',
                 }}
                 className="mobile-menu-button"
               >
