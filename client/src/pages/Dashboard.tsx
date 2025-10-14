@@ -360,6 +360,7 @@ export default function Dashboard() {
                 onClick={toggleAllEvents}
                 style={{
                   padding: '6px 12px',
+                  paddingBottom: '10px',
                   background: colors.purple,
                   color: '#fff',
                   border: 'none',
@@ -520,6 +521,7 @@ export default function Dashboard() {
                         }}
                         style={{
                           padding: '6px 12px',
+                          paddingBottom: '10px',
                           background: colors.purple,
                           color: '#fff',
                           border: 'none',
@@ -574,6 +576,7 @@ export default function Dashboard() {
                           }}
                           style={{
                             padding: '6px 12px',
+                            paddingBottom: '10px',
                             background: colors.purple,
                             color: '#fff',
                             border: 'none',

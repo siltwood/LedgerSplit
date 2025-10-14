@@ -625,6 +625,7 @@ export default function EventDetail() {
                 onClick={toggleAllBills}
                 style={{
                   padding: '6px 12px',
+                  paddingBottom: '10px',
                   background: colors.purple,
                   color: '#fff',
                   border: 'none',
