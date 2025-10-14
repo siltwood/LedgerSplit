@@ -423,7 +423,7 @@ export default function Dashboard() {
                 fontSize: '18px',
                 fontWeight: 'bold'
               }}>
-                Create Your First Event
+                Create Event
               </button>
             </Link>
           </div>
