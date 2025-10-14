@@ -279,18 +279,18 @@ export default function EventDetail() {
                     key={p.user_id}
                     style={{
                       padding: window.innerWidth < 600 ? '4px 8px' : '6px 12px',
+                      paddingRight: canRemove ? (window.innerWidth < 600 ? '24px' : '28px') : (window.innerWidth < 600 ? '8px' : '12px'),
                       background: getParticipantColor(p.user_id),
                       borderRadius: '6px',
                       fontSize: window.innerWidth < 600 ? '16px' : '20px',
                       color: '#000',
                       fontWeight: '500',
                       wordBreak: 'break-word',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px'
+                      display: 'inline-block',
+                      position: 'relative'
                     }}
                   >
-                    <span>{p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}</span>
+                    {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
                     {canRemove && (
                       <button
                         onClick={() => setRemoveParticipantModal({ show: true, userId: p.user_id, userName: p.user?.name || p.user?.email || 'this participant' })}
@@ -298,11 +298,13 @@ export default function EventDetail() {
                           background: 'transparent',
                           border: 'none',
                           cursor: 'pointer',
-                          fontSize: '18px',
+                          fontSize: '16px',
                           color: '#000',
                           fontWeight: 'bold',
-                          padding: '0',
-                          flexShrink: 0,
+                          padding: '2px',
+                          position: 'absolute',
+                          top: '2px',
+                          right: '2px',
                           lineHeight: 1
                         }}
                         title="Remove participant"
