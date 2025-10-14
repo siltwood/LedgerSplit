@@ -57,8 +57,21 @@ export default function EventDetail() {
       setSplits(transformedSplits);
       setPayments(paymentsRes.data.payments || []);
       setSettledConfirmations(eventRes.data.settled_confirmations || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to load event:', error);
+
+      // Handle 403 (kicked from event) or 404 (event deleted)
+      if (error?.response?.status === 403) {
+        setCopyStatus('✗ You were removed from this event');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
+      } else if (error?.response?.status === 404) {
+        setCopyStatus('✗ This event was deleted');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
+      }
     } finally {
       setLoading(false);
     }
@@ -71,8 +84,25 @@ export default function EventDetail() {
       await splitsAPI.delete(deleteModal.splitId);
       setDeleteModal({ show: false, splitId: null });
       loadData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to delete bill:', error);
+      setDeleteModal({ show: false, splitId: null });
+
+      // Handle 403 (kicked from event) or 404 (event deleted)
+      if (error?.response?.status === 403) {
+        setCopyStatus('✗ You were removed from this event');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
+      } else if (error?.response?.status === 404) {
+        setCopyStatus('✗ This event was deleted');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
+      } else {
+        setCopyStatus('✗ Failed to delete bill');
+        setTimeout(() => setCopyStatus(''), 2500);
+      }
     }
   };
 
@@ -116,10 +146,24 @@ export default function EventDetail() {
     // Make API call in background
     try {
       await settledAPI.toggleConfirmation(id);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to toggle settled confirmation:', error);
-      // Reload on error to get correct state
-      loadData();
+
+      // Handle 403 (kicked from event) or 404 (event deleted)
+      if (error?.response?.status === 403) {
+        setCopyStatus('✗ You were removed from this event');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
+      } else if (error?.response?.status === 404) {
+        setCopyStatus('✗ This event was deleted');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
+      } else {
+        // Reload on other errors to get correct state
+        loadData();
+      }
     }
   };
 
