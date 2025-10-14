@@ -623,7 +623,8 @@ export default function Dashboard() {
                             style={{
                               ...buttonStyles.small,
                               padding: '6px 12px',
-                              fontSize: '16px'
+                              fontSize: '16px',
+                              opacity: 1
                             }}
                           >
                             Restore
@@ -638,7 +639,8 @@ export default function Dashboard() {
                             style={{
                               ...buttonStyles.small,
                               padding: '6px 12px',
-                              fontSize: '16px'
+                              fontSize: '16px',
+                              opacity: event.is_dismissed ? 1 : undefined
                             }}
                           >
                             Delete
