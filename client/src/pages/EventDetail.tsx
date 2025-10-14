@@ -295,20 +295,15 @@ export default function EventDetail() {
                       <button
                         onClick={() => setRemoveParticipantModal({ show: true, userId: p.user_id, userName: p.user?.name || p.user?.email || 'this participant' })}
                         style={{
-                          background: 'rgba(0, 0, 0, 0.2)',
+                          background: 'transparent',
                           border: 'none',
-                          borderRadius: '50%',
-                          width: '20px',
-                          height: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
                           cursor: 'pointer',
-                          fontSize: '14px',
+                          fontSize: '18px',
                           color: '#000',
                           fontWeight: 'bold',
                           padding: '0',
-                          flexShrink: 0
+                          flexShrink: 0,
+                          lineHeight: 1
                         }}
                         title="Remove participant"
                       >
