@@ -504,7 +504,7 @@ export default function Dashboard() {
                           {event.participants?.length || 0} {(event.participants?.length || 0) === 1 ? 'person' : 'people'}
                         </span>
                       </div>
-                      <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0 }}>↓</div>
+                      <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0, paddingLeft: '12px' }}>▼</div>
                     </div>
                   )}
 
@@ -539,7 +539,7 @@ export default function Dashboard() {
                             </span>
                           )}
                         </div>
-                        <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0 }}>↑</div>
+                        <div style={{ fontSize: '20px', color: colors.text, flexShrink: 0, paddingLeft: '12px' }}>▲</div>
                       </div>
 
                       <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
@@ -581,8 +581,8 @@ export default function Dashboard() {
                         <Link to={`/events/${event.event_id}`} style={{ textDecoration: 'none' }}>
                           <button style={{
                             padding: '6px 12px',
-                            background: colors.primary,
-                            color: '#000',
+                            background: colors.purple,
+                            color: '#fff',
                             border: 'none',
                             borderRadius: '4px',
                             fontSize: '16px',

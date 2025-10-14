@@ -335,39 +335,38 @@ export default function EventDetail() {
             </div>
           </div>
         )}
-      </div>
 
-      {/* Action Buttons */}
-      <div style={{ marginBottom: window.innerWidth < 600 ? '16px' : '24px', display: 'flex', flexDirection: 'column', gap: window.innerWidth < 600 ? '6px' : '8px' }}>
-        <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', width: '100%' }}>
-          <button style={{
-            ...buttonStyles.primary,
+        {/* Share Invite Link Button */}
+        <div style={{ marginTop: window.innerWidth < 600 ? '12px' : '20px', paddingTop: window.innerWidth < 600 ? '12px' : '20px', borderTop: `1px solid ${colors.border}` }}>
+          <button onClick={handleCopyShareLink} style={{
+            ...buttonStyles.secondary,
             padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
-            fontSize: window.innerWidth < 600 ? '16px' : '18px'
+            fontSize: window.innerWidth < 600 ? '16px' : '18px',
+            width: window.innerWidth < 600 ? '100%' : 'auto',
+            maxWidth: window.innerWidth >= 600 ? '300px' : '100%'
           }}>
-            Add Bill
+            Share Invite Link
           </button>
-        </Link>
-        <button onClick={handleCopyShareLink} style={{
-          ...buttonStyles.secondary,
-          padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
-          fontSize: window.innerWidth < 600 ? '16px' : '18px'
-        }}>
-          Share Invite Link
-        </button>
+        </div>
+
+        {/* Delete Event Button */}
         {event.created_by === user?.id && (
-          <button
-            onClick={() => setShowDeleteEventModal(true)}
-            style={{
-              ...buttonStyles.secondary,
-              background: colors.error,
-              border: 'none',
-              padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
-              fontSize: window.innerWidth < 600 ? '16px' : '18px'
-            }}
-          >
-            Delete Event
-          </button>
+          <div style={{ marginTop: window.innerWidth < 600 ? '12px' : '20px', paddingTop: window.innerWidth < 600 ? '12px' : '20px', borderTop: `1px solid ${colors.border}` }}>
+            <button
+              onClick={() => setShowDeleteEventModal(true)}
+              style={{
+                ...buttonStyles.secondary,
+                background: colors.error,
+                border: 'none',
+                padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
+                fontSize: window.innerWidth < 600 ? '16px' : '18px',
+                width: window.innerWidth < 600 ? '100%' : 'auto',
+                maxWidth: window.innerWidth >= 600 ? '300px' : '100%'
+              }}
+            >
+              Delete Event
+            </button>
+          </div>
         )}
       </div>
 
@@ -599,6 +598,21 @@ export default function EventDetail() {
         );
       })()}
 
+      {/* Add Bill Button */}
+      <div style={{ marginBottom: window.innerWidth < 600 ? '16px' : '24px' }}>
+        <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', display: 'inline-block', width: window.innerWidth < 600 ? '100%' : 'auto' }}>
+          <button style={{
+            ...buttonStyles.primary,
+            padding: window.innerWidth < 600 ? '8px 16px' : '10px 20px',
+            fontSize: window.innerWidth < 600 ? '16px' : '18px',
+            width: window.innerWidth < 600 ? '100%' : 'auto',
+            maxWidth: window.innerWidth >= 600 ? '300px' : '100%'
+          }}>
+            Add Bill
+          </button>
+        </Link>
+      </div>
+
       {/* Bills Section */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
@@ -737,7 +751,7 @@ export default function EventDetail() {
                         by {payerName}
                       </span>
                     </div>
-                    <div style={{ fontSize: '20px', color: '#000', flexShrink: 0 }}>↓</div>
+                    <div style={{ fontSize: '20px', color: '#000', flexShrink: 0, paddingLeft: '12px' }}>▼</div>
                   </div>
                 )}
 
@@ -757,7 +771,7 @@ export default function EventDetail() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                         <strong style={{ fontSize: '20px', color: '#000' }}>{split.title}</strong>
                       </div>
-                      <div style={{ fontSize: '20px', color: '#000', flexShrink: 0 }}>↑</div>
+                      <div style={{ fontSize: '20px', color: '#000', flexShrink: 0, paddingLeft: '12px' }}>▲</div>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>
