@@ -16,7 +16,7 @@ export default function EventDetail() {
   const [loading, setLoading] = useState(true);
   const [copyStatus, setCopyStatus] = useState('');
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; splitId: string | null }>({ show: false, splitId: null });
-  const [showAllBalances, setShowAllBalances] = useState(true);
+  const [showAllBalances] = useState(true);
   const [settledConfirmations, setSettledConfirmations] = useState<EventSettledConfirmation[]>([]);
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
   const [showLeaveEventModal, setShowLeaveEventModal] = useState(false);
@@ -123,22 +123,6 @@ export default function EventDetail() {
     }
   };
 
-  const handleMarkAsPaid = async (settlement: { from: string; to: string; amount: number }) => {
-    if (!id) return;
-
-    try {
-      await paymentsAPI.create({
-        event_id: id,
-        from_user_id: settlement.from,
-        to_user_id: settlement.to,
-        amount: settlement.amount,
-      });
-      loadData(); // Reload to update balances
-    } catch (error) {
-      console.error('Failed to record payment:', error);
-      alert('Failed to record payment');
-    }
-  };
 
   const handleDeleteEvent = async () => {
     if (!id) return;
@@ -222,50 +206,6 @@ export default function EventDetail() {
     balances[payment.to_user_id] = (balances[payment.to_user_id] || 0) - payment.amount;
   });
 
-  // Calculate optimal settle up transactions
-  interface Settlement {
-    from: string;
-    to: string;
-    amount: number;
-  }
-
-  const calculateSettlements = (): Settlement[] => {
-    const settlements: Settlement[] = [];
-    const balancesCopy = { ...balances };
-
-    // Get creditors (people owed money) and debtors (people who owe)
-    const creditors = Object.entries(balancesCopy).filter(([_, amt]) => amt > 0.01);
-    const debtors = Object.entries(balancesCopy).filter(([_, amt]) => amt < -0.01);
-
-    // Greedy algorithm: match largest debtor with largest creditor
-    let creditorIdx = 0;
-    let debtorIdx = 0;
-
-    while (creditorIdx < creditors.length && debtorIdx < debtors.length) {
-      const [creditorId, creditorAmt] = creditors[creditorIdx];
-      const [debtorId, debtorAmt] = debtors[debtorIdx];
-
-      const settleAmount = Math.min(creditorAmt, Math.abs(debtorAmt));
-
-      if (settleAmount > 0.01) {
-        settlements.push({
-          from: debtorId,
-          to: creditorId,
-          amount: settleAmount
-        });
-
-        creditors[creditorIdx][1] -= settleAmount;
-        debtors[debtorIdx][1] += settleAmount;
-      }
-
-      if (Math.abs(creditors[creditorIdx][1]) < 0.01) creditorIdx++;
-      if (Math.abs(debtors[debtorIdx][1]) < 0.01) debtorIdx++;
-    }
-
-    return settlements;
-  };
-
-  const settlements = calculateSettlements();
 
   // Assign colors to participants (using approved palette)
   const participantColors = [
