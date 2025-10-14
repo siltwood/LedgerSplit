@@ -45,6 +45,9 @@ export default function Layout() {
                   fontSize: '24px',
                   cursor: 'pointer',
                   padding: '5px 10px',
+                  lineHeight: '1',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
                 className="mobile-menu-button"
               >
@@ -149,7 +152,7 @@ export default function Layout() {
             display: none !important;
           }
           .mobile-menu-button {
-            display: block !important;
+            display: flex !important;
           }
           .mobile-nav {
             display: flex !important;
