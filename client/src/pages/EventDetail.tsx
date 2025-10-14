@@ -601,7 +601,8 @@ export default function EventDetail() {
                   fontWeight: '600',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '6px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
                 }}
               >
                 {expandedBills.size === splits.length ? '▲' : '▼'}

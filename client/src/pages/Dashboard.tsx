@@ -466,7 +466,6 @@ export default function Dashboard() {
                     background: event.is_dismissed ? colors.cadetGray2 : colors.surface,
                     border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
                     borderRadius: '8px',
-                    opacity: event.is_dismissed ? 0.6 : 1,
                     transition: 'all 0.2s ease'
                   }}
                 >
@@ -587,7 +586,7 @@ export default function Dashboard() {
                         </div>
                       )}
 
-                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', position: 'relative', zIndex: 1, opacity: 1 }}>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
                         {!event.is_dismissed && (
                           <Link to={`/events/${event.event_id}`} style={{ textDecoration: 'none' }}>
                             <button style={{
@@ -623,8 +622,7 @@ export default function Dashboard() {
                             style={{
                               ...buttonStyles.small,
                               padding: '6px 12px',
-                              fontSize: '16px',
-                              opacity: 1
+                              fontSize: '16px'
                             }}
                           >
                             Restore
@@ -639,8 +637,7 @@ export default function Dashboard() {
                             style={{
                               ...buttonStyles.small,
                               padding: '6px 12px',
-                              fontSize: '16px',
-                              opacity: event.is_dismissed ? 1 : undefined
+                              fontSize: '16px'
                             }}
                           >
                             Delete
