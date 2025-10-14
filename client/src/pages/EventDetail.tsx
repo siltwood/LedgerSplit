@@ -16,7 +16,7 @@ export default function EventDetail() {
   const [loading, setLoading] = useState(true);
   const [copyStatus, setCopyStatus] = useState('');
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; splitId: string | null }>({ show: false, splitId: null });
-  const [showAllBalances, setShowAllBalances] = useState(false);
+  const [showAllBalances, setShowAllBalances] = useState(true);
   const [settledConfirmations, setSettledConfirmations] = useState<EventSettledConfirmation[]>([]);
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
   const [showLeaveEventModal, setShowLeaveEventModal] = useState(false);
@@ -565,122 +565,94 @@ export default function EventDetail() {
         </div>
       )}
 
-      {/* Your Balance Card - Priority Section */}
-      {splits.length > 0 && event.participants && event.participants.length > 1 && (() => {
-        const userBalance = balances[user?.id || ''] || 0;
-        const userSettlements = settlements.filter(s => s.from === user?.id || s.to === user?.id);
-
-        if (Math.abs(userBalance) < 0.01 && userSettlements.length === 0) return null;
-
-        return (
-          <>
-            <h2 style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '20px' }}>Your Balance</h2>
-            <div style={{
-              background: colors.surface,
-              padding: '20px',
-              borderRadius: '8px',
-              border: `2px solid ${Math.abs(userBalance) > 0.01 ? colors.purple : colors.border}`,
-              marginBottom: '24px'
-            }}>
-              {/* Big Balance Display */}
-              <div style={{
-                marginBottom: userSettlements.length > 0 ? '20px' : '0',
-                padding: Math.abs(userBalance) < 0.01 ? '16px' : '0',
-                background: Math.abs(userBalance) < 0.01 ? colors.purple : 'transparent',
-                borderRadius: Math.abs(userBalance) < 0.01 ? '8px' : '0',
-                textAlign: Math.abs(userBalance) < 0.01 ? 'center' : 'left'
-              }}>
-                <div style={{
-                  fontSize: '32px',
-                  fontWeight: 'bold',
-                  color: Math.abs(userBalance) > 0.01 ? colors.purple : '#fff'
-                }}>
-                  {userBalance < -0.01 ? `You owe $${Math.abs(userBalance).toFixed(2)}` :
-                   userBalance > 0.01 ? `People owe $${userBalance.toFixed(2)}` :
-                   '✓ All settled up!'}
-                </div>
-              </div>
-
-            {/* Settlement Actions */}
-            {userSettlements.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ fontSize: '18px', color: colors.text, opacity: 0.8, marginBottom: '4px', fontStyle: 'italic' }}>
-                  💡 Payments optimized to minimize transactions
-                </div>
-                {userSettlements.map((settlement, idx) => {
-                  const fromUser = event.participants?.find(p => p.user_id === settlement.from);
-                  const toUser = event.participants?.find(p => p.user_id === settlement.to);
-                  const isUserPaying = settlement.from === user?.id;
-
-                  // Check if this settlement has been marked as paid
-                  const hasPayment = payments.some((payment: any) =>
-                    payment.from_user_id === settlement.from &&
-                    payment.to_user_id === settlement.to &&
-                    Math.abs(payment.amount - settlement.amount) < 0.01
-                  );
-
-                  return (
-                    <div
-                      key={idx}
-                      onClick={() => !hasPayment && handleMarkAsPaid(settlement)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        padding: '14px',
-                        background: hasPayment ? colors.purple : colors.background,
-                        borderRadius: '6px',
-                        border: `2px solid ${hasPayment ? colors.purple : colors.border}`,
-                        cursor: hasPayment ? 'default' : 'pointer',
-                        transition: 'all 0.2s ease',
-                        width: '100%'
-                      }}
-                    >
-                      <div style={{
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '4px',
-                        border: `2px solid ${hasPayment ? '#fff' : colors.border}`,
-                        background: hasPayment ? colors.purple : 'transparent',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0
-                      }}>
-                        {hasPayment && (
-                          <span style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>✓</span>
-                        )}
-                      </div>
-                      <div style={{ flex: 1, fontSize: '20px', color: hasPayment ? '#fff' : '#000', fontWeight: '600', wordBreak: 'break-word' }}>
-                        {isUserPaying ? (
-                          <>Pay {toUser?.user?.name || toUser?.user?.email}</>
-                        ) : (
-                          <>{fromUser?.user?.name || fromUser?.user?.email} pays you</>
-                        )}
-                      </div>
-                      <div style={{
-                        fontSize: '22px',
-                        fontWeight: 'bold',
-                        color: hasPayment ? '#fff' : colors.purple,
-                        flexShrink: 0
-                      }}>
-                        ${settlement.amount.toFixed(2)}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+      {/* All Balances Section */}
+      {splits.length > 0 && event.participants && event.participants.length > 1 && showAllBalances && (
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{
+            background: colors.surface,
+            padding: '20px',
+            borderRadius: '8px',
+            border: `1px solid ${colors.border}`
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {event.participants
+                .sort((a, b) => {
+                  // Sort so current user appears last
+                  if (a.user_id === user?.id) return 1;
+                  if (b.user_id === user?.id) return -1;
+                  return 0;
+                })
+                .map(p => {
+                const balance = balances[p.user_id] || 0;
+                const isCurrentUser = p.user_id === user?.id;
+                return (
+                  <div key={p.user_id} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '12px',
+                    background: isCurrentUser ? getParticipantColor(p.user_id) : colors.background,
+                    borderRadius: '6px',
+                    border: isCurrentUser ? `2px solid ${colors.primary}` : 'none',
+                    flexWrap: 'wrap',
+                    gap: '8px'
+                  }}>
+                    <span style={{ fontSize: '20px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', wordBreak: 'break-word' }}>
+                      {p.user?.name || p.user?.email}{isCurrentUser ? ' (you)' : ''}
+                    </span>
+                    <span style={{
+                      fontSize: '22px',
+                      fontWeight: 'bold',
+                      color: Math.abs(balance) > 0.01 ? colors.purple : (isCurrentUser ? '#000' : colors.text)
+                    }}>
+                      {(() => {
+                        if (balance > 0.01) {
+                          return `People owe $${balance.toFixed(2)}`;
+                        } else if (balance < -0.01) {
+                          return isCurrentUser ? `You owe $${Math.abs(balance).toFixed(2)}` : `Owes $${Math.abs(balance).toFixed(2)}`;
+                        }
+                        return isCurrentUser ? `You owe $0.00` : `$0.00`;
+                      })()}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
-          </>
-        );
-      })()}
+          </div>
+        </div>
+      )}
 
       {/* Bills Section */}
       <div>
-        <h2 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>
-          Bills
-        </h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '12px' }}>
+          <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>
+            Bills
+          </h2>
+          {splits.length > 0 && (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => setExpandedBills(new Set(splits.map(s => s.split_id)))}
+                style={{
+                  ...buttonStyles.small,
+                  padding: isMobile ? '6px 12px' : '8px 16px',
+                  fontSize: isMobile ? '14px' : '16px'
+                }}
+              >
+                Expand All
+              </button>
+              <button
+                onClick={() => setExpandedBills(new Set())}
+                style={{
+                  ...buttonStyles.small,
+                  padding: isMobile ? '6px 12px' : '8px 16px',
+                  fontSize: isMobile ? '14px' : '16px'
+                }}
+              >
+                Collapse All
+              </button>
+            </div>
+          )}
+        </div>
 
         <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', display: 'block', marginBottom: '16px' }}>
           <button style={{
@@ -962,64 +934,6 @@ export default function EventDetail() {
         )}
       </div>
 
-      {/* Collapsible All Balances Section */}
-      {splits.length > 0 && event.participants && event.participants.length > 1 && (
-        <div style={{ marginBottom: '24px', marginTop: '24px' }}>
-          <button
-            onClick={() => setShowAllBalances(!showAllBalances)}
-            style={{ ...buttonStyles.small, textAlign: 'left', display: 'inline-block' }}
-          >
-            {showAllBalances ? 'Hide all balances' : 'See all balances'}
-          </button>
-          {showAllBalances && (
-            <div style={{
-              background: colors.surface,
-              padding: '20px',
-              borderRadius: '8px',
-              border: `1px solid ${colors.border}`,
-              marginTop: '12px'
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {event.participants.map(p => {
-                  const balance = balances[p.user_id] || 0;
-                  const isCurrentUser = p.user_id === user?.id;
-                  return (
-                    <div key={p.user_id} style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '12px',
-                      background: isCurrentUser ? getParticipantColor(p.user_id) : colors.background,
-                      borderRadius: '6px',
-                      border: isCurrentUser ? `2px solid ${colors.primary}` : 'none',
-                      flexWrap: 'wrap',
-                      gap: '8px'
-                    }}>
-                      <span style={{ fontSize: '20px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', wordBreak: 'break-word' }}>
-                        {p.user?.name || p.user?.email}{isCurrentUser ? ' (you)' : ''}
-                      </span>
-                      <span style={{
-                        fontSize: '22px',
-                        fontWeight: 'bold',
-                        color: Math.abs(balance) > 0.01 ? colors.purple : (isCurrentUser ? '#000' : colors.text)
-                      }}>
-                        {(() => {
-                          if (balance > 0.01) {
-                            return isCurrentUser ? `People owe $${balance.toFixed(2)}` : `People owe $${balance.toFixed(2)}`;
-                          } else if (balance < -0.01) {
-                            return isCurrentUser ? `You owe $${Math.abs(balance).toFixed(2)}` : `Owes $${Math.abs(balance).toFixed(2)}`;
-                          }
-                          return '$0.00';
-                        })()}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Delete Confirmation Modal */}
       {deleteModal.show && (
