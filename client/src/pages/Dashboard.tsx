@@ -587,7 +587,7 @@ export default function Dashboard() {
                         </div>
                       )}
 
-                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', position: 'relative', zIndex: 1, opacity: 1 }}>
                         {!event.is_dismissed && (
                           <Link to={`/events/${event.event_id}`} style={{ textDecoration: 'none' }}>
                             <button style={{
