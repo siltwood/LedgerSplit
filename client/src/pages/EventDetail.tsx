@@ -374,7 +374,7 @@ export default function EventDetail() {
       </div>
 
       {/* Settling Vote Section */}
-      {event.participants && event.participants.length > 0 && splits.length > 0 && !event.is_settled && (
+      {event.participants && event.participants.length > 0 && splits.length > 0 && (
         <div style={{
           background: colors.surface,
           padding: window.innerWidth < 600 ? '12px' : '20px',
@@ -483,7 +483,7 @@ export default function EventDetail() {
             fontSize: window.innerWidth < 600 ? '16px' : '20px',
             color: colors.text,
             opacity: 0.7,
-            textAlign: 'center'
+            textAlign: window.innerWidth < 600 ? 'center' : 'left'
           }}>
             {settledConfirmations.length} of {event.participants.length} participants confirmed
           </div>
@@ -525,9 +525,9 @@ export default function EventDetail() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {event.participants
                 .sort((a, b) => {
-                  // Sort so current user appears last
-                  if (a.user_id === user?.id) return 1;
-                  if (b.user_id === user?.id) return -1;
+                  // Sort so current user appears first
+                  if (a.user_id === user?.id) return -1;
+                  if (b.user_id === user?.id) return 1;
                   return 0;
                 })
                 .map(p => {
@@ -901,18 +901,18 @@ export default function EventDetail() {
             <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
               This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
-              <button
-                onClick={() => setDeleteModal({ show: false, splitId: null })}
-                style={buttonStyles.secondary}
-              >
-                Cancel
-              </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button
                 onClick={handleDeleteSplit}
                 style={buttonStyles.secondary}
               >
                 Delete
+              </button>
+              <button
+                onClick={() => setDeleteModal({ show: false, splitId: null })}
+                style={buttonStyles.secondary}
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -945,18 +945,18 @@ export default function EventDetail() {
             <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
               This will permanently delete the event and all associated bills. This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
-              <button
-                onClick={() => setShowDeleteEventModal(false)}
-                style={buttonStyles.secondary}
-              >
-                Cancel
-              </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button
                 onClick={handleDeleteEvent}
                 style={buttonStyles.secondary}
               >
                 Delete Event
+              </button>
+              <button
+                onClick={() => setShowDeleteEventModal(false)}
+                style={buttonStyles.secondary}
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -989,18 +989,18 @@ export default function EventDetail() {
             <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
               This will remove you from the event and delete all bills you created or paid for. This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
-              <button
-                onClick={() => setShowLeaveEventModal(false)}
-                style={buttonStyles.secondary}
-              >
-                Cancel
-              </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button
                 onClick={handleLeaveEvent}
                 style={buttonStyles.secondary}
               >
                 Leave Event
+              </button>
+              <button
+                onClick={() => setShowLeaveEventModal(false)}
+                style={buttonStyles.secondary}
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -1033,18 +1033,18 @@ export default function EventDetail() {
             <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
               This will remove {removeParticipantModal.userName} from the event and delete all bills they created or paid for. This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
-              <button
-                onClick={() => setRemoveParticipantModal({ show: false, userId: null, userName: null })}
-                style={buttonStyles.secondary}
-              >
-                Cancel
-              </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button
                 onClick={handleRemoveParticipant}
                 style={buttonStyles.secondary}
               >
                 Remove Participant
+              </button>
+              <button
+                onClick={() => setRemoveParticipantModal({ show: false, userId: null, userName: null })}
+                style={buttonStyles.secondary}
+              >
+                Cancel
               </button>
             </div>
           </div>
