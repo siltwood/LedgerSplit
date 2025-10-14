@@ -298,8 +298,8 @@ export default function Dashboard() {
         </div>
 
         {/* Filter and Sort Controls */}
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', width: '100%' }}>
-          <div style={{ flex: '1', minWidth: '200px', maxWidth: window.innerWidth < 600 ? '100%' : 'calc(50% - 6px)' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '12px', flexWrap: isMobile ? 'wrap' : 'nowrap', width: '100%' }}>
+          <div style={{ flex: isMobile ? '1' : 'none', minWidth: isMobile ? '200px' : 'auto', maxWidth: isMobile ? '100%' : '300px', width: isMobile ? 'auto' : '300px' }}>
             <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px' }}>
               Filter
             </label>
@@ -308,7 +308,7 @@ export default function Dashboard() {
               onChange={(e) => setFilterBy(e.target.value as FilterOption)}
               style={{
                 width: '100%',
-                padding: '8px 12px',
+                padding: '8px 32px 8px 12px',
                 fontSize: '16px',
                 border: `2px solid ${colors.border}`,
                 borderRadius: '8px',
@@ -324,7 +324,7 @@ export default function Dashboard() {
             </select>
           </div>
 
-          <div style={{ flex: '1', minWidth: '200px', maxWidth: window.innerWidth < 600 ? '100%' : 'calc(50% - 6px)' }}>
+          <div style={{ flex: isMobile ? '1' : 'none', minWidth: isMobile ? '200px' : 'auto', maxWidth: isMobile ? '100%' : '300px', width: isMobile ? 'auto' : '300px' }}>
             <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px' }}>
               Sort By
             </label>
@@ -333,7 +333,7 @@ export default function Dashboard() {
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               style={{
                 width: '100%',
-                padding: '8px 12px',
+                padding: '8px 32px 8px 12px',
                 fontSize: '16px',
                 border: `2px solid ${colors.border}`,
                 borderRadius: '8px',
