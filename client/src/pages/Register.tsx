@@ -206,7 +206,7 @@ export default function Register() {
         </button>
 
         <p style={{ marginTop: isMobile ? '8px' : '12px', textAlign: 'center', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
-          Already have an account? <Link to="/login" style={{ color: colors.text }}>Login</Link>
+          Already have an account? <Link to="/login" style={{ color: colors.text, fontSize: isMobile ? '18px' : '20px', fontWeight: 'bold' }}>Login</Link>
         </p>
       </div>
 
