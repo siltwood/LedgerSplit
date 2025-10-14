@@ -577,16 +577,11 @@ export default function EventDetail() {
             Bills
           </h2>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none', flex: isMobile ? '1' : '0' }}>
+            <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none' }}>
               <button style={{
+                ...buttonStyles.primary,
                 padding: isMobile ? '8px 16px' : '10px 20px',
                 fontSize: isMobile ? '16px' : '18px',
-                background: colors.purple,
-                color: '#fff',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
                 ...getResponsiveButtonWidth(isMobile)
               }}>
                 Add Bill

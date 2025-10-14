@@ -237,7 +237,7 @@ export default function Dashboard() {
       <h1 style={{ color: colors.text, marginBottom: '12px' }}>Dashboard</h1>
 
       {/* Quick Actions */}
-      <div style={{ marginBottom: '16px', display: 'flex', justifyContent: isMobile ? 'flex-start' : 'center' }}>
+      <div style={{ marginBottom: '16px' }}>
         <Link to="/events/new" style={{ textDecoration: 'none' }}>
           <button style={{
             ...buttonStyles.primary,
@@ -585,7 +585,7 @@ export default function Dashboard() {
                         </div>
                       )}
 
-                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
                         {!event.is_dismissed && (
                           <Link to={`/events/${event.event_id}`} style={{ textDecoration: 'none' }}>
                             <button style={{
