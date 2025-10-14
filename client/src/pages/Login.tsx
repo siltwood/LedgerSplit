@@ -3,6 +3,7 @@ import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
+import { buttonStyles } from '../styles/buttons';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -82,14 +83,9 @@ export default function Login() {
             <button
               onClick={() => setShowModal(false)}
               style={{
+                ...buttonStyles.small,
                 padding: '8px 16px',
-                background: colors.primary,
-                color: colors.text,
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '18px',
-                fontWeight: 'bold'
+                fontSize: '18px'
               }}
             >
               Got it
@@ -174,13 +170,9 @@ export default function Login() {
           type="submit"
           disabled={loading}
           style={{
-            width: '100%',
+            ...buttonStyles.primary,
             padding: isMobile ? '8px' : '10px',
             fontSize: isMobile ? '16px' : '18px',
-            background: colors.primary,
-            color: colors.text,
-            border: 'none',
-            borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer'
           }}
         >

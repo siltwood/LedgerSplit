@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
+import { buttonStyles } from '../styles/buttons';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -171,13 +172,9 @@ export default function Register() {
             type="submit"
             disabled={loading}
             style={{
-              width: '100%',
+              ...buttonStyles.primary,
               padding: isMobile ? '8px' : '10px',
               fontSize: isMobile ? '16px' : '18px',
-              background: colors.primary,
-              color: colors.text,
-              border: 'none',
-              borderRadius: '4px',
               cursor: loading ? 'not-allowed' : 'pointer'
             }}
           >
