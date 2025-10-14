@@ -382,7 +382,7 @@ export default function EventDetail() {
           border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
           marginBottom: window.innerWidth < 600 ? '16px' : '24px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: window.innerWidth < 600 ? '10px' : '16px', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '8px' : '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: window.innerWidth < 600 ? '10px' : '16px', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '8px' : '12px', minHeight: window.innerWidth < 600 ? '32px' : '38px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <h3 style={{ margin: 0, color: colors.text, fontSize: window.innerWidth < 600 ? '18px' : '22px' }}>
                 Settle Event
@@ -401,18 +401,17 @@ export default function EventDetail() {
                 </span>
               )}
             </div>
-            {event.is_settled && (
-              <span style={{
-                padding: window.innerWidth < 600 ? '6px 12px' : '8px 16px',
-                background: colors.purple,
-                color: '#fff',
-                borderRadius: '20px',
-                fontSize: window.innerWidth < 600 ? '16px' : '18px',
-                fontWeight: '600'
-              }}>
-                All settled up!
-              </span>
-            )}
+            <span style={{
+              padding: window.innerWidth < 600 ? '6px 12px' : '8px 16px',
+              background: event.is_settled ? colors.purple : 'transparent',
+              color: event.is_settled ? '#fff' : 'transparent',
+              borderRadius: '20px',
+              fontSize: window.innerWidth < 600 ? '16px' : '18px',
+              fontWeight: '600',
+              visibility: event.is_settled ? 'visible' : 'hidden'
+            }}>
+              All settled up!
+            </span>
           </div>
 
           <div style={{ fontSize: window.innerWidth < 600 ? '16px' : '18px', color: colors.text, marginBottom: window.innerWidth < 600 ? '10px' : '16px', opacity: 0.9 }}>
