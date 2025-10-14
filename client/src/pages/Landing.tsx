@@ -28,9 +28,9 @@ export default function Landing() {
         </p>
         <div style={{
           display: 'flex',
+          flexDirection: 'column',
           gap: '15px',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
+          alignItems: 'center',
           width: '100%',
           maxWidth: '400px',
           padding: '0 20px'
@@ -41,10 +41,10 @@ export default function Landing() {
               ...buttonStyles.primary,
               padding: '12px 24px',
               fontSize: 'clamp(16px, 3vw, 18px)',
-              flex: '1 1 140px',
-              minWidth: '120px',
+              width: '100%',
               maxWidth: '100%',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              textAlign: 'center'
             }}
           >
             Login
@@ -55,10 +55,10 @@ export default function Landing() {
               ...buttonStyles.primary,
               padding: '12px 24px',
               fontSize: 'clamp(16px, 3vw, 18px)',
-              flex: '1 1 140px',
-              minWidth: '120px',
+              width: '100%',
               maxWidth: '100%',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              textAlign: 'center'
             }}
           >
             Sign Up

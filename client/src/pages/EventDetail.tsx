@@ -383,9 +383,24 @@ export default function EventDetail() {
           marginBottom: window.innerWidth < 600 ? '16px' : '24px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: window.innerWidth < 600 ? '10px' : '16px', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '8px' : '12px' }}>
-            <h3 style={{ margin: 0, color: colors.text, fontSize: window.innerWidth < 600 ? '18px' : '22px' }}>
-              {event.is_settled ? '✓ Event Settled!' : 'Settle Event'}
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <h3 style={{ margin: 0, color: colors.text, fontSize: window.innerWidth < 600 ? '18px' : '22px' }}>
+                Settle Event
+              </h3>
+              {event.is_settled && (
+                <span style={{
+                  padding: '4px 8px',
+                  background: colors.purple,
+                  color: '#fff',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  flexShrink: 0
+                }}>
+                  ✓
+                </span>
+              )}
+            </div>
             {event.is_settled && (
               <span style={{
                 padding: window.innerWidth < 600 ? '6px 12px' : '8px 16px',
