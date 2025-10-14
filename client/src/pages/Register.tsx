@@ -52,10 +52,28 @@ export default function Register() {
     }
   };
 
+  const isMobile = window.innerWidth < 600;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <div style={{ flex: 1, maxWidth: '400px', margin: '10px auto 0', padding: '10px', width: '100%' }}>
-        <h1 style={{ color: colors.text, marginBottom: '12px' }}>Register</h1>
+      {/* LedgerSplit Header */}
+      <div style={{
+        textAlign: 'center',
+        padding: isMobile ? '12px 0 8px' : '16px 0 12px',
+        borderBottom: `1px solid ${colors.border}`
+      }}>
+        <h1 style={{
+          color: colors.text,
+          margin: 0,
+          fontSize: isMobile ? '24px' : '28px',
+          fontWeight: 'bold'
+        }}>
+          LedgerSplit
+        </h1>
+      </div>
+
+      <div style={{ flex: 1, maxWidth: '400px', margin: '0 auto', padding: isMobile ? '16px 10px' : '20px 10px', width: '100%' }}>
+        <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: isMobile ? '20px' : '24px' }}>Register</h2>
 
         {error && (
           <div style={{
@@ -70,8 +88,8 @@ export default function Register() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '20px' }}>Name</label>
+          <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Name</label>
             <input
               type="text"
               value={name}
@@ -79,8 +97,8 @@ export default function Register() {
               required
               style={{
                 width: '100%',
-                padding: '6px',
-                fontSize: '18px',
+                padding: isMobile ? '6px' : '8px',
+                fontSize: isMobile ? '16px' : '18px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -88,8 +106,8 @@ export default function Register() {
             />
           </div>
 
-          <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '20px' }}>Email</label>
+          <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Email</label>
             <input
               type="email"
               value={email}
@@ -97,8 +115,8 @@ export default function Register() {
               required
               style={{
                 width: '100%',
-                padding: '6px',
-                fontSize: '18px',
+                padding: isMobile ? '6px' : '8px',
+                fontSize: isMobile ? '16px' : '18px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -106,8 +124,8 @@ export default function Register() {
             />
           </div>
 
-          <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '20px' }}>Password</label>
+          <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Password</label>
             <input
               type="password"
               value={password}
@@ -116,8 +134,8 @@ export default function Register() {
               minLength={6}
               style={{
                 width: '100%',
-                padding: '6px',
-                fontSize: '18px',
+                padding: isMobile ? '6px' : '8px',
+                fontSize: isMobile ? '16px' : '18px',
                 border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -125,8 +143,8 @@ export default function Register() {
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '20px' }}>Confirm Password</label>
+          <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Confirm Password</label>
             <input
               type="password"
               value={confirmPassword}
@@ -135,15 +153,15 @@ export default function Register() {
               minLength={6}
               style={{
                 width: '100%',
-                padding: '6px',
-                fontSize: '18px',
+                padding: isMobile ? '6px' : '8px',
+                fontSize: isMobile ? '16px' : '18px',
                 border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
               }}
             />
             {passwordError && (
-              <div style={{ color: '#ff6b6b', fontSize: '18px', marginTop: '4px' }}>
+              <div style={{ color: '#ff6b6b', fontSize: isMobile ? '14px' : '16px', marginTop: '4px' }}>
                 {passwordError}
               </div>
             )}
@@ -154,8 +172,8 @@ export default function Register() {
             disabled={loading}
             style={{
               width: '100%',
-              padding: '8px',
-              fontSize: '18px',
+              padding: isMobile ? '8px' : '10px',
+              fontSize: isMobile ? '16px' : '18px',
               background: colors.primary,
               color: colors.text,
               border: 'none',
@@ -167,7 +185,7 @@ export default function Register() {
           </button>
         </form>
 
-        <div style={{ margin: '12px 0', textAlign: 'center', color: colors.text, fontSize: '18px' }}>
+        <div style={{ margin: isMobile ? '8px 0' : '12px 0', textAlign: 'center', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
           <span>or</span>
         </div>
 
@@ -175,8 +193,8 @@ export default function Register() {
           onClick={handleGoogleSignup}
           style={{
             width: '100%',
-            padding: '8px',
-            fontSize: '18px',
+            padding: isMobile ? '8px' : '10px',
+            fontSize: isMobile ? '16px' : '18px',
             background: colors.surface,
             color: colors.text,
             border: `1px solid ${colors.border}`,
@@ -187,18 +205,18 @@ export default function Register() {
           Continue with Google
         </button>
 
-        <p style={{ marginTop: '12px', textAlign: 'center', color: colors.text, fontSize: '18px' }}>
+        <p style={{ marginTop: isMobile ? '8px' : '12px', textAlign: 'center', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
           Already have an account? <Link to="/login" style={{ color: colors.text }}>Login</Link>
         </p>
       </div>
 
       <footer style={{
         background: colors.surface,
-        padding: '10px',
+        padding: isMobile ? '8px' : '10px',
         textAlign: 'center',
         borderTop: `1px solid ${colors.border}`
       }}>
-        <div style={{ color: colors.text, fontSize: '18px' }}>
+        <div style={{ color: colors.text, fontSize: isMobile ? '14px' : '16px' }}>
           Need help? Contact us at{' '}
           <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
             hello@ledgersplit.com

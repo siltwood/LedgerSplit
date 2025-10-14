@@ -8,6 +8,7 @@ import {
   getEventByShareToken,
   joinEventByShareToken,
   removeParticipant,
+  leaveEvent,
   inviteToEvent,
   getMyInvites,
   acceptInvite,
@@ -36,5 +37,6 @@ router.put('/:id', updateEvent);
 router.delete('/:id', deleteEvent);
 router.post('/:id/invite', inviteToEvent);
 router.delete('/:id/participants/:userId', removeParticipant);
+router.post('/:id/leave', leaveEvent);
 
 export default router;

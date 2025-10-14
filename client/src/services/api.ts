@@ -44,6 +44,8 @@ export const eventsAPI = {
     api.post(`/events/invites/${inviteId}/decline`),
   removeParticipant: (id: string, userId: string) =>
     api.delete(`/events/${id}/participants/${userId}`),
+  leaveEvent: (id: string) =>
+    api.post(`/events/${id}/leave`),
 };
 
 // Splits

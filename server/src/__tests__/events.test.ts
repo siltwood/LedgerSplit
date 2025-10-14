@@ -1161,7 +1161,285 @@ describe('Events API', () => {
       const response = await request(app).delete('/events/event-123/participants/user-to-remove');
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Only event creator can remove participants');
+      expect(response.body.error).toBe('Only event creator can remove participants.');
+    });
+
+    it('should fail if trying to remove creator', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            is: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: { created_by: 'test-user-id' },
+                error: null,
+              }),
+            })),
+          })),
+        })),
+      }));
+
+      const response = await request(app).delete('/events/event-123/participants/test-user-id');
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Cannot remove event creator.');
+    });
+
+    it('should handle database errors when removing participant', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation((table: string) => {
+        if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { created_by: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'splits') {
+          return {
+            update: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                or: jest.fn().mockResolvedValue({
+                  error: { message: 'Database error' },
+                }),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).delete('/events/event-123/participants/user-to-remove');
+
+      expect(response.status).toBe(500);
+      expect(response.body.error).toBe('Failed to remove participant splits.');
+    });
+  });
+
+  describe('POST /events/:id/leave', () => {
+    it('should allow non-creator to leave event', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation((table: string) => {
+        if (table === 'event_participants') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { event_id: 'event-123', user_id: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+            delete: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn().mockResolvedValue({ error: null }),
+              })),
+            })),
+          };
+        } else if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { created_by: 'other-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'splits') {
+          return {
+            update: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                or: jest.fn().mockResolvedValue({
+                  error: null,
+                }),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).post('/events/event-123/leave');
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Left event successfully (including your splits)');
+    });
+
+    it('should fail if creator tries to leave event', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation((table: string) => {
+        if (table === 'event_participants') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { event_id: 'event-123', user_id: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { created_by: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).post('/events/event-123/leave');
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Event creator cannot leave. Delete the event instead.');
+    });
+
+    it('should fail if user not a participant', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: null,
+                error: null,
+              }),
+            })),
+          })),
+        })),
+      }));
+
+      const response = await request(app).post('/events/event-123/leave');
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe('Not a participant of this event.');
+    });
+
+    it('should handle database errors when leaving event', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation((table: string) => {
+        if (table === 'event_participants') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { event_id: 'event-123', user_id: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+            delete: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn().mockResolvedValue({ error: { message: 'Database error' } }),
+              })),
+            })),
+          };
+        } else if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { created_by: 'other-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'splits') {
+          return {
+            update: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                or: jest.fn().mockResolvedValue({
+                  error: null,
+                }),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).post('/events/event-123/leave');
+
+      expect(response.status).toBe(500);
+      expect(response.body.error).toBe('Failed to leave event.');
+    });
+
+    it('should handle split deletion errors when leaving event', async () => {
+      const { db } = require('../config/database');
+
+      db.from.mockImplementation((table: string) => {
+        if (table === 'event_participants') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { event_id: 'event-123', user_id: 'test-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'events') {
+          return {
+            select: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                is: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { created_by: 'other-user-id' },
+                    error: null,
+                  }),
+                })),
+              })),
+            })),
+          };
+        } else if (table === 'splits') {
+          return {
+            update: jest.fn(() => ({
+              eq: jest.fn(() => ({
+                or: jest.fn().mockResolvedValue({
+                  error: { message: 'Split deletion error' },
+                }),
+              })),
+            })),
+          };
+        }
+      });
+
+      const response = await request(app).post('/events/event-123/leave');
+
+      expect(response.status).toBe(500);
+      expect(response.body.error).toBe('Failed to remove your splits.');
     });
   });
 

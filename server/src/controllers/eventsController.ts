@@ -902,6 +902,72 @@ export const removeParticipant = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// Leave event (non-creator can remove themselves)
+export const leaveEvent = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.id;
+
+    // Check if user is participant
+    const { data: participation } = await db
+      .from('event_participants')
+      .select('*')
+      .eq('event_id', id)
+      .eq('user_id', userId)
+      .single();
+
+    if (!participation) {
+      return res.status(404).json({ error: 'Not a participant of this event.' });
+    }
+
+    // Get event to check if user is creator
+    const { data: event } = await db
+      .from('events')
+      .select('created_by')
+      .eq('event_id', id)
+      .is('deleted_at', null)
+      .single();
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found.' });
+    }
+
+    // Can't leave if you're the creator - must delete event instead
+    if (event.created_by === userId) {
+      return res.status(400).json({ error: 'Event creator cannot leave. Delete the event instead.' });
+    }
+
+    // Soft delete all splits in this event created by or paid by this user
+    const { error: splitError } = await db
+      .from('splits')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('event_id', id)
+      .or(`created_by.eq.${userId},paid_by.eq.${userId}`);
+
+    if (splitError) {
+      console.error('Split deletion error:', splitError);
+      return res.status(500).json({ error: 'Failed to remove your splits.' });
+    }
+
+    // Remove user from event
+    const { error } = await db
+      .from('event_participants')
+      .delete()
+      .eq('event_id', id)
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Failed to leave event.' });
+    }
+
+    res.json({ message: 'Left event successfully (including your splits)' });
+  } catch (error) {
+    console.error('Leave event error:', error);
+    res.status(500).json({ error: 'Failed to leave event.' });
+  }
+};
+
 // Get event details by share token (public endpoint - no auth required)
 export const getEventByShareToken = async (req: Request, res: Response) => {
   try {

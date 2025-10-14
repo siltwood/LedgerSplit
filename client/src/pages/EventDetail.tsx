@@ -19,6 +19,8 @@ export default function EventDetail() {
   const [showAllBalances, setShowAllBalances] = useState(false);
   const [settledConfirmations, setSettledConfirmations] = useState<EventSettledConfirmation[]>([]);
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
+  const [showLeaveEventModal, setShowLeaveEventModal] = useState(false);
+  const [removeParticipantModal, setRemoveParticipantModal] = useState<{ show: boolean; userId: string | null; userName: string | null }>({ show: false, userId: null, userName: null });
   const [billSearchQuery, setBillSearchQuery] = useState('');
   const [expandedBills, setExpandedBills] = useState<Set<string>>(new Set());
 
@@ -147,6 +149,31 @@ export default function EventDetail() {
     } catch (error) {
       console.error('Failed to delete event:', error);
       alert('Failed to delete event');
+    }
+  };
+
+  const handleLeaveEvent = async () => {
+    if (!id) return;
+
+    try {
+      await eventsAPI.leaveEvent(id);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Failed to leave event:', error);
+      alert('Failed to leave event');
+    }
+  };
+
+  const handleRemoveParticipant = async () => {
+    if (!id || !removeParticipantModal.userId) return;
+
+    try {
+      await eventsAPI.removeParticipant(id, removeParticipantModal.userId);
+      setRemoveParticipantModal({ show: false, userId: null, userName: null });
+      loadData();
+    } catch (error) {
+      console.error('Failed to remove participant:', error);
+      alert('Failed to remove participant');
     }
   };
 
@@ -292,27 +319,60 @@ export default function EventDetail() {
               {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '6px' : '8px' }}>
-              {event.participants.map((p) => (
-                <span
-                  key={p.user_id}
-                  style={{
-                    padding: window.innerWidth < 600 ? '4px 8px' : '6px 12px',
-                    background: getParticipantColor(p.user_id),
-                    borderRadius: '6px',
-                    fontSize: window.innerWidth < 600 ? '16px' : '20px',
-                    color: '#000',
-                    fontWeight: '500',
-                    wordBreak: 'break-word'
-                  }}
-                >
-                  {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
-                </span>
-              ))}
+              {event.participants.map((p) => {
+                const isCreator = event.created_by === user?.id;
+                const isParticipantCreator = p.user_id === event.created_by;
+                const canRemove = isCreator && !isParticipantCreator;
+
+                return (
+                  <span
+                    key={p.user_id}
+                    style={{
+                      padding: window.innerWidth < 600 ? '4px 8px' : '6px 12px',
+                      background: getParticipantColor(p.user_id),
+                      borderRadius: '6px',
+                      fontSize: window.innerWidth < 600 ? '16px' : '20px',
+                      color: '#000',
+                      fontWeight: '500',
+                      wordBreak: 'break-word',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <span>{p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}</span>
+                    {canRemove && (
+                      <button
+                        onClick={() => setRemoveParticipantModal({ show: true, userId: p.user_id, userName: p.user?.name || p.user?.email || 'this participant' })}
+                        style={{
+                          background: 'rgba(0, 0, 0, 0.2)',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '20px',
+                          height: '20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          color: '#000',
+                          fontWeight: 'bold',
+                          padding: '0',
+                          flexShrink: 0
+                        }}
+                        title="Remove participant"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}
 
-        {/* Share Invite Link and Delete Event Buttons */}
+        {/* Share Invite Link, Leave Event, and Delete Event Buttons */}
         <div style={{
           marginTop: isMobile ? '12px' : '20px',
           paddingTop: isMobile ? '12px' : '20px',
@@ -334,6 +394,19 @@ export default function EventDetail() {
           }}>
             Share Invite Link
           </button>
+          {event.created_by !== user?.id && (
+            <button
+              onClick={() => setShowLeaveEventModal(true)}
+              style={{
+                ...buttonStyles.secondary,
+                padding: isMobile ? '8px 16px' : '10px 20px',
+                fontSize: isMobile ? '16px' : '18px',
+                ...getResponsiveButtonWidth(isMobile)
+              }}
+            >
+              Leave Event
+            </button>
+          )}
           {event.created_by === user?.id && (
             <button
               onClick={() => setShowDeleteEventModal(true)}
@@ -1030,6 +1103,94 @@ export default function EventDetail() {
                 style={{ ...buttonStyles.danger, border: 'none' }}
               >
                 Delete Event
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Leave Event Confirmation Modal */}
+      {showLeaveEventModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: colors.surface,
+            padding: '24px',
+            borderRadius: '8px',
+            border: `1px solid ${colors.border}`,
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>Leave Event?</h3>
+            <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
+              This will remove you from the event and delete all bills you created or paid for. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
+              <button
+                onClick={() => setShowLeaveEventModal(false)}
+                style={buttonStyles.secondary}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLeaveEvent}
+                style={{ ...buttonStyles.danger, border: 'none' }}
+              >
+                Leave Event
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Remove Participant Confirmation Modal */}
+      {removeParticipantModal.show && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: colors.surface,
+            padding: '24px',
+            borderRadius: '8px',
+            border: `1px solid ${colors.border}`,
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>Remove Participant?</h3>
+            <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
+              This will remove {removeParticipantModal.userName} from the event and delete all bills they created or paid for. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-start' }}>
+              <button
+                onClick={() => setRemoveParticipantModal({ show: false, userId: null, userName: null })}
+                style={buttonStyles.secondary}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRemoveParticipant}
+                style={{ ...buttonStyles.danger, border: 'none' }}
+              >
+                Remove Participant
               </button>
             </div>
           </div>

@@ -116,32 +116,68 @@ export default function AcceptInvite() {
     }
   };
 
+  const isMobile = window.innerWidth < 600;
+
   if (loading) {
     return (
-      <div style={{ maxWidth: '500px', margin: '50px auto', padding: '20px', textAlign: 'center' }}>
-        <div style={{ color: colors.text, fontSize: '20px' }}>Loading invite...</div>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        {/* LedgerSplit Header */}
+        <div style={{
+          textAlign: 'center',
+          padding: isMobile ? '12px 0 8px' : '16px 0 12px',
+          borderBottom: `1px solid ${colors.border}`
+        }}>
+          <h1 style={{
+            color: colors.text,
+            margin: 0,
+            fontSize: isMobile ? '24px' : '28px',
+            fontWeight: 'bold'
+          }}>
+            LedgerSplit
+          </h1>
+        </div>
+        <div style={{ maxWidth: '500px', margin: '20px auto', padding: '20px', textAlign: 'center' }}>
+          <div style={{ color: colors.text, fontSize: '20px' }}>Loading invite...</div>
+        </div>
       </div>
     );
   }
 
   if (error && !invite) {
     return (
-      <div style={{ maxWidth: '500px', margin: '50px auto', padding: '20px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        {/* LedgerSplit Header */}
         <div style={{
-          padding: '20px',
-          background: colors.error,
-          color: colors.text,
-          borderRadius: '4px',
-          marginBottom: '20px',
-          fontSize: '20px',
-          textAlign: 'center'
+          textAlign: 'center',
+          padding: isMobile ? '12px 0 8px' : '16px 0 12px',
+          borderBottom: `1px solid ${colors.border}`
         }}>
-          {error}
+          <h1 style={{
+            color: colors.text,
+            margin: 0,
+            fontSize: isMobile ? '24px' : '28px',
+            fontWeight: 'bold'
+          }}>
+            LedgerSplit
+          </h1>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <Link to="/dashboard" style={{ color: colors.text, fontSize: '20px' }}>
-            Go to Dashboard
-          </Link>
+        <div style={{ maxWidth: '500px', margin: '20px auto', padding: '20px' }}>
+          <div style={{
+            padding: '20px',
+            background: colors.error,
+            color: colors.text,
+            borderRadius: '4px',
+            marginBottom: '20px',
+            fontSize: '20px',
+            textAlign: 'center'
+          }}>
+            {error}
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <Link to="/dashboard" style={{ color: colors.text, fontSize: '20px' }}>
+              Go to Dashboard
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -152,32 +188,49 @@ export default function AcceptInvite() {
   }
 
   return (
-    <div style={{ maxWidth: '500px', margin: '50px auto', padding: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      {/* LedgerSplit Header */}
+      <div style={{
+        textAlign: 'center',
+        padding: isMobile ? '12px 0 8px' : '16px 0 12px',
+        borderBottom: `1px solid ${colors.border}`
+      }}>
+        <h1 style={{
+          color: colors.text,
+          margin: 0,
+          fontSize: isMobile ? '24px' : '28px',
+          fontWeight: 'bold'
+        }}>
+          LedgerSplit
+        </h1>
+      </div>
+
+      <div style={{ maxWidth: '500px', margin: '0 auto', padding: isMobile ? '16px 10px' : '20px', width: '100%' }}>
       {/* Invite Info */}
       <div style={{
         background: colors.surface,
-        padding: '30px',
+        padding: isMobile ? '16px' : '24px',
         borderRadius: '8px',
         border: `1px solid ${colors.border}`,
-        marginBottom: '30px',
+        marginBottom: isMobile ? '16px' : '20px',
         textAlign: 'center'
       }}>
-        <h1 style={{ color: colors.text, marginBottom: '16px', fontSize: '28px' }}>
+        <h2 style={{ color: colors.text, marginBottom: isMobile ? '8px' : '12px', fontSize: isMobile ? '20px' : '24px' }}>
           You're Invited!
-        </h1>
-        <p style={{ color: colors.text, fontSize: '20px', marginBottom: '0', lineHeight: '1.5' }}>
+        </h2>
+        <p style={{ color: colors.text, fontSize: isMobile ? '16px' : '18px', marginBottom: '0', lineHeight: '1.5' }}>
           Your friend wants to split payments using LedgerSplit for the <strong>{invite.name}</strong> event.
         </p>
       </div>
 
       {error && (
         <div style={{
-          padding: '10px',
+          padding: isMobile ? '8px' : '10px',
           background: colors.error,
           color: colors.text,
           borderRadius: '4px',
-          marginBottom: '20px',
-          fontSize: '20px'
+          marginBottom: isMobile ? '12px' : '16px',
+          fontSize: isMobile ? '16px' : '18px'
         }}>
           {error}
         </div>
@@ -190,17 +243,17 @@ export default function AcceptInvite() {
             // Register Form
             <div style={{
               background: colors.surface,
-              padding: '30px',
+              padding: isMobile ? '16px' : '24px',
               borderRadius: '8px',
               border: `1px solid ${colors.border}`
             }}>
-              <h2 style={{ color: colors.text, marginBottom: '20px', fontSize: '22px' }}>
+              <h3 style={{ color: colors.text, marginBottom: isMobile ? '12px' : '16px', fontSize: isMobile ? '18px' : '20px' }}>
                 Create Account
-              </h2>
+              </h3>
 
               <form onSubmit={handleRegister}>
-                <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+                <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
                     Name
                   </label>
                   <input
@@ -210,8 +263,8 @@ export default function AcceptInvite() {
                     required
                     style={{
                       width: '100%',
-                      padding: '10px',
-                      fontSize: '20px',
+                      padding: isMobile ? '6px' : '8px',
+                      fontSize: isMobile ? '16px' : '18px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -220,8 +273,8 @@ export default function AcceptInvite() {
                   />
                 </div>
 
-                <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+                <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
                     Email
                   </label>
                   <input
@@ -231,8 +284,8 @@ export default function AcceptInvite() {
                     required
                     style={{
                       width: '100%',
-                      padding: '10px',
-                      fontSize: '20px',
+                      padding: isMobile ? '6px' : '8px',
+                      fontSize: isMobile ? '16px' : '18px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -241,8 +294,8 @@ export default function AcceptInvite() {
                   />
                 </div>
 
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+                <div style={{ marginBottom: isMobile ? '10px' : '14px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
                     Password
                   </label>
                   <input
@@ -253,8 +306,8 @@ export default function AcceptInvite() {
                     minLength={6}
                     style={{
                       width: '100%',
-                      padding: '10px',
-                      fontSize: '20px',
+                      padding: isMobile ? '6px' : '8px',
+                      fontSize: isMobile ? '16px' : '18px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -268,21 +321,21 @@ export default function AcceptInvite() {
                   disabled={submitting}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    fontSize: '20px',
+                    padding: isMobile ? '8px' : '10px',
+                    fontSize: isMobile ? '16px' : '18px',
                     background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
                     cursor: submitting ? 'not-allowed' : 'pointer',
-                    marginBottom: '15px'
+                    marginBottom: isMobile ? '10px' : '12px'
                   }}
                 >
                   {submitting ? 'Creating Account...' : 'Create Account and Join Event'}
                 </button>
 
-                <div style={{ textAlign: 'center', marginBottom: '15px', marginTop: '5px' }}>
-                  <span style={{ color: colors.text, fontSize: '22px' }}>or</span>
+                <div style={{ textAlign: 'center', marginBottom: isMobile ? '10px' : '12px', marginTop: '4px' }}>
+                  <span style={{ color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>or</span>
                 </div>
 
                 <button
@@ -290,14 +343,14 @@ export default function AcceptInvite() {
                   onClick={handleGoogleLogin}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    fontSize: '20px',
+                    padding: isMobile ? '8px' : '10px',
+                    fontSize: isMobile ? '16px' : '18px',
                     background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    marginBottom: '20px'
+                    marginBottom: isMobile ? '10px' : '14px'
                   }}
                 >
                   Continue with Google
@@ -309,8 +362,8 @@ export default function AcceptInvite() {
                     onClick={() => setShowRegister(false)}
                     style={{
                       width: '100%',
-                      padding: '12px',
-                      fontSize: '20px',
+                      padding: isMobile ? '8px' : '10px',
+                      fontSize: isMobile ? '16px' : '18px',
                       background: colors.columbiaBlue,
                       color: colors.text,
                       border: `1px solid ${colors.border}`,
@@ -327,14 +380,14 @@ export default function AcceptInvite() {
             // Login Form
             <div style={{
               background: colors.surface,
-              padding: '30px',
+              padding: isMobile ? '16px' : '24px',
               borderRadius: '8px',
               border: `1px solid ${colors.border}`
             }}>
 
               <form onSubmit={handleLogin}>
-                <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+                <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
                     Email
                   </label>
                   <input
@@ -344,8 +397,8 @@ export default function AcceptInvite() {
                     required
                     style={{
                       width: '100%',
-                      padding: '10px',
-                      fontSize: '20px',
+                      padding: isMobile ? '6px' : '8px',
+                      fontSize: isMobile ? '16px' : '18px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -354,8 +407,8 @@ export default function AcceptInvite() {
                   />
                 </div>
 
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+                <div style={{ marginBottom: isMobile ? '10px' : '14px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
                     Password
                   </label>
                   <input
@@ -365,8 +418,8 @@ export default function AcceptInvite() {
                     required
                     style={{
                       width: '100%',
-                      padding: '10px',
-                      fontSize: '20px',
+                      padding: isMobile ? '6px' : '8px',
+                      fontSize: isMobile ? '16px' : '18px',
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -380,27 +433,27 @@ export default function AcceptInvite() {
                   disabled={submitting}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    fontSize: '20px',
+                    padding: isMobile ? '8px' : '10px',
+                    fontSize: isMobile ? '16px' : '18px',
                     background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
                     cursor: submitting ? 'not-allowed' : 'pointer',
-                    marginBottom: '15px'
+                    marginBottom: isMobile ? '8px' : '10px'
                   }}
                 >
                   {submitting ? 'Signing In...' : 'Sign in and Join Event'}
                 </button>
 
-                <div style={{ textAlign: 'left' }}>
-                  <Link to="/forgot-password" style={{ color: colors.text, fontSize: '20px', textDecoration: 'underline' }}>
+                <div style={{ textAlign: 'left', marginBottom: isMobile ? '10px' : '12px' }}>
+                  <Link to="/forgot-password" style={{ color: colors.text, fontSize: isMobile ? '14px' : '16px', textDecoration: 'underline' }}>
                     Forgot password?
                   </Link>
                 </div>
 
-                <div style={{ textAlign: 'center', marginBottom: '15px', marginTop: '5px' }}>
-                  <span style={{ color: colors.text, fontSize: '22px' }}>or</span>
+                <div style={{ textAlign: 'center', marginBottom: isMobile ? '10px' : '12px', marginTop: '4px' }}>
+                  <span style={{ color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>or</span>
                 </div>
 
                 <button
@@ -408,14 +461,14 @@ export default function AcceptInvite() {
                   onClick={handleGoogleLogin}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    fontSize: '20px',
+                    padding: isMobile ? '8px' : '10px',
+                    fontSize: isMobile ? '16px' : '18px',
                     background: colors.columbiaBlue,
                     color: colors.text,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    marginBottom: '20px'
+                    marginBottom: isMobile ? '10px' : '14px'
                   }}
                 >
                   Continue with Google
@@ -427,8 +480,8 @@ export default function AcceptInvite() {
                     onClick={() => setShowRegister(true)}
                     style={{
                       width: '100%',
-                      padding: '12px',
-                      fontSize: '20px',
+                      padding: isMobile ? '8px' : '10px',
+                      fontSize: isMobile ? '16px' : '18px',
                       background: colors.columbiaBlue,
                       color: colors.text,
                       border: `1px solid ${colors.border}`,
@@ -444,6 +497,7 @@ export default function AcceptInvite() {
           )}
         </>
       )}
+      </div>
     </div>
   );
 }
