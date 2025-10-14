@@ -237,8 +237,8 @@ export default function Dashboard() {
       <h1 style={{ color: colors.text, marginBottom: '12px' }}>Dashboard</h1>
 
       {/* Quick Actions */}
-      <div style={{ marginBottom: '16px' }}>
-        <Link to="/events/new">
+      <div style={{ marginBottom: '16px', display: 'flex', justifyContent: isMobile ? 'flex-start' : 'center' }}>
+        <Link to="/events/new" style={{ textDecoration: 'none' }}>
           <button style={{
             ...buttonStyles.primary,
             ...getResponsiveButtonWidth(isMobile)
