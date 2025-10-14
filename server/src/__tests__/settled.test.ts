@@ -257,7 +257,7 @@ describe('Settled Confirmation API', () => {
         .post(`/events/${validEventId}/settled/toggle`);
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Not a participant of this event');
+      expect(response.body.error).toBe('Not a participant of this event.');
     });
 
     it('should fail with invalid event ID', async () => {
@@ -265,7 +265,7 @@ describe('Settled Confirmation API', () => {
         .post('/events/invalid-id/settled/toggle');
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Invalid event ID');
+      expect(response.body.error).toBe('Invalid event ID.');
     });
   });
 
@@ -329,7 +329,7 @@ describe('Settled Confirmation API', () => {
         .get(`/events/${validEventId}/settled`);
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Not a participant of this event');
+      expect(response.body.error).toBe('Not a participant of this event.');
     });
 
     it('should fail with invalid event ID', async () => {
@@ -337,7 +337,7 @@ describe('Settled Confirmation API', () => {
         .get('/events/invalid-id/settled');
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Invalid event ID');
+      expect(response.body.error).toBe('Invalid event ID.');
     });
   });
 });

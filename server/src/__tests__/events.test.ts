@@ -120,7 +120,7 @@ describe('Events API', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Event name is required');
+      expect(response.body.error).toBe('Event name is required.');
     });
   });
 
@@ -390,7 +390,7 @@ describe('Events API', () => {
         .send({ user_id: 'friend-123' });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('User already in event');
+      expect(response.body.error).toBe('User already in event.');
     });
 
     it('should invite user by email (non-existing user)', async () => {
@@ -529,7 +529,7 @@ describe('Events API', () => {
         .send({ email: 'existing@example.com' });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('User already in event');
+      expect(response.body.error).toBe('User already in event.');
     });
 
     it('should fail if user not participant of event', async () => {
@@ -557,7 +557,7 @@ describe('Events API', () => {
         .send({ user_id: 'friend-123' });
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Not a participant of this event');
+      expect(response.body.error).toBe('Not a participant of this event.');
     });
   });
 
@@ -801,7 +801,7 @@ describe('Events API', () => {
       const response = await request(app).delete('/events/event-123');
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Only event creator can delete');
+      expect(response.body.error).toBe('Only event creator can delete.');
     });
 
     it('should handle database errors', async () => {
@@ -915,7 +915,7 @@ describe('Events API', () => {
       const response = await request(app).get('/events/event-123');
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Not a participant of this event');
+      expect(response.body.error).toBe('Not a participant of this event.');
     });
 
     it('should fail if event not found', async () => {
@@ -955,7 +955,7 @@ describe('Events API', () => {
       const response = await request(app).get('/events/event-123');
 
       expect(response.status).toBe(404);
-      expect(response.body.error).toBe('Event not found');
+      expect(response.body.error).toBe('Event not found.');
     });
   });
 
@@ -1019,7 +1019,7 @@ describe('Events API', () => {
         .send({ name: 'Updated Event' });
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Only event creator can update');
+      expect(response.body.error).toBe('Only event creator can update.');
     });
   });
 
@@ -1509,7 +1509,7 @@ describe('Events API', () => {
       const response = await request(app).get('/events/join/invalid-token');
 
       expect(response.status).toBe(404);
-      expect(response.body.error).toBe('Event not found');
+      expect(response.body.error).toBe('Event not found.');
     });
   });
 
@@ -1617,7 +1617,7 @@ describe('Events API', () => {
       const response = await request(app).post('/events/join/test-token');
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Already a participant of this event');
+      expect(response.body.error).toBe('Already a participant of this event.');
     });
   });
 

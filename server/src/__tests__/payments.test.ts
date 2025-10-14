@@ -95,7 +95,7 @@ describe('Payments API', () => {
         ;
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Event ID is required');
+      expect(response.body.error).toBe('Event ID is required.');
     });
 
     it('should fail if user is not a participant', async () => {
@@ -124,7 +124,7 @@ describe('Payments API', () => {
         ;
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Not a participant of this event');
+      expect(response.body.error).toBe('Not a participant of this event.');
     });
   });
 
@@ -192,7 +192,7 @@ describe('Payments API', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Event ID, from_user_id, to_user_id, and amount are required');
+      expect(response.body.error).toBe('Event ID, from_user_id, to_user_id, and amount are required.');
     });
 
     it('should fail with invalid amount', async () => {
@@ -207,7 +207,7 @@ describe('Payments API', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Invalid amount');
+      expect(response.body.error).toBe('Invalid amount.');
     });
 
     it('should fail with zero amount', async () => {
@@ -222,7 +222,7 @@ describe('Payments API', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Invalid amount');
+      expect(response.body.error).toBe('Invalid amount.');
     });
 
     it('should fail if user is not a participant', async () => {
@@ -256,7 +256,7 @@ describe('Payments API', () => {
         });
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Not a participant of this event');
+      expect(response.body.error).toBe('Not a participant of this event.');
     });
 
     it('should fail if from_user is not a participant', async () => {
@@ -309,7 +309,7 @@ describe('Payments API', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Both users must be participants of the event');
+      expect(response.body.error).toBe('Both users must be participants of the event.');
     });
   });
 
@@ -389,7 +389,7 @@ describe('Payments API', () => {
         ;
 
       expect(response.status).toBe(404);
-      expect(response.body.error).toBe('Payment not found');
+      expect(response.body.error).toBe('Payment not found.');
     });
 
     it('should fail if user is not a participant', async () => {
@@ -434,7 +434,7 @@ describe('Payments API', () => {
         ;
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Not authorized to delete this payment');
+      expect(response.body.error).toBe('Not authorized to delete this payment.');
     });
   });
 });

@@ -199,7 +199,7 @@ describe('Splits API', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Event ID, title, amount, and paid_by are required');
+      expect(response.body.error).toBe('Event ID, title, amount, and paid_by are required.');
     });
 
     it('should fail if user not participant of event', async () => {
@@ -234,7 +234,7 @@ describe('Splits API', () => {
         });
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Not a participant of this event');
+      expect(response.body.error).toBe('Not a participant of this event.');
     });
   });
 
@@ -375,7 +375,7 @@ describe('Splits API', () => {
         .send({ title: 'Updated Dinner' });
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Only split creator can update');
+      expect(response.body.error).toBe('Only split creator can update.');
     });
   });
 
@@ -432,7 +432,7 @@ describe('Splits API', () => {
       const response = await request(app).delete(`/splits/${TEST_SPLIT_ID}`);
 
       expect(response.status).toBe(403);
-      expect(response.body.error).toBe('Only split creator can delete');
+      expect(response.body.error).toBe('Only split creator can delete.');
     });
   });
 });
