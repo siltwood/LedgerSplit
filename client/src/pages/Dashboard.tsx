@@ -239,7 +239,7 @@ export default function Dashboard() {
 
       {/* Search and Filter */}
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '18px' }}>
+        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'normal', color: colors.text, fontSize: '18px' }}>
           Search Events and Participants
         </label>
         <div style={{ position: 'relative', width: '100%', maxWidth: window.innerWidth < 600 ? '100%' : '600px' }}>

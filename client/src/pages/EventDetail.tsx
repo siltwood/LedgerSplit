@@ -640,7 +640,7 @@ export default function EventDetail() {
         {/* Bill Search */}
         {splits.length > 0 && (
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px', fontWeight: 'normal' }}>
               Search Bills
             </label>
             <input
@@ -651,7 +651,7 @@ export default function EventDetail() {
               style={{
                 width: '100%',
                 padding: '8px 12px',
-                fontSize: '18px',
+                fontSize: '16px',
                 border: `2px solid ${colors.border}`,
                 borderRadius: '8px',
                 background: colors.surface,
