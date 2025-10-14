@@ -124,7 +124,7 @@ describe('Auth Routes', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Password must be at least 8 characters');
+      expect(response.body.error).toBe('Password must be at least 8 characters.');
     });
 
     it('should return 400 if email already exists', async () => {
@@ -150,7 +150,7 @@ describe('Auth Routes', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Email already registered');
+      expect(response.body.error).toBe('Email already registered.');
     });
   });
 
@@ -211,7 +211,7 @@ describe('Auth Routes', () => {
         });
 
       expect(response.status).toBe(401);
-      expect(response.body.error).toBe('Invalid credentials');
+      expect(response.body.error).toBe('Invalid credentials.');
     });
 
     it('should return 400 if user registered with Google', async () => {
@@ -242,7 +242,7 @@ describe('Auth Routes', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Please login with Google');
+      expect(response.body.error).toBe('Please login with Google.');
     });
   });
 
@@ -624,7 +624,7 @@ describe('Auth Routes', () => {
       const response = await request(app).get('/auth/google/callback');
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Authorization code missing');
+      expect(response.body.error).toBe('Authorization code missing.');
     });
   });
 
