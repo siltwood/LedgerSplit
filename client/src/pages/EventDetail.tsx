@@ -414,6 +414,86 @@ export default function EventDetail() {
         </div>
       </div>
 
+      {/* Toast Notification for Copy Status */}
+      {copyStatus && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          padding: '16px 24px',
+          background: copyStatus.includes('✗') ? colors.error : colors.purple,
+          color: '#fff',
+          borderRadius: '8px',
+          fontSize: '20px',
+          fontWeight: '600',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          zIndex: 1000,
+          animation: 'slideIn 0.3s ease-out',
+          whiteSpace: 'pre-line',
+          maxWidth: '90%',
+          wordBreak: 'break-all'
+        }}>
+          {copyStatus}
+        </div>
+      )}
+
+      {/* All Balances Section */}
+      {splits.length > 0 && event.participants && event.participants.length > 1 && showAllBalances && (
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{
+            background: colors.surface,
+            padding: '20px',
+            borderRadius: '8px',
+            border: `1px solid ${colors.border}`
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {event.participants
+                .sort((a, b) => {
+                  // Sort so current user appears first
+                  if (a.user_id === user?.id) return -1;
+                  if (b.user_id === user?.id) return 1;
+                  return 0;
+                })
+                .map(p => {
+                const balance = balances[p.user_id] || 0;
+                const isCurrentUser = p.user_id === user?.id;
+                return (
+                  <div key={p.user_id} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '12px',
+                    background: isCurrentUser ? getParticipantColor(p.user_id) : colors.background,
+                    borderRadius: '6px',
+                    border: isCurrentUser ? `2px solid ${colors.primary}` : 'none',
+                    flexWrap: 'wrap',
+                    gap: '8px'
+                  }}>
+                    <span style={{ fontSize: '20px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', wordBreak: 'break-word' }}>
+                      {p.user?.name || p.user?.email}{isCurrentUser ? ' (you)' : ''}
+                    </span>
+                    <span style={{
+                      fontSize: '22px',
+                      fontWeight: 'bold',
+                      color: Math.abs(balance) > 0.01 ? colors.purple : (isCurrentUser ? '#000' : colors.text)
+                    }}>
+                      {(() => {
+                        if (balance > 0.01) {
+                          return `People owe $${balance.toFixed(2)}`;
+                        } else if (balance < -0.01) {
+                          return isCurrentUser ? `You owe $${Math.abs(balance).toFixed(2)}` : `Owes $${Math.abs(balance).toFixed(2)}`;
+                        }
+                        return isCurrentUser ? `You owe $0.00` : `$0.00`;
+                      })()}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Settling Vote Section */}
       {event.participants && event.participants.length > 0 && splits.length > 0 && (
         <div style={{
@@ -563,86 +643,6 @@ export default function EventDetail() {
             textAlign: window.innerWidth < 600 ? 'center' : 'left'
           }}>
             {settledConfirmations.length} of {event.participants.length} participants confirmed
-          </div>
-        </div>
-      )}
-
-      {/* Toast Notification for Copy Status */}
-      {copyStatus && (
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          padding: '16px 24px',
-          background: copyStatus.includes('✗') ? colors.error : colors.purple,
-          color: '#fff',
-          borderRadius: '8px',
-          fontSize: '20px',
-          fontWeight: '600',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          zIndex: 1000,
-          animation: 'slideIn 0.3s ease-out',
-          whiteSpace: 'pre-line',
-          maxWidth: '90%',
-          wordBreak: 'break-all'
-        }}>
-          {copyStatus}
-        </div>
-      )}
-
-      {/* All Balances Section */}
-      {splits.length > 0 && event.participants && event.participants.length > 1 && showAllBalances && (
-        <div style={{ marginBottom: '24px' }}>
-          <div style={{
-            background: colors.surface,
-            padding: '20px',
-            borderRadius: '8px',
-            border: `1px solid ${colors.border}`
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {event.participants
-                .sort((a, b) => {
-                  // Sort so current user appears first
-                  if (a.user_id === user?.id) return -1;
-                  if (b.user_id === user?.id) return 1;
-                  return 0;
-                })
-                .map(p => {
-                const balance = balances[p.user_id] || 0;
-                const isCurrentUser = p.user_id === user?.id;
-                return (
-                  <div key={p.user_id} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px',
-                    background: isCurrentUser ? getParticipantColor(p.user_id) : colors.background,
-                    borderRadius: '6px',
-                    border: isCurrentUser ? `2px solid ${colors.primary}` : 'none',
-                    flexWrap: 'wrap',
-                    gap: '8px'
-                  }}>
-                    <span style={{ fontSize: '20px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', wordBreak: 'break-word' }}>
-                      {p.user?.name || p.user?.email}{isCurrentUser ? ' (you)' : ''}
-                    </span>
-                    <span style={{
-                      fontSize: '22px',
-                      fontWeight: 'bold',
-                      color: Math.abs(balance) > 0.01 ? colors.purple : (isCurrentUser ? '#000' : colors.text)
-                    }}>
-                      {(() => {
-                        if (balance > 0.01) {
-                          return `People owe $${balance.toFixed(2)}`;
-                        } else if (balance < -0.01) {
-                          return isCurrentUser ? `You owe $${Math.abs(balance).toFixed(2)}` : `Owes $${Math.abs(balance).toFixed(2)}`;
-                        }
-                        return isCurrentUser ? `You owe $0.00` : `$0.00`;
-                      })()}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
           </div>
         </div>
       )}
