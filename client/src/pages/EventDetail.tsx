@@ -23,6 +23,8 @@ export default function EventDetail() {
   const [removeParticipantModal, setRemoveParticipantModal] = useState<{ show: boolean; userId: string | null; userName: string | null }>({ show: false, userId: null, userName: null });
   const [billSearchQuery, setBillSearchQuery] = useState('');
   const [expandedBills, setExpandedBills] = useState<Set<string>>(new Set());
+  const [sortBy, setSortBy] = useState<string>('date-newest');
+  const [filterBy, setFilterBy] = useState<string>('all');
 
   useEffect(() => {
     loadData();
@@ -280,6 +282,18 @@ export default function EventDetail() {
     if (!event?.participants) return colors.surface;
     const index = event.participants.findIndex(p => p.user_id === userId);
     return index !== -1 ? participantColors[index % participantColors.length] : colors.surface;
+  };
+
+  const getCategoryLabel = (category?: string) => {
+    const categoryMap: Record<string, string> = {
+      'food': 'Food & Dining',
+      'transportation': 'Transportation',
+      'lodging': 'Lodging',
+      'entertainment': 'Entertainment',
+      'groceries': 'Groceries',
+      'other': 'Other'
+    };
+    return category ? categoryMap[category] || category : null;
   };
 
   return (
@@ -689,6 +703,71 @@ export default function EventDetail() {
           </div>
         </div>
 
+        {/* Sort and Filter */}
+        {splits.length > 0 && (
+          <div style={{ marginBottom: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ flex: '1', minWidth: '200px' }}>
+              <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px', fontWeight: 'bold' }}>
+                Sort By
+              </label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  fontSize: '16px',
+                  border: `2px solid ${colors.border}`,
+                  borderRadius: '8px',
+                  background: colors.surface,
+                  color: colors.text,
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="date-newest">Date (Newest)</option>
+                <option value="date-oldest">Date (Oldest)</option>
+                <option value="amount-high">Amount (High to Low)</option>
+                <option value="amount-low">Amount (Low to High)</option>
+                <option value="category">Category</option>
+                <option value="creator">Bill Creator</option>
+              </select>
+            </div>
+            <div style={{ flex: '1', minWidth: '200px' }}>
+              <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px', fontWeight: 'bold' }}>
+                Filter By
+              </label>
+              <select
+                value={filterBy}
+                onChange={(e) => setFilterBy(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  fontSize: '16px',
+                  border: `2px solid ${colors.border}`,
+                  borderRadius: '8px',
+                  background: colors.surface,
+                  color: colors.text,
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="all">All Bills</option>
+                <option value="my-bills">My Bills</option>
+                <option value="i-owe">Bills I Owe On</option>
+                <option value="i-paid">Bills I Paid For</option>
+                <optgroup label="By Category">
+                  <option value="cat-food">Food & Dining</option>
+                  <option value="cat-transportation">Transportation</option>
+                  <option value="cat-lodging">Lodging</option>
+                  <option value="cat-entertainment">Entertainment</option>
+                  <option value="cat-groceries">Groceries</option>
+                  <option value="cat-other">Other</option>
+                  <option value="cat-uncategorized">Uncategorized</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+        )}
+
         {/* Bill Search */}
         {splits.length > 0 && (
           <div style={{ marginBottom: '16px' }}>
@@ -731,35 +810,80 @@ export default function EventDetail() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {splits.filter(split => {
-              // Apply search filter
-              if (!billSearchQuery.trim()) return true;
-              const query = billSearchQuery.toLowerCase();
+            {splits
+              .filter(split => {
+                // Apply filter
+                if (filterBy === 'all') return true;
+                if (filterBy === 'my-bills') return split.created_by === user?.id;
+                if (filterBy === 'i-owe') {
+                  return split.paid_by !== user?.id && split.split_participants?.some((p: any) => p.user_id === user?.id);
+                }
+                if (filterBy === 'i-paid') return split.paid_by === user?.id;
+                if (filterBy.startsWith('cat-')) {
+                  const category = filterBy.replace('cat-', '');
+                  if (category === 'uncategorized') return !split.category;
+                  return split.category === category;
+                }
+                return true;
+              })
+              .filter(split => {
+                // Apply search filter
+                if (!billSearchQuery.trim()) return true;
+                const query = billSearchQuery.toLowerCase();
 
-              // Check for "me", "you", "my bills" keywords to show user's bills
-              if (query === 'me' || query === 'you' || query === 'my bills') {
-                return split.created_by === user?.id;
-              }
+                // Check for "me", "you", "my bills" keywords to show user's bills
+                if (query === 'me' || query === 'you' || query === 'my bills') {
+                  return split.created_by === user?.id;
+                }
 
-              // Search in title
-              if (split.title.toLowerCase().includes(query)) return true;
+                // Search in title
+                if (split.title.toLowerCase().includes(query)) return true;
 
-              // Search in payer name
-              if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
-              if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
+                // Search in payer name
+                if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
+                if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
 
-              // Search in notes
-              if (split.notes?.toLowerCase().includes(query)) return true;
+                // Search in notes
+                if (split.notes?.toLowerCase().includes(query)) return true;
 
-              // Search in participant names
-              if (split.split_participants?.some((p: any) => {
-                const participant = event.participants?.find(ep => ep.user_id === p.user_id);
-                return participant?.user?.name?.toLowerCase().includes(query) ||
-                       participant?.user?.email?.toLowerCase().includes(query);
-              })) return true;
+                // Search in participant names
+                if (split.split_participants?.some((p: any) => {
+                  const participant = event.participants?.find(ep => ep.user_id === p.user_id);
+                  return participant?.user?.name?.toLowerCase().includes(query) ||
+                         participant?.user?.email?.toLowerCase().includes(query);
+                })) return true;
 
-              return false;
-            }).map((split) => {
+                return false;
+              })
+              .sort((a, b) => {
+                // Apply sort
+                if (sortBy === 'date-newest') {
+                  return new Date(b.date).getTime() - new Date(a.date).getTime();
+                }
+                if (sortBy === 'date-oldest') {
+                  return new Date(a.date).getTime() - new Date(b.date).getTime();
+                }
+                if (sortBy === 'amount-high') {
+                  return b.amount - a.amount;
+                }
+                if (sortBy === 'amount-low') {
+                  return a.amount - b.amount;
+                }
+                if (sortBy === 'category') {
+                  const catA = a.category || 'zzz'; // Put uncategorized at end
+                  const catB = b.category || 'zzz';
+                  return catA.localeCompare(catB);
+                }
+                if (sortBy === 'creator') {
+                  const creatorA = event.participants?.find(p => p.user_id === a.created_by);
+                  const creatorB = event.participants?.find(p => p.user_id === b.created_by);
+                  const nameA = creatorA?.user?.name || creatorA?.user?.email || '';
+                  const nameB = creatorB?.user?.name || creatorB?.user?.email || '';
+                  return nameA.localeCompare(nameB);
+                }
+                return 0;
+              })
+              .map((split) => {
               const isExpanded = expandedBills.has(split.split_id);
               const payerName = split.paid_by === user?.id ? 'you' : (split.paid_by_user?.name || split.paid_by_user?.email);
 
@@ -823,6 +947,18 @@ export default function EventDetail() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>
                       <div style={{ flex: 1, minWidth: '250px' }}>
                     <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                      {split.category && (
+                        <span style={{
+                          padding: '4px 12px',
+                          background: colors.skyBlue,
+                          color: '#000',
+                          borderRadius: '16px',
+                          fontSize: '14px',
+                          fontWeight: '600'
+                        }}>
+                          {getCategoryLabel(split.category)}
+                        </span>
+                      )}
                       {(() => {
                         // Check if this split is settled for the current user
                         const perPersonAmount = split.split_participants && split.split_participants.length > 0

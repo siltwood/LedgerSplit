@@ -13,6 +13,7 @@ export default function CreateSplit() {
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState<string>('');
   const [event, setEvent] = useState<Event | null>(null);
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -81,6 +82,7 @@ export default function CreateSplit() {
         amount: parseFloat(amount),
         paid_by: user.id,
         date: new Date().toISOString().split('T')[0],
+        category: category || undefined,
         participant_ids: selectedParticipants,
       });
 
@@ -186,6 +188,65 @@ export default function CreateSplit() {
               color: colors.text
             }}
           />
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+            Category (optional)
+          </label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {[
+              { value: 'food', label: 'Food & Dining' },
+              { value: 'transportation', label: 'Transportation' },
+              { value: 'lodging', label: 'Lodging' },
+              { value: 'entertainment', label: 'Entertainment' },
+              { value: 'groceries', label: 'Groceries' },
+              { value: 'other', label: 'Other' }
+            ].map(cat => (
+              <div
+                key={cat.value}
+                onClick={() => setCategory(category === cat.value ? '' : cat.value)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '10px 14px',
+                  background: colors.surface,
+                  borderRadius: '6px',
+                  border: `2px solid ${category === cat.value ? colors.purple : colors.border}`,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
+                  border: `2px solid ${category === cat.value ? colors.purple : colors.border}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  {category === cat.value && (
+                    <div style={{
+                      width: '10px',
+                      height: '10px',
+                      borderRadius: '50%',
+                      background: colors.purple
+                    }} />
+                  )}
+                </div>
+                <span style={{
+                  fontSize: '18px',
+                  color: colors.text,
+                  fontWeight: category === cat.value ? '600' : '500'
+                }}>
+                  {cat.label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div style={{ marginBottom: '20px' }}>

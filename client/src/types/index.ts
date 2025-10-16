@@ -45,6 +45,7 @@ export interface Split {
   created_by: string;
   date: string;
   notes?: string;
+  category?: string;
   created_at: string;
   updated_at: string;
   deleted_at?: string;

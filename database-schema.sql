@@ -70,6 +70,7 @@ CREATE TABLE splits (
   created_by UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
   date DATE NOT NULL DEFAULT CURRENT_DATE,
   notes TEXT,
+  category TEXT, -- Optional: 'food', 'transportation', 'lodging', 'entertainment', 'groceries', 'other'
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW(),
   deleted_at TIMESTAMP
@@ -123,6 +124,7 @@ CREATE INDEX idx_splits_paid_by ON splits(paid_by);
 CREATE INDEX idx_splits_created_by ON splits(created_by);
 CREATE INDEX idx_splits_date ON splits(date);
 CREATE INDEX idx_splits_deleted_at ON splits(deleted_at);
+CREATE INDEX idx_splits_category ON splits(category);
 CREATE INDEX idx_split_participants_user_id ON split_participants(user_id);
 CREATE INDEX idx_payments_event_id ON payments(event_id);
 CREATE INDEX idx_payments_from_user_id ON payments(from_user_id);
