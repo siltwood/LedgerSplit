@@ -494,7 +494,7 @@ export default function EventDetail() {
                     }}>
                       {(() => {
                         if (balance > 0.01) {
-                          return `People owe $${balance.toFixed(2)}`;
+                          return isCurrentUser ? `People owe you $${balance.toFixed(2)}` : `People owe $${balance.toFixed(2)}`;
                         } else if (balance < -0.01) {
                           return isCurrentUser ? `You owe $${Math.abs(balance).toFixed(2)}` : `Owes $${Math.abs(balance).toFixed(2)}`;
                         }
