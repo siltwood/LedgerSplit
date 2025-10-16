@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
+import { typography } from '../styles/typography';
 import axios from 'axios';
 
 export default function AcceptInvite() {
@@ -117,7 +118,15 @@ export default function AcceptInvite() {
     }
   };
 
-  const isMobile = window.innerWidth < 600;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   if (loading) {
     return (
@@ -131,14 +140,14 @@ export default function AcceptInvite() {
           <h1 style={{
             color: colors.text,
             margin: 0,
-            fontSize: isMobile ? '24px' : '28px',
+            fontSize: typography.getFontSize('h1', isMobile),
             fontWeight: 'bold'
           }}>
             LedgerSplit
           </h1>
         </div>
         <div style={{ maxWidth: '500px', margin: '20px auto', padding: '20px', textAlign: 'center' }}>
-          <div style={{ color: colors.text, fontSize: '20px' }}>Loading invite...</div>
+          <div style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>Loading invite...</div>
         </div>
       </div>
     );
@@ -156,7 +165,7 @@ export default function AcceptInvite() {
           <h1 style={{
             color: colors.text,
             margin: 0,
-            fontSize: isMobile ? '24px' : '28px',
+            fontSize: typography.getFontSize('h1', isMobile),
             fontWeight: 'bold'
           }}>
             LedgerSplit
@@ -169,13 +178,13 @@ export default function AcceptInvite() {
             color: colors.text,
             borderRadius: '4px',
             marginBottom: '20px',
-            fontSize: '20px',
+            fontSize: typography.getFontSize('body', isMobile),
             textAlign: 'center'
           }}>
             {error}
           </div>
           <div style={{ textAlign: 'center' }}>
-            <Link to="/dashboard" style={{ color: colors.text, fontSize: '20px' }}>
+            <Link to="/dashboard" style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
               Go to Dashboard
             </Link>
           </div>
@@ -216,10 +225,10 @@ export default function AcceptInvite() {
         marginBottom: isMobile ? '16px' : '20px',
         textAlign: 'center'
       }}>
-        <h2 style={{ color: colors.text, marginBottom: isMobile ? '8px' : '12px', fontSize: isMobile ? '20px' : '24px' }}>
+        <h2 style={{ color: colors.text, marginBottom: isMobile ? '8px' : '12px', fontSize: typography.getFontSize('h2', isMobile) }}>
           You're Invited!
         </h2>
-        <p style={{ color: colors.text, fontSize: isMobile ? '16px' : '18px', marginBottom: '0', lineHeight: '1.5' }}>
+        <p style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), marginBottom: '0', lineHeight: '1.5' }}>
           Your friend wants to split payments using LedgerSplit for the <strong>{invite.name}</strong> event.
         </p>
       </div>
@@ -231,7 +240,7 @@ export default function AcceptInvite() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: isMobile ? '12px' : '16px',
-          fontSize: isMobile ? '16px' : '18px'
+          fontSize: typography.getFontSize('body', isMobile)
         }}>
           {error}
         </div>
@@ -248,13 +257,13 @@ export default function AcceptInvite() {
               borderRadius: '8px',
               border: `1px solid ${colors.border}`
             }}>
-              <h3 style={{ color: colors.text, marginBottom: isMobile ? '12px' : '16px', fontSize: isMobile ? '18px' : '20px' }}>
+              <h3 style={{ color: colors.text, marginBottom: isMobile ? '12px' : '16px', fontSize: typography.getFontSize('h3', isMobile) }}>
                 Create Account
               </h3>
 
               <form onSubmit={handleRegister}>
                 <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
                     Name
                   </label>
                   <input
@@ -265,7 +274,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: isMobile ? '6px' : '8px',
-                      fontSize: isMobile ? '16px' : '18px',
+                      fontSize: typography.getFontSize('body', isMobile),
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -275,7 +284,7 @@ export default function AcceptInvite() {
                 </div>
 
                 <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
                     Email
                   </label>
                   <input
@@ -286,7 +295,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: isMobile ? '6px' : '8px',
-                      fontSize: isMobile ? '16px' : '18px',
+                      fontSize: typography.getFontSize('body', isMobile),
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -296,7 +305,7 @@ export default function AcceptInvite() {
                 </div>
 
                 <div style={{ marginBottom: isMobile ? '10px' : '14px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
                     Password
                   </label>
                   <input
@@ -308,7 +317,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: isMobile ? '6px' : '8px',
-                      fontSize: isMobile ? '16px' : '18px',
+                      fontSize: typography.getFontSize('body', isMobile),
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -323,7 +332,7 @@ export default function AcceptInvite() {
                   style={{
                     ...buttonStyles.primary,
                     padding: isMobile ? '8px' : '10px',
-                    fontSize: isMobile ? '16px' : '18px',
+                    fontSize: typography.getFontSize('body', isMobile),
                     cursor: submitting ? 'not-allowed' : 'pointer',
                     marginBottom: isMobile ? '10px' : '12px'
                   }}
@@ -332,7 +341,7 @@ export default function AcceptInvite() {
                 </button>
 
                 <div style={{ textAlign: 'center', marginBottom: isMobile ? '10px' : '12px', marginTop: '4px' }}>
-                  <span style={{ color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>or</span>
+                  <span style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>or</span>
                 </div>
 
                 <button
@@ -341,7 +350,7 @@ export default function AcceptInvite() {
                   style={{
                     ...buttonStyles.primary,
                     padding: isMobile ? '8px' : '10px',
-                    fontSize: isMobile ? '16px' : '18px',
+                    fontSize: typography.getFontSize('body', isMobile),
                     marginBottom: isMobile ? '10px' : '14px'
                   }}
                 >
@@ -355,7 +364,7 @@ export default function AcceptInvite() {
                     style={{
                       ...buttonStyles.primary,
                       padding: isMobile ? '8px' : '10px',
-                      fontSize: isMobile ? '16px' : '18px'
+                      fontSize: typography.getFontSize('body', isMobile)
                     }}
                   >
                     Already have an account? Sign in
@@ -374,7 +383,7 @@ export default function AcceptInvite() {
 
               <form onSubmit={handleLogin}>
                 <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
                     Email
                   </label>
                   <input
@@ -385,7 +394,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: isMobile ? '6px' : '8px',
-                      fontSize: isMobile ? '16px' : '18px',
+                      fontSize: typography.getFontSize('body', isMobile),
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -395,7 +404,7 @@ export default function AcceptInvite() {
                 </div>
 
                 <div style={{ marginBottom: isMobile ? '10px' : '14px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
                     Password
                   </label>
                   <input
@@ -406,7 +415,7 @@ export default function AcceptInvite() {
                     style={{
                       width: '100%',
                       padding: isMobile ? '6px' : '8px',
-                      fontSize: isMobile ? '16px' : '18px',
+                      fontSize: typography.getFontSize('body', isMobile),
                       border: `1px solid ${colors.border}`,
                       borderRadius: '4px',
                       background: colors.columbiaBlue,
@@ -421,7 +430,7 @@ export default function AcceptInvite() {
                   style={{
                     ...buttonStyles.primary,
                     padding: isMobile ? '8px' : '10px',
-                    fontSize: isMobile ? '16px' : '18px',
+                    fontSize: typography.getFontSize('body', isMobile),
                     cursor: submitting ? 'not-allowed' : 'pointer',
                     marginBottom: isMobile ? '8px' : '10px'
                   }}
@@ -430,13 +439,13 @@ export default function AcceptInvite() {
                 </button>
 
                 <div style={{ textAlign: 'left', marginBottom: isMobile ? '10px' : '12px' }}>
-                  <Link to="/forgot-password" style={{ color: colors.text, fontSize: isMobile ? '14px' : '16px', textDecoration: 'underline' }}>
+                  <Link to="/forgot-password" style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile), textDecoration: 'underline' }}>
                     Forgot password?
                   </Link>
                 </div>
 
                 <div style={{ textAlign: 'center', marginBottom: isMobile ? '10px' : '12px', marginTop: '4px' }}>
-                  <span style={{ color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>or</span>
+                  <span style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>or</span>
                 </div>
 
                 <button
@@ -445,7 +454,7 @@ export default function AcceptInvite() {
                   style={{
                     ...buttonStyles.primary,
                     padding: isMobile ? '8px' : '10px',
-                    fontSize: isMobile ? '16px' : '18px',
+                    fontSize: typography.getFontSize('body', isMobile),
                     marginBottom: isMobile ? '10px' : '14px'
                   }}
                 >
@@ -459,7 +468,7 @@ export default function AcceptInvite() {
                     style={{
                       ...buttonStyles.primary,
                       padding: isMobile ? '8px' : '10px',
-                      fontSize: isMobile ? '16px' : '18px'
+                      fontSize: typography.getFontSize('body', isMobile)
                     }}
                   >
                     Don't have an account? Create one

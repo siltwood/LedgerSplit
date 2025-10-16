@@ -1,16 +1,27 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
+import { typography } from '../styles/typography';
 
 export default function Landing() {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
         <h1 style={{
           color: colors.text,
-          fontSize: 'clamp(32px, 8vw, 48px)',
+          fontSize: typography.getFontSize('h1', isMobile),
           marginBottom: '20px',
           textAlign: 'center'
         }}>
@@ -18,7 +29,7 @@ export default function Landing() {
         </h1>
         <p style={{
           color: colors.text,
-          fontSize: 'clamp(16px, 4vw, 20px)',
+          fontSize: typography.getFontSize('bodyLarge', isMobile),
           marginBottom: '40px',
           textAlign: 'center',
           maxWidth: '600px',
@@ -40,7 +51,7 @@ export default function Landing() {
             style={{
               ...buttonStyles.primary,
               padding: '12px 24px',
-              fontSize: 'clamp(16px, 3vw, 18px)',
+              fontSize: typography.getFontSize('button', isMobile),
               width: '100%',
               maxWidth: '100%',
               whiteSpace: 'nowrap',
@@ -54,7 +65,7 @@ export default function Landing() {
             style={{
               ...buttonStyles.primary,
               padding: '12px 24px',
-              fontSize: 'clamp(16px, 3vw, 18px)',
+              fontSize: typography.getFontSize('button', isMobile),
               width: '100%',
               maxWidth: '100%',
               whiteSpace: 'nowrap',
@@ -72,7 +83,7 @@ export default function Landing() {
         textAlign: 'center',
         borderTop: `1px solid ${colors.border}`
       }}>
-        <div style={{ color: colors.text, fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
+        <div style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile) }}>
           Need help? Contact us at{' '}
           <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
             hello@ledgersplit.com
