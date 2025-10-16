@@ -231,7 +231,11 @@ export default function EventDetail() {
   };
 
   if (loading) return <div style={{ padding: '20px' }}></div>;
-  if (!event) return <div style={{ padding: '20px', color: colors.text, fontSize: '20px' }}>Event not found</div>;
+  if (!event) {
+    // If event is null after loading, redirect to dashboard
+    navigate('/dashboard');
+    return <div style={{ padding: '20px' }}></div>;
+  }
 
   const isMobile = window.innerWidth < 600;
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
