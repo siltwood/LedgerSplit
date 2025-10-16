@@ -1,5 +1,4 @@
 import { colors } from '../styles/colors';
-import { useState } from 'react';
 
 interface CaretProps {
   direction: 'up' | 'down';
@@ -7,13 +6,9 @@ interface CaretProps {
 }
 
 export default function Caret({ direction, onClick }: CaretProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <div
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       style={{
         padding: '6px 12px',
         paddingBottom: '10px',
@@ -28,9 +23,7 @@ export default function Caret({ direction, onClick }: CaretProps) {
         gap: '6px',
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
         flexShrink: 0,
-        cursor: onClick ? 'pointer' : 'default',
-        opacity: isHovered ? 0.8 : 1,
-        transition: 'opacity 0.2s ease'
+        cursor: 'pointer'
       }}
     >
       {direction === 'up' ? '▲' : '▼'}
