@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { eventsAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
+import { typography } from '../styles/typography';
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function CreateEvent() {
 
   return (
     <div style={{ padding: '15px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ color: colors.text, marginBottom: '15px' }}>New Event</h1>
+      <h1 style={{ color: colors.text, marginBottom: '15px', fontSize: typography.getFontSize('h1', isMobile) }}>New Event</h1>
 
       {error && (
         <div style={{
@@ -61,7 +62,7 @@ export default function CreateEvent() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
             Event Name *
           </label>
           <input
@@ -73,7 +74,7 @@ export default function CreateEvent() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '18px',
+              fontSize: typography.getFontSize('bodyLarge', isMobile),
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -83,7 +84,7 @@ export default function CreateEvent() {
         </div>
 
         <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
             Description (Optional)
           </label>
           <textarea
@@ -94,7 +95,7 @@ export default function CreateEvent() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '18px',
+              fontSize: typography.getFontSize('bodyLarge', isMobile),
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,

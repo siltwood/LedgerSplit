@@ -5,6 +5,7 @@ import { eventsAPI } from '../services/api';
 import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
+import { typography } from '../styles/typography';
 
 type SortOption = 'newest' | 'oldest' | 'name';
 type FilterOption = 'all' | 'active' | 'settled' | 'dismissed';
@@ -234,7 +235,7 @@ export default function Dashboard() {
 
   return (
     <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ color: colors.text, marginBottom: '12px' }}>Dashboard</h1>
+      <h1 style={{ color: colors.text, marginBottom: '12px', fontSize: typography.getFontSize('h1', isMobile) }}>Dashboard</h1>
 
       {/* Quick Actions */}
       <div style={{ marginBottom: '16px' }}>
@@ -250,7 +251,7 @@ export default function Dashboard() {
 
       {/* Search and Filter */}
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'normal', color: colors.text, fontSize: '18px' }}>
+        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'normal', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
           Search Events and Participants
         </label>
         <div style={{ position: 'relative', width: '100%', maxWidth: window.innerWidth < 600 ? '100%' : '600px' }}>
@@ -262,7 +263,7 @@ export default function Dashboard() {
               left: '12px',
               color: colors.text,
               opacity: 0.4,
-              fontSize: '16px',
+              fontSize: typography.getFontSize('body', isMobile),
               pointerEvents: 'none',
               whiteSpace: 'nowrap',
               overflow: 'hidden'
@@ -284,7 +285,7 @@ export default function Dashboard() {
             style={{
               width: '100%',
               padding: '8px 12px',
-              fontSize: '16px',
+              fontSize: typography.getFontSize('body', isMobile),
               border: `2px solid ${colors.border}`,
               borderRadius: '8px',
               background: colors.surface,
@@ -300,7 +301,7 @@ export default function Dashboard() {
         {/* Filter and Sort Controls */}
         <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '12px', flexWrap: isMobile ? 'wrap' : 'nowrap', width: '100%' }}>
           <div style={{ flex: isMobile ? '1' : 'none', minWidth: isMobile ? '200px' : 'auto', maxWidth: isMobile ? '100%' : '300px', width: isMobile ? 'auto' : '300px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
               Filter
             </label>
             <select
@@ -309,7 +310,7 @@ export default function Dashboard() {
               style={{
                 width: '100%',
                 padding: '8px 32px 8px 12px',
-                fontSize: '16px',
+                fontSize: typography.getFontSize('body', isMobile),
                 border: `2px solid ${colors.border}`,
                 borderRadius: '8px',
                 background: colors.surface,
@@ -325,7 +326,7 @@ export default function Dashboard() {
           </div>
 
           <div style={{ flex: isMobile ? '1' : 'none', minWidth: isMobile ? '200px' : 'auto', maxWidth: isMobile ? '100%' : '300px', width: isMobile ? 'auto' : '300px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
               Sort By
             </label>
             <select
@@ -334,7 +335,7 @@ export default function Dashboard() {
               style={{
                 width: '100%',
                 padding: '8px 32px 8px 12px',
-                fontSize: '16px',
+                fontSize: typography.getFontSize('body', isMobile),
                 border: `2px solid ${colors.border}`,
                 borderRadius: '8px',
                 background: colors.surface,
@@ -354,7 +355,7 @@ export default function Dashboard() {
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <h2 style={{ color: colors.text, margin: 0, fontSize: '20px' }}>Your Events</h2>
+            <h2 style={{ color: colors.text, margin: 0, fontSize: typography.getFontSize('h2', isMobile) }}>Your Events</h2>
             {filteredEvents.length > 0 && (
               <button
                 onClick={toggleAllEvents}
@@ -365,7 +366,7 @@ export default function Dashboard() {
                   color: '#fff',
                   border: 'none',
                   borderRadius: '6px',
-                  fontSize: '16px',
+                  fontSize: typography.getFontSize('body', isMobile),
                   cursor: 'pointer',
                   fontWeight: '600',
                   display: 'flex',
@@ -418,8 +419,8 @@ export default function Dashboard() {
             color: colors.text
           }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>📅</div>
-            <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '12px' }}>No events yet</div>
-            <div style={{ fontSize: '18px', opacity: 0.7, marginBottom: '24px' }}>
+            <div style={{ fontSize: typography.getFontSize('h2', isMobile), fontWeight: 'bold', marginBottom: '12px' }}>No events yet</div>
+            <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), opacity: 0.7, marginBottom: '24px' }}>
               Create your first event to start tracking shared expenses with friends and family
             </div>
             <div style={{ display: 'flex', justifyContent: isMobile ? 'flex-start' : 'center' }}>
@@ -444,7 +445,7 @@ export default function Dashboard() {
             fontSize: '18px'
           }}>
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
-            <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>No events found</div>
+            <div style={{ fontSize: typography.getFontSize('h3', isMobile), fontWeight: 'bold', marginBottom: '8px' }}>No events found</div>
             {searchQuery ? (
               <div>No events match "{searchQuery}"</div>
             ) : (
@@ -487,7 +488,7 @@ export default function Dashboard() {
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
-                        <span style={{ fontSize: '20px', fontWeight: 'bold', color: colors.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <span style={{ fontSize: typography.getFontSize('h3', isMobile), fontWeight: 'bold', color: colors.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {event.name}
                         </span>
                         {event.is_settled && (
@@ -496,7 +497,7 @@ export default function Dashboard() {
                             background: colors.purple,
                             color: '#fff',
                             borderRadius: '12px',
-                            fontSize: '14px',
+                            fontSize: typography.getFontSize('bodySmall', isMobile),
                             fontWeight: '600',
                             flexShrink: 0
                           }}>
@@ -526,7 +527,7 @@ export default function Dashboard() {
                           color: '#fff',
                           border: 'none',
                           borderRadius: '6px',
-                          fontSize: '16px',
+                          fontSize: typography.getFontSize('body', isMobile),
                           cursor: 'pointer',
                           fontWeight: '600',
                           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
@@ -555,14 +556,14 @@ export default function Dashboard() {
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                          <h3 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>{event.name}</h3>
+                          <h3 style={{ margin: 0, color: colors.text, fontSize: typography.getFontSize('h3', isMobile) }}>{event.name}</h3>
                           {event.is_settled && (
                             <span style={{
                               padding: '4px 10px',
                               background: colors.purple,
                               color: '#fff',
                               borderRadius: '12px',
-                              fontSize: '16px',
+                              fontSize: typography.getFontSize('body', isMobile),
                               fontWeight: '600'
                             }}>
                               ✓ Settled
@@ -581,7 +582,7 @@ export default function Dashboard() {
                             color: '#fff',
                             border: 'none',
                             borderRadius: '6px',
-                            fontSize: '16px',
+                            fontSize: typography.getFontSize('body', isMobile),
                             cursor: 'pointer',
                             fontWeight: '600',
                             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
@@ -615,7 +616,7 @@ export default function Dashboard() {
                                 padding: '4px 8px',
                                 background: getParticipantColor(event, p.user_id),
                                 borderRadius: '6px',
-                                fontSize: '16px',
+                                fontSize: typography.getFontSize('body', isMobile),
                                 color: '#000',
                                 fontWeight: '500',
                                 wordBreak: 'break-word'
@@ -716,8 +717,8 @@ export default function Dashboard() {
             maxWidth: '400px',
             width: '90%'
           }}>
-            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '18px' }}>Delete Event?</h3>
-            <p style={{ margin: '0 0 16px 0', color: colors.text, fontSize: '18px', opacity: 0.9 }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: typography.getFontSize('h3', isMobile) }}>Delete Event?</h3>
+            <p style={{ margin: '0 0 16px 0', color: colors.text, fontSize: typography.getFontSize('bodyLarge', isMobile), opacity: 0.9 }}>
               This will permanently delete the event and all associated bills. This action cannot be undone.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

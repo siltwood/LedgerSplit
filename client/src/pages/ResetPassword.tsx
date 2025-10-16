@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
+import { typography } from '../styles/typography';
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -11,6 +12,7 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   const token = searchParams.get('token');
 
   useEffect(() => {
@@ -18,6 +20,14 @@ export default function ResetPassword() {
       setError('Invalid reset link.');
     }
   }, [token]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +63,7 @@ export default function ResetPassword() {
 
   return (
     <div style={{ maxWidth: '400px', margin: '30px auto', padding: '15px' }}>
-      <h1 style={{ color: colors.text, marginBottom: '15px' }}>Reset Password</h1>
+      <h1 style={{ color: colors.text, marginBottom: '15px', fontSize: typography.getFontSize('h1', isMobile) }}>Reset Password</h1>
 
       {success && (
         <div style={{
@@ -62,7 +72,7 @@ export default function ResetPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '12px',
-          fontSize: '18px',
+          fontSize: typography.getFontSize('body', isMobile),
           textAlign: 'center'
         }}>
           Password reset successful! Redirecting to login...
@@ -76,7 +86,7 @@ export default function ResetPassword() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '12px',
-          fontSize: '18px'
+          fontSize: typography.getFontSize('body', isMobile)
         }}>
           {error}
         </div>
@@ -85,7 +95,7 @@ export default function ResetPassword() {
       {token ? (
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
               New Password
             </label>
             <input
@@ -97,7 +107,7 @@ export default function ResetPassword() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: '18px',
+                fontSize: typography.getFontSize('body', isMobile),
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -106,7 +116,7 @@ export default function ResetPassword() {
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
               Confirm Password
             </label>
             <input
@@ -118,7 +128,7 @@ export default function ResetPassword() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: '18px',
+                fontSize: typography.getFontSize('body', isMobile),
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -132,7 +142,7 @@ export default function ResetPassword() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '18px',
+              fontSize: typography.getFontSize('body', isMobile),
               background: colors.primary,
               color: colors.text,
               border: 'none',

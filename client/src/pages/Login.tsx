@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
+import { typography } from '../styles/typography';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -48,7 +49,15 @@ export default function Login() {
     }
   };
 
-  const isMobile = window.innerWidth < 600;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -74,10 +83,10 @@ export default function Login() {
             textAlign: 'center',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
           }}>
-            <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: '20px' }}>
+            <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: typography.getFontSize('h3', isMobile) }}>
               Email Already Registered
             </h2>
-            <p style={{ color: colors.text, marginBottom: '15px', fontSize: '18px', lineHeight: '1.5' }}>
+            <p style={{ color: colors.text, marginBottom: '15px', fontSize: typography.getFontSize('body', isMobile), lineHeight: '1.5' }}>
               This email is already registered with a password. Please log in with your email and password instead.
             </p>
             <button
@@ -85,7 +94,7 @@ export default function Login() {
               style={{
                 ...buttonStyles.small,
                 padding: '8px 16px',
-                fontSize: '18px'
+                fontSize: typography.getFontSize('body', isMobile)
               }}
             >
               Got it
@@ -103,7 +112,7 @@ export default function Login() {
         <h1 style={{
           color: colors.text,
           margin: 0,
-          fontSize: isMobile ? '24px' : '28px',
+          fontSize: typography.getFontSize('h1', isMobile),
           fontWeight: 'bold'
         }}>
           LedgerSplit
@@ -111,7 +120,7 @@ export default function Login() {
       </div>
 
       <div style={{ flex: 1, maxWidth: '400px', margin: '0 auto', padding: isMobile ? '16px 10px' : '20px 10px', width: '100%' }}>
-        <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: isMobile ? '20px' : '24px' }}>Login</h2>
+        <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: typography.getFontSize('h2', isMobile) }}>Login</h2>
 
         {error && (
         <div style={{
@@ -127,7 +136,7 @@ export default function Login() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Email</label>
+          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Email</label>
           <input
             type="email"
             value={email}
@@ -136,7 +145,7 @@ export default function Login() {
             style={{
               width: '100%',
               padding: isMobile ? '6px' : '8px',
-              fontSize: isMobile ? '16px' : '18px',
+              fontSize: typography.getFontSize('body', isMobile),
               border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
@@ -144,7 +153,7 @@ export default function Login() {
         </div>
 
         <div style={{ marginBottom: isMobile ? '6px' : '8px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Password</label>
+          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Password</label>
           <input
             type="password"
             value={password}
@@ -153,7 +162,7 @@ export default function Login() {
             style={{
               width: '100%',
               padding: isMobile ? '6px' : '8px',
-              fontSize: isMobile ? '16px' : '18px',
+              fontSize: typography.getFontSize('body', isMobile),
               border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
@@ -161,7 +170,7 @@ export default function Login() {
         </div>
 
         <div style={{ marginBottom: isMobile ? '8px' : '12px', textAlign: 'left' }}>
-          <Link to="/forgot-password" style={{ color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+          <Link to="/forgot-password" style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
             Forgot password?
           </Link>
         </div>
@@ -180,7 +189,7 @@ export default function Login() {
         </button>
       </form>
 
-      <div style={{ margin: isMobile ? '8px 0' : '12px 0', textAlign: 'center', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+      <div style={{ margin: isMobile ? '8px 0' : '12px 0', textAlign: 'center', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
         <span>or</span>
       </div>
 
@@ -195,8 +204,8 @@ export default function Login() {
         Continue with Google
       </button>
 
-        <p style={{ marginTop: isMobile ? '8px' : '12px', textAlign: 'center', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
-          Don't have an account? <Link to="/register" style={{ color: colors.text, fontSize: isMobile ? '18px' : '20px', fontWeight: 'bold' }}>Register</Link>
+        <p style={{ marginTop: isMobile ? '8px' : '12px', textAlign: 'center', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
+          Don't have an account? <Link to="/register" style={{ color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: 'bold' }}>Register</Link>
         </p>
       </div>
 
@@ -206,7 +215,7 @@ export default function Login() {
         textAlign: 'center',
         borderTop: `1px solid ${colors.border}`
       }}>
-        <div style={{ color: colors.text, fontSize: isMobile ? '14px' : '16px' }}>
+        <div style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile) }}>
           Need help? Contact us at{' '}
           <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
             hello@ledgersplit.com

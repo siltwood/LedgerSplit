@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
+import { typography } from '../styles/typography';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -53,7 +54,15 @@ export default function Register() {
     }
   };
 
-  const isMobile = window.innerWidth < 600;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -66,7 +75,7 @@ export default function Register() {
         <h1 style={{
           color: colors.text,
           margin: 0,
-          fontSize: isMobile ? '24px' : '28px',
+          fontSize: typography.getFontSize('h1', isMobile),
           fontWeight: 'bold'
         }}>
           LedgerSplit
@@ -74,7 +83,7 @@ export default function Register() {
       </div>
 
       <div style={{ flex: 1, maxWidth: '400px', margin: '0 auto', padding: isMobile ? '16px 10px' : '20px 10px', width: '100%' }}>
-        <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: isMobile ? '20px' : '24px' }}>Register</h2>
+        <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: typography.getFontSize('h2', isMobile) }}>Register</h2>
 
         {error && (
           <div style={{
@@ -90,7 +99,7 @@ export default function Register() {
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Name</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Name</label>
             <input
               type="text"
               value={name}
@@ -99,7 +108,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: isMobile ? '6px' : '8px',
-                fontSize: isMobile ? '16px' : '18px',
+                fontSize: typography.getFontSize('body', isMobile),
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -108,7 +117,7 @@ export default function Register() {
           </div>
 
           <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Email</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Email</label>
             <input
               type="email"
               value={email}
@@ -117,7 +126,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: isMobile ? '6px' : '8px',
-                fontSize: isMobile ? '16px' : '18px',
+                fontSize: typography.getFontSize('body', isMobile),
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -126,7 +135,7 @@ export default function Register() {
           </div>
 
           <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Password</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Password</label>
             <input
               type="password"
               value={password}
@@ -136,7 +145,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: isMobile ? '6px' : '8px',
-                fontSize: isMobile ? '16px' : '18px',
+                fontSize: typography.getFontSize('body', isMobile),
                 border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -145,7 +154,7 @@ export default function Register() {
           </div>
 
           <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: isMobile ? '18px' : '20px' }}>Confirm Password</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Confirm Password</label>
             <input
               type="password"
               value={confirmPassword}
@@ -155,14 +164,14 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: isMobile ? '6px' : '8px',
-                fontSize: isMobile ? '16px' : '18px',
+                fontSize: typography.getFontSize('body', isMobile),
                 border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
               }}
             />
             {passwordError && (
-              <div style={{ color: '#ff6b6b', fontSize: isMobile ? '14px' : '16px', marginTop: '4px' }}>
+              <div style={{ color: '#ff6b6b', fontSize: typography.getFontSize('bodySmall', isMobile), marginTop: '4px' }}>
                 {passwordError}
               </div>
             )}
@@ -182,7 +191,7 @@ export default function Register() {
           </button>
         </form>
 
-        <div style={{ margin: isMobile ? '8px 0' : '12px 0', textAlign: 'center', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+        <div style={{ margin: isMobile ? '8px 0' : '12px 0', textAlign: 'center', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
           <span>or</span>
         </div>
 
@@ -197,8 +206,8 @@ export default function Register() {
           Continue with Google
         </button>
 
-        <p style={{ marginTop: isMobile ? '8px' : '12px', textAlign: 'center', color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
-          Already have an account? <Link to="/login" style={{ color: colors.text, fontSize: isMobile ? '18px' : '20px', fontWeight: 'bold' }}>Login</Link>
+        <p style={{ marginTop: isMobile ? '8px' : '12px', textAlign: 'center', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
+          Already have an account? <Link to="/login" style={{ color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: 'bold' }}>Login</Link>
         </p>
       </div>
 
@@ -208,7 +217,7 @@ export default function Register() {
         textAlign: 'center',
         borderTop: `1px solid ${colors.border}`
       }}>
-        <div style={{ color: colors.text, fontSize: isMobile ? '14px' : '16px' }}>
+        <div style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile) }}>
           Need help? Contact us at{' '}
           <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
             hello@ledgersplit.com

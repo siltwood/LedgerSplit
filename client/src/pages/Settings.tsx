@@ -1,14 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
+import { typography } from '../styles/typography';
 
 export default function Settings() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [status, setStatus] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleDeleteAccount = async () => {
     try {
@@ -22,7 +32,7 @@ export default function Settings() {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ color: colors.text, marginBottom: '20px' }}>Settings</h1>
+      <h1 style={{ color: colors.text, marginBottom: '20px', fontSize: typography.getFontSize('h1', isMobile) }}>Settings</h1>
 
       {/* Profile Section */}
       <div style={{
@@ -32,18 +42,18 @@ export default function Settings() {
         border: `1px solid ${colors.border}`,
         marginBottom: '30px'
       }}>
-        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text }}>Profile</h2>
+        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text, fontSize: typography.getFontSize('h2', isMobile) }}>Profile</h2>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
             Name
           </label>
-          <div style={{ fontSize: '22px', color: colors.text }}>{user?.name}</div>
+          <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), color: colors.text }}>{user?.name}</div>
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
             Email
           </label>
-          <div style={{ fontSize: '22px', color: colors.text }}>{user?.email}</div>
+          <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), color: colors.text }}>{user?.email}</div>
         </div>
         {user?.google_id && (
           <div style={{
@@ -51,7 +61,7 @@ export default function Settings() {
             background: colors.surfaceLight,
             borderRadius: '4px',
             marginTop: '15px',
-            fontSize: '20px',
+            fontSize: typography.getFontSize('body', isMobile),
             color: colors.text
           }}>
             Connected with Google Account
@@ -81,7 +91,7 @@ export default function Settings() {
             >
               Change Password
             </button>
-            <p style={{ fontSize: '20px', color: colors.text, marginTop: '5px' }}>
+            <p style={{ fontSize: typography.getFontSize('body', isMobile), color: colors.text, marginTop: '5px' }}>
               We'll send you an email with a secure link to change your password
             </p>
           </div>
@@ -107,8 +117,8 @@ export default function Settings() {
         borderRadius: '8px',
         border: `1px solid ${colors.border}`
       }}>
-        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text }}>Danger Zone</h2>
-        <p style={{ color: colors.text, fontSize: '20px', marginBottom: '15px' }}>
+        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text, fontSize: typography.getFontSize('h2', isMobile) }}>Danger Zone</h2>
+        <p style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), marginBottom: '15px' }}>
           Once you delete your account, there is no going back. Your name will be grayed out in
           splits, but your data will remain for other users' records.
         </p>
@@ -130,7 +140,7 @@ export default function Settings() {
           </button>
         ) : (
           <div>
-            <p style={{ fontWeight: 'bold', marginBottom: '10px', color: colors.text, fontSize: '20px' }}>
+            <p style={{ fontWeight: 'bold', marginBottom: '10px', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
               Are you absolutely sure? This action cannot be undone.
             </p>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -143,7 +153,7 @@ export default function Settings() {
                   border: 'none',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '20px',
+                  fontSize: typography.getFontSize('body', isMobile),
                   fontWeight: 'bold'
                 }}
               >
