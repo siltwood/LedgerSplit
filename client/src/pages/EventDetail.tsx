@@ -286,10 +286,10 @@ export default function EventDetail() {
 
   const getCategoryLabel = (category?: string) => {
     const categoryMap: Record<string, string> = {
-      'food': 'Food & Dining',
-      'transportation': 'Transportation',
+      'food': 'Food',
+      'transportation': 'Transport',
       'lodging': 'Lodging',
-      'entertainment': 'Entertainment',
+      'entertainment': 'Fun',
       'groceries': 'Groceries',
       'other': 'Other'
     };
@@ -755,10 +755,10 @@ export default function EventDetail() {
                 <option value="i-owe">Bills I Owe On</option>
                 <option value="i-paid">Bills I Paid For</option>
                 <optgroup label="By Category">
-                  <option value="cat-food">Food & Dining</option>
-                  <option value="cat-transportation">Transportation</option>
+                  <option value="cat-food">Food</option>
+                  <option value="cat-transportation">Transport</option>
                   <option value="cat-lodging">Lodging</option>
-                  <option value="cat-entertainment">Entertainment</option>
+                  <option value="cat-entertainment">Fun</option>
                   <option value="cat-groceries">Groceries</option>
                   <option value="cat-other">Other</option>
                   <option value="cat-uncategorized">Uncategorized</option>

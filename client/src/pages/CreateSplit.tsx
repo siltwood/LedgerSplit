@@ -5,6 +5,7 @@ import { splitsAPI, eventsAPI } from '../services/api';
 import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
+import { typography } from '../styles/typography';
 
 export default function CreateSplit() {
   const { user } = useAuth();
@@ -127,8 +128,8 @@ export default function CreateSplit() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ color: colors.text, marginBottom: '20px' }}>New Bill for {event.name}</h1>
+    <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
+      <h1 style={{ color: colors.text, marginBottom: '16px', fontSize: typography.getFontSize('h1', isMobile) }}>New Bill for {event.name}</h1>
 
       {error && (
         <div style={{
@@ -190,16 +191,20 @@ export default function CreateSplit() {
           />
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
             Category (optional)
           </label>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr',
+            gap: '8px'
+          }}>
             {[
-              { value: 'food', label: 'Food & Dining' },
-              { value: 'transportation', label: 'Transportation' },
+              { value: 'food', label: 'Food' },
+              { value: 'transportation', label: 'Transport' },
               { value: 'lodging', label: 'Lodging' },
-              { value: 'entertainment', label: 'Entertainment' },
+              { value: 'entertainment', label: 'Fun' },
               { value: 'groceries', label: 'Groceries' },
               { value: 'other', label: 'Other' }
             ].map(cat => (
@@ -209,8 +214,8 @@ export default function CreateSplit() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '12px',
-                  padding: '10px 14px',
+                  gap: '8px',
+                  padding: '8px 10px',
                   background: colors.surface,
                   borderRadius: '6px',
                   border: `2px solid ${category === cat.value ? colors.purple : colors.border}`,
@@ -219,8 +224,8 @@ export default function CreateSplit() {
                 }}
               >
                 <div style={{
-                  width: '20px',
-                  height: '20px',
+                  width: '16px',
+                  height: '16px',
                   borderRadius: '50%',
                   border: `2px solid ${category === cat.value ? colors.purple : colors.border}`,
                   display: 'flex',
@@ -230,15 +235,15 @@ export default function CreateSplit() {
                 }}>
                   {category === cat.value && (
                     <div style={{
-                      width: '10px',
-                      height: '10px',
+                      width: '8px',
+                      height: '8px',
                       borderRadius: '50%',
                       background: colors.purple
                     }} />
                   )}
                 </div>
                 <span style={{
-                  fontSize: '18px',
+                  fontSize: typography.getFontSize('bodySmall', isMobile),
                   color: colors.text,
                   fontWeight: category === cat.value ? '600' : '500'
                 }}>
