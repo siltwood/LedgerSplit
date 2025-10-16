@@ -128,7 +128,7 @@ export default function EditSplit() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '18px'
+          fontSize: typography.getFontSize('body', isMobile)
         }}>
           {error || 'Event not found'}
         </div>
@@ -156,7 +156,7 @@ export default function EditSplit() {
           color: colors.text,
           borderRadius: '4px',
           marginBottom: '20px',
-          fontSize: '18px'
+          fontSize: typography.getFontSize('body', isMobile)
         }}>
           {error}
         </div>
@@ -165,7 +165,7 @@ export default function EditSplit() {
       <form onSubmit={handleSubmit}>
 
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
             Description *
           </label>
           <input
@@ -177,7 +177,7 @@ export default function EditSplit() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '18px',
+              fontSize: typography.getFontSize('body', isMobile),
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -187,7 +187,7 @@ export default function EditSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
             Amount *
           </label>
           <input
@@ -200,7 +200,7 @@ export default function EditSplit() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: '18px',
+              fontSize: typography.getFontSize('body', isMobile),
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -273,7 +273,7 @@ export default function EditSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
             Split between *
           </label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -322,11 +322,11 @@ export default function EditSplit() {
                     flexShrink: 0
                   }}>
                     {isSelected && (
-                      <span style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>✓</span>
+                      <span style={{ color: '#fff', fontSize: typography.getFontSize('body', isMobile), fontWeight: 'bold' }}>✓</span>
                     )}
                   </div>
                   <span style={{
-                    fontSize: '18px',
+                    fontSize: typography.getFontSize('body', isMobile),
                     color: isSelected ? '#fff' : colors.text,
                     fontWeight: isSelected ? '600' : '500'
                   }}>
@@ -337,7 +337,7 @@ export default function EditSplit() {
             })}
           </div>
           {selectedParticipants.length > 0 && (
-            <div style={{ marginTop: '8px', fontSize: '18px', color: colors.text, opacity: 0.7 }}>
+            <div style={{ marginTop: '8px', fontSize: typography.getFontSize('body', isMobile), color: colors.text, opacity: 0.7 }}>
               ${parseFloat(amount || '0').toFixed(2)} ÷ {selectedParticipants.length} = ${(parseFloat(amount || '0') / selectedParticipants.length).toFixed(2)} per person
             </div>
           )}
