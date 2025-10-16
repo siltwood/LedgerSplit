@@ -883,6 +883,29 @@ export const removeParticipant = async (req: AuthRequest, res: Response) => {
       return res.status(500).json({ error: 'Failed to remove participant splits.' });
     }
 
+    // Remove participant from all split_participants in this event
+    const { data: eventSplits } = await db
+      .from('splits')
+      .select('split_id')
+      .eq('event_id', id)
+      .is('deleted_at', null);
+
+    if (eventSplits && eventSplits.length > 0) {
+      const splitIds = eventSplits.map(s => s.split_id);
+      await db
+        .from('split_participants')
+        .delete()
+        .in('split_id', splitIds)
+        .eq('user_id', participantUserId);
+    }
+
+    // Remove participant's settled confirmation for this event
+    await db
+      .from('event_settled_confirmations')
+      .delete()
+      .eq('event_id', id)
+      .eq('user_id', participantUserId);
+
     // Remove participant
     const { error } = await db
       .from('event_participants')
@@ -948,6 +971,29 @@ export const leaveEvent = async (req: AuthRequest, res: Response) => {
       console.error('Split deletion error:', splitError);
       return res.status(500).json({ error: 'Failed to remove your splits.' });
     }
+
+    // Remove user from all split_participants in this event
+    const { data: eventSplits } = await db
+      .from('splits')
+      .select('split_id')
+      .eq('event_id', id)
+      .is('deleted_at', null);
+
+    if (eventSplits && eventSplits.length > 0) {
+      const splitIds = eventSplits.map(s => s.split_id);
+      await db
+        .from('split_participants')
+        .delete()
+        .in('split_id', splitIds)
+        .eq('user_id', userId);
+    }
+
+    // Remove user's settled confirmation for this event
+    await db
+      .from('event_settled_confirmations')
+      .delete()
+      .eq('event_id', id)
+      .eq('user_id', userId);
 
     // Remove user from event
     const { error } = await db

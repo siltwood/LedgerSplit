@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState<string | null>(null);
+  const [showLeaveEventModal, setShowLeaveEventModal] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [filterBy, setFilterBy] = useState<FilterOption>('all');
@@ -57,6 +58,19 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Failed to delete event:', error);
       alert('Failed to delete event');
+    }
+  };
+
+  const handleLeaveEvent = async () => {
+    if (!showLeaveEventModal) return;
+
+    try {
+      await eventsAPI.leaveEvent(showLeaveEventModal);
+      setShowLeaveEventModal(null);
+      loadData();
+    } catch (error) {
+      console.error('Failed to leave event:', error);
+      alert('Failed to leave event');
     }
   };
 
@@ -629,6 +643,21 @@ export default function Dashboard() {
                             Restore
                           </button>
                         )}
+                        {event.created_by !== user?.id && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowLeaveEventModal(event.event_id);
+                            }}
+                            style={{
+                              ...buttonStyles.small,
+                              padding: '6px 12px',
+                              fontSize: '16px'
+                            }}
+                          >
+                            Leave Event
+                          </button>
+                        )}
                         {event.created_by === user?.id && (
                           <button
                             onClick={(e) => {
@@ -689,6 +718,50 @@ export default function Dashboard() {
               </button>
               <button
                 onClick={() => setShowDeleteModal(null)}
+                style={buttonStyles.secondary}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Leave Event Confirmation Modal */}
+      {showLeaveEventModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: colors.surface,
+            padding: '20px',
+            borderRadius: '8px',
+            border: `1px solid ${colors.border}`,
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: typography.getFontSize('h3', isMobile) }}>Leave Event?</h3>
+            <p style={{ margin: '0 0 16px 0', color: colors.text, fontSize: typography.getFontSize('bodyLarge', isMobile), opacity: 0.9 }}>
+              This will remove you from the event and delete all bills you created or paid for. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button
+                onClick={handleLeaveEvent}
+                style={buttonStyles.primary}
+              >
+                Leave Event
+              </button>
+              <button
+                onClick={() => setShowLeaveEventModal(null)}
                 style={buttonStyles.secondary}
               >
                 Cancel
