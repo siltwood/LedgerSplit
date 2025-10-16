@@ -30,10 +30,16 @@ export default function CreateSplit() {
   }, []);
 
   useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
     if (eventIdFromParams) {
       loadEvent();
     }
-  }, [eventIdFromParams]);
+  }, [eventIdFromParams, user, navigate]);
 
   const loadEvent = async () => {
     if (!eventIdFromParams) return;

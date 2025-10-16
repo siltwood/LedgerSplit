@@ -31,10 +31,16 @@ export default function EditSplit() {
   }, []);
 
   useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
     if (eventIdFromParams && splitId) {
       loadData();
     }
-  }, [eventIdFromParams, splitId]);
+  }, [eventIdFromParams, splitId, user, navigate]);
 
   const loadData = async () => {
     if (!eventIdFromParams || !splitId) return;
