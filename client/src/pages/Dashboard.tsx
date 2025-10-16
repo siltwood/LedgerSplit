@@ -6,6 +6,7 @@ import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 import { typography } from '../styles/typography';
+import Caret from '../components/Caret';
 
 type SortOption = 'newest' | 'oldest' | 'name';
 type FilterOption = 'all' | 'active' | 'settled' | 'dismissed';
@@ -357,25 +358,9 @@ export default function Dashboard() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <h2 style={{ color: colors.text, margin: 0, fontSize: typography.getFontSize('h2', isMobile) }}>Your Events</h2>
             {filteredEvents.length > 0 && (
-              <button
-                onClick={toggleAllEvents}
-                style={{
-                  padding: '6px 12px',
-                  paddingBottom: '10px',
-                  background: colors.purple,
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: typography.getFontSize('body', isMobile),
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                {expandedEvents.size === filteredEvents.length ? '▲' : '▼'}
-              </button>
+              <div onClick={toggleAllEvents}>
+                <Caret direction={expandedEvents.size === filteredEvents.length ? 'up' : 'down'} />
+              </div>
             )}
           </div>
 
@@ -515,27 +500,14 @@ export default function Dashboard() {
                           {event.participants?.length || 0} {(event.participants?.length || 0) === 1 ? 'person' : 'people'}
                         </span>
                       </div>
-                      <button
+                      <div
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleEventExpanded(event.event_id);
                         }}
-                        style={{
-                          padding: '6px 12px',
-                          paddingBottom: '10px',
-                          background: colors.purple,
-                          color: '#fff',
-                          border: 'none',
-                          borderRadius: '6px',
-                          fontSize: typography.getFontSize('body', isMobile),
-                          cursor: 'pointer',
-                          fontWeight: '600',
-                          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-                          flexShrink: 0
-                        }}
                       >
-                        ▼
-                      </button>
+                        <Caret direction="down" />
+                      </div>
                     </div>
                   )}
 
@@ -570,27 +542,14 @@ export default function Dashboard() {
                             </span>
                           )}
                         </div>
-                        <button
+                        <div
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleEventExpanded(event.event_id);
                           }}
-                          style={{
-                            padding: '6px 12px',
-                            paddingBottom: '10px',
-                            background: colors.purple,
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '6px',
-                            fontSize: typography.getFontSize('body', isMobile),
-                            cursor: 'pointer',
-                            fontWeight: '600',
-                            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-                            flexShrink: 0
-                          }}
                         >
-                          ▲
-                        </button>
+                          <Caret direction="up" />
+                        </div>
                       </div>
 
                       <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>

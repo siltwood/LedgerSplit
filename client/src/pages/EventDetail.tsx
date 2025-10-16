@@ -5,6 +5,7 @@ import type { Event, Split, EventSettledConfirmation } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth, getResponsiveCardWidth } from '../styles/buttons';
 import { useAuth } from '../context/AuthContext';
+import Caret from '../components/Caret';
 
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
@@ -679,26 +680,9 @@ export default function EventDetail() {
               </button>
             </Link>
             {splits.length > 0 && (
-              <button
-                onClick={toggleAllBills}
-                style={{
-                  padding: '6px 12px',
-                  paddingBottom: '10px',
-                  background: colors.purple,
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '16px',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
-                }}
-              >
-                {expandedBills.size === splits.length ? '▲' : '▼'}
-              </button>
+              <div onClick={toggleAllBills}>
+                <Caret direction={expandedBills.size === splits.length ? 'up' : 'down'} />
+              </div>
             )}
           </div>
         </div>
@@ -921,7 +905,7 @@ export default function EventDetail() {
                         by {payerName}
                       </span>
                     </div>
-                    <div style={{ fontSize: '20px', color: '#000', flexShrink: 0, paddingLeft: '12px' }}>▼</div>
+                    <Caret direction="down" />
                   </div>
                 )}
 
@@ -941,7 +925,7 @@ export default function EventDetail() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                         <strong style={{ fontSize: '20px', color: '#000' }}>{split.title}</strong>
                       </div>
-                      <div style={{ fontSize: '20px', color: '#000', flexShrink: 0, paddingLeft: '12px' }}>▲</div>
+                      <Caret direction="up" />
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>
