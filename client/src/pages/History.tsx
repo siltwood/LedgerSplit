@@ -355,7 +355,7 @@ export default function History() {
               <div style={{ fontSize: '36px', marginBottom: '12px' }}>📅</div>
               <div style={{ fontSize: typography.getFontSize('h3', isMobile), fontWeight: 'bold', marginBottom: '8px' }}>No events found</div>
               {searchQuery ? (
-                <div>No events match "{searchQuery}"</div>
+                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>No events match "{searchQuery}"</div>
               ) : (
                 <div>No events in your history</div>
               )}
@@ -386,7 +386,7 @@ export default function History() {
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: typography.getFontSize('h3', isMobile), fontWeight: 'bold', color: colors.text }}>
+                        <span style={{ fontSize: typography.getFontSize('h3', isMobile), fontWeight: 'bold', color: colors.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '250px' }}>
                           {event.name}
                         </span>
                         {event.is_settled && (
@@ -417,7 +417,7 @@ export default function History() {
                     {isExpanded && (
                       <div style={{ padding: '0 16px 16px 16px' }}>
                         {event.description && (
-                          <div style={{ fontSize: '16px', color: colors.text, opacity: 0.8, marginBottom: '12px' }}>
+                          <div style={{ fontSize: '16px', color: colors.text, opacity: 0.8, marginBottom: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {event.description}
                           </div>
                         )}
@@ -433,7 +433,11 @@ export default function History() {
                                   borderRadius: '6px',
                                   fontSize: '16px',
                                   color: '#000',
-                                  fontWeight: '500'
+                                  fontWeight: '500',
+                                  maxWidth: '200px',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
                                 }}
                               >
                                 {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}
@@ -482,7 +486,7 @@ export default function History() {
                 No {viewType === 'bills' ? 'bills' : 'payments'} found
               </div>
               {searchQuery ? (
-                <div>No {viewType === 'bills' ? 'bills' : 'payments'} match "{searchQuery}"</div>
+                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>No {viewType === 'bills' ? 'bills' : 'payments'} match "{searchQuery}"</div>
               ) : (
                 <div>No {viewType === 'bills' ? 'bills' : 'payments'} in your history</div>
               )}
@@ -500,8 +504,8 @@ export default function History() {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-                    <div>
-                      <div style={{ fontSize: typography.getFontSize('h3', isMobile), fontWeight: 'bold', color: colors.text, marginBottom: '4px' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: typography.getFontSize('h3', isMobile), fontWeight: 'bold', color: colors.text, marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {bill.description}
                       </div>
                       <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7 }}>
@@ -530,7 +534,12 @@ export default function History() {
                       background: colors.columbiaBlue,
                       borderRadius: '6px',
                       fontSize: typography.getFontSize('bodySmall', isMobile),
-                      color: '#000'
+                      color: '#000',
+                      maxWidth: '200px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      display: 'inline-block'
                     }}>
                       {bill.event_name}
                     </span>

@@ -470,7 +470,7 @@ export default function Dashboard() {
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
             <div style={{ fontSize: typography.getFontSize('h3', isMobile), fontWeight: 'bold', marginBottom: '8px' }}>No events found</div>
             {searchQuery ? (
-              <div>No events match "{searchQuery}"</div>
+              <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>No events match "{searchQuery}"</div>
             ) : (
               <div>Try changing your filter settings</div>
             )}
@@ -566,7 +566,7 @@ export default function Dashboard() {
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                          <h3 style={{ margin: 0, color: colors.text, fontSize: typography.getFontSize('h3', isMobile) }}>{event.name}</h3>
+                          <h3 style={{ margin: 0, color: colors.text, fontSize: typography.getFontSize('h3', isMobile), overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{event.name}</h3>
                           {event.is_settled && (
                             <span style={{
                               padding: '4px 10px',
@@ -599,7 +599,7 @@ export default function Dashboard() {
                       </div>
 
                       {event.description && (
-                        <div style={{ fontSize: '16px', color: colors.text, opacity: 0.8, marginBottom: '12px' }}>
+                        <div style={{ fontSize: '16px', color: colors.text, opacity: 0.8, marginBottom: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {event.description}
                         </div>
                       )}
@@ -616,7 +616,10 @@ export default function Dashboard() {
                                 fontSize: '16px',
                                 color: '#000',
                                 fontWeight: '500',
-                                wordBreak: 'break-word'
+                                maxWidth: '200px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
                               }}
                             >
                               {p.user?.name || p.user?.email}{p.user_id === user?.id ? ' (you)' : ''}

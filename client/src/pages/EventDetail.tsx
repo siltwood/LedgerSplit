@@ -416,9 +416,9 @@ export default function EventDetail() {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: isMobile ? '8px' : '16px', marginBottom: isMobile ? '8px' : '16px' }}>
           <div style={{ flex: 1, minWidth: '250px' }}>
-            <h1 style={{ margin: '0 0 4px 0', color: colors.text, fontSize: isMobile ? '22px' : '28px' }}>{event.name}</h1>
+            <h1 style={{ margin: '0 0 4px 0', color: colors.text, fontSize: isMobile ? '22px' : '28px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{event.name}</h1>
             {event.description && (
-              <p style={{ color: colors.text, margin: '0', fontSize: isMobile ? '16px' : '20px', opacity: 0.9 }}>
+              <p style={{ color: colors.text, margin: '0', fontSize: isMobile ? '16px' : '20px', opacity: 0.9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {event.description}
               </p>
             )}
@@ -451,7 +451,10 @@ export default function EventDetail() {
                       fontSize: isMobile ? '16px' : '20px',
                       color: '#000',
                       fontWeight: '500',
-                      wordBreak: 'break-word',
+                      maxWidth: '200px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
                       display: 'inline-block',
                       position: 'relative'
                     }}
@@ -592,7 +595,7 @@ export default function EventDetail() {
                     flexWrap: 'wrap',
                     gap: '8px'
                   }}>
-                    <span style={{ fontSize: '20px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', wordBreak: 'break-word' }}>
+                    <span style={{ fontSize: '20px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {p.user?.name || p.user?.email}{isCurrentUser ? ' (you)' : ''}
                     </span>
                     <span style={{
@@ -919,7 +922,7 @@ export default function EventDetail() {
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
             <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>No bills found</div>
             {billSearchQuery ? (
-              <div>No bills match "{billSearchQuery}"</div>
+              <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>No bills match "{billSearchQuery}"</div>
             ) : (
               <div>Try changing your filter settings</div>
             )}
@@ -981,8 +984,8 @@ export default function EventDetail() {
                         cursor: 'pointer'
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                        <strong style={{ fontSize: '20px', color: '#000' }}>{split.title}</strong>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
+                        <strong style={{ fontSize: '20px', color: '#000', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{split.title}</strong>
                       </div>
                       <Caret direction="up" />
                     </div>
