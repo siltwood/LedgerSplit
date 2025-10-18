@@ -319,7 +319,7 @@ export default function History() {
           style={{
             width: '100%',
             padding: '8px 12px',
-            fontSize: typography.getFontSize('body', isMobile),
+            fontSize: isMobile ? '16px' : '16px',
             border: `2px solid ${colors.border}`,
             borderRadius: '8px',
             background: colors.surface,

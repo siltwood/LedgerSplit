@@ -7,7 +7,7 @@ import { buttonStyles, getResponsiveButtonWidth, getResponsiveCardWidth } from '
 import { useAuth } from '../context/AuthContext';
 import Caret from '../components/Caret';
 
-const BILLS_PER_PAGE = 10;
+const BILLS_PER_PAGE = 5;
 
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>();

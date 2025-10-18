@@ -11,7 +11,7 @@ import Caret from '../components/Caret';
 type SortOption = 'newest' | 'oldest' | 'name';
 type FilterOption = 'all' | 'active' | 'settled' | 'dismissed';
 
-const EVENTS_PER_PAGE = 15;
+const EVENTS_PER_PAGE = 5;
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -344,7 +344,7 @@ export default function Dashboard() {
               style={{
                 width: '100%',
                 padding: '8px 32px 8px 12px',
-                fontSize: typography.getFontSize('body', isMobile),
+                fontSize: isMobile ? '16px' : '16px',
                 border: `2px solid ${colors.border}`,
                 borderRadius: '8px',
                 background: colors.surface,
@@ -369,7 +369,7 @@ export default function Dashboard() {
               style={{
                 width: '100%',
                 padding: '8px 32px 8px 12px',
-                fontSize: typography.getFontSize('body', isMobile),
+                fontSize: isMobile ? '16px' : '16px',
                 border: `2px solid ${colors.border}`,
                 borderRadius: '8px',
                 background: colors.surface,
