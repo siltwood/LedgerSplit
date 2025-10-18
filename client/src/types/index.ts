@@ -20,6 +20,7 @@ export interface Event {
   participants?: EventParticipant[];
   creator?: User;
   settled_confirmations?: EventSettledConfirmation[];
+  splits?: Split[];
 }
 
 export interface EventSettledConfirmation {
