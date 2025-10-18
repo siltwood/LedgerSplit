@@ -49,6 +49,11 @@ export default function History() {
     loadData();
   }, [user]);
 
+  // Reset to page 1 when view type, search, or sort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [viewType, searchQuery, sortBy]);
+
   const loadData = async () => {
     if (!user) return;
 
@@ -204,11 +209,6 @@ export default function History() {
 
   // Get payments (bills paid by or owed to user)
   const userPayments = allBills.filter(bill => bill.paid_by === user?.id);
-
-  // Reset to page 1 when view type, search, or sort changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [viewType, searchQuery, sortBy]);
 
   // Get current items based on view type
   const getCurrentItems = () => {
