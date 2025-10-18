@@ -69,12 +69,44 @@ export const getEvents = async (req: AuthRequest, res: Response) => {
       });
     });
 
-    // Merge preferences and participants into events
+    // Get splits for all events
+    const { data: allSplits } = await db
+      .from('splits')
+      .select(`
+        split_id,
+        event_id,
+        description,
+        amount,
+        category,
+        paid_by,
+        created_at,
+        split_participants (
+          user_id,
+          amount_owed
+        )
+      `)
+      .in('event_id', eventIds)
+      .is('deleted_at', null);
+
+    // Group splits by event_id
+    const splitsMap = new Map<string, any[]>();
+    allSplits?.forEach((split: any) => {
+      if (!splitsMap.has(split.event_id)) {
+        splitsMap.set(split.event_id, []);
+      }
+      splitsMap.get(split.event_id)!.push({
+        ...split,
+        participants: split.split_participants
+      });
+    });
+
+    // Merge preferences, participants, and splits into events
     const prefsMap = new Map(preferences?.map(p => [p.event_id, p.is_dismissed]) || []);
     const eventsWithData = events.map((event: any) => ({
       ...event,
       is_dismissed: prefsMap.get(event.event_id) || false,
-      participants: participantsMap.get(event.event_id) || []
+      participants: participantsMap.get(event.event_id) || [],
+      splits: splitsMap.get(event.event_id) || []
     }));
 
     res.json({ events: eventsWithData });
