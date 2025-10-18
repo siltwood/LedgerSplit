@@ -1136,7 +1136,8 @@ export default function EventDetail() {
               onClick={() => goToBillsPage(billsPage - 1)}
               disabled={billsPage === 1}
               style={{
-                padding: '8px 16px',
+                padding: '8px 12px',
+                minWidth: '44px',
                 background: billsPage === 1 ? colors.surface : colors.purple,
                 color: billsPage === 1 ? colors.text : '#fff',
                 border: `2px solid ${colors.border}`,
@@ -1146,7 +1147,7 @@ export default function EventDetail() {
                 opacity: billsPage === 1 ? 0.5 : 1
               }}
             >
-              Previous
+              ←
             </button>
 
             {/* Page numbers */}
@@ -1179,6 +1180,7 @@ export default function EventDetail() {
                     onClick={() => goToBillsPage(page)}
                     style={{
                       padding: '8px 12px',
+                      minWidth: '44px',
                       background: billsPage === page ? colors.purple : colors.surface,
                       color: billsPage === page ? '#fff' : colors.text,
                       border: `2px solid ${billsPage === page ? colors.purple : colors.border}`,
@@ -1198,7 +1200,8 @@ export default function EventDetail() {
               onClick={() => goToBillsPage(billsPage + 1)}
               disabled={billsPage === totalBillsPages}
               style={{
-                padding: '8px 16px',
+                padding: '8px 12px',
+                minWidth: '44px',
                 background: billsPage === totalBillsPages ? colors.surface : colors.purple,
                 color: billsPage === totalBillsPages ? colors.text : '#fff',
                 border: `2px solid ${colors.border}`,
@@ -1208,7 +1211,7 @@ export default function EventDetail() {
                 opacity: billsPage === totalBillsPages ? 0.5 : 1
               }}
             >
-              Next
+              →
             </button>
           </div>
         )}

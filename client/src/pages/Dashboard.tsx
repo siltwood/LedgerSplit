@@ -810,7 +810,8 @@ export default function Dashboard() {
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
             style={{
-              padding: '8px 16px',
+              padding: '8px 12px',
+              minWidth: '44px',
               background: currentPage === 1 ? colors.surface : colors.purple,
               color: currentPage === 1 ? colors.text : '#fff',
               border: `2px solid ${colors.border}`,
@@ -820,7 +821,7 @@ export default function Dashboard() {
               opacity: currentPage === 1 ? 0.5 : 1
             }}
           >
-            Previous
+            ←
           </button>
 
           {/* Page numbers */}
@@ -853,6 +854,7 @@ export default function Dashboard() {
                   onClick={() => goToPage(page)}
                   style={{
                     padding: '8px 12px',
+                    minWidth: '44px',
                     background: currentPage === page ? colors.purple : colors.surface,
                     color: currentPage === page ? '#fff' : colors.text,
                     border: `2px solid ${currentPage === page ? colors.purple : colors.border}`,
@@ -872,7 +874,8 @@ export default function Dashboard() {
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === totalPages}
             style={{
-              padding: '8px 16px',
+              padding: '8px 12px',
+              minWidth: '44px',
               background: currentPage === totalPages ? colors.surface : colors.purple,
               color: currentPage === totalPages ? colors.text : '#fff',
               border: `2px solid ${colors.border}`,
@@ -882,7 +885,7 @@ export default function Dashboard() {
               opacity: currentPage === totalPages ? 0.5 : 1
             }}
           >
-            Next
+            →
           </button>
         </div>
       )}
