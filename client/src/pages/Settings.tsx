@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
+import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 
 export default function Settings() {
   const { user } = useAuth();
@@ -80,13 +81,10 @@ export default function Settings() {
                 }
               }}
               style={{
-                padding: '8px 16px',
-                background: colors.primary,
-                color: colors.text,
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '20px'
+                ...buttonStyles.primary,
+                padding: isMobile ? '8px 16px' : '10px 20px',
+                fontSize: isMobile ? '16px' : '18px',
+                ...getResponsiveButtonWidth(isMobile)
               }}
             >
               Change Password
