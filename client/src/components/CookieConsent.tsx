@@ -15,8 +15,8 @@ export default function CookieConsent() {
   const handleAccept = () => {
     localStorage.setItem('cookie-consent', 'accepted');
     setShowBanner(false);
-    // Reload page to load analytics script
-    window.location.reload();
+    // Dispatch custom event to notify GoogleAnalytics component
+    window.dispatchEvent(new CustomEvent('cookie-consent-accepted'));
   };
 
   const handleDecline = () => {

@@ -2,9 +2,10 @@ import { useEffect } from 'react';
 
 export default function GoogleAnalytics() {
   useEffect(() => {
-    const cookieConsent = localStorage.getItem('cookie-consent');
+    const loadGoogleAnalytics = () => {
+      // Check if already loaded
+      if ((window as any).gtag) return;
 
-    if (cookieConsent === 'accepted') {
       // Load Google Analytics script
       const script = document.createElement('script');
       script.async = true;
@@ -21,7 +22,24 @@ export default function GoogleAnalytics() {
 
       // Make gtag available globally
       (window as any).gtag = gtag;
+    };
+
+    // Check initial consent status
+    const cookieConsent = localStorage.getItem('cookie-consent');
+    if (cookieConsent === 'accepted') {
+      loadGoogleAnalytics();
     }
+
+    // Listen for consent changes
+    const handleConsentAccepted = () => {
+      loadGoogleAnalytics();
+    };
+
+    window.addEventListener('cookie-consent-accepted', handleConsentAccepted);
+
+    return () => {
+      window.removeEventListener('cookie-consent-accepted', handleConsentAccepted);
+    };
   }, []);
 
   return null;
