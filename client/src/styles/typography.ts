@@ -1,17 +1,17 @@
 // Centralized typography and spacing constants
 export const typography = {
   // Font sizes - mobile first, desktop in comments
-  h1: { mobile: '20px', desktop: '24px' },       // Reduced from 22/28
-  h2: { mobile: '18px', desktop: '20px' },       // Reduced from 20/22
-  h3: { mobile: '16px', desktop: '18px' },       // Reduced from 18/20
+  h1: { mobile: '24px', desktop: '28px' },
+  h2: { mobile: '22px', desktop: '24px' },
+  h3: { mobile: '20px', desktop: '22px' },
 
-  body: { mobile: '14px', desktop: '16px' },     // Reduced from 16/18
-  bodyLarge: { mobile: '16px', desktop: '18px' }, // Reduced from 18/20
-  bodySmall: { mobile: '12px', desktop: '14px' }, // Reduced from 14/16
+  body: { mobile: '20px', desktop: '20px' },
+  bodyLarge: { mobile: '22px', desktop: '22px' },
+  bodySmall: { mobile: '20px', desktop: '20px' },
 
-  label: { mobile: '14px', desktop: '16px' },    // Reduced from 16/18
-  button: { mobile: '14px', desktop: '16px' },   // Reduced from 16/18
-  caption: { mobile: '12px', desktop: '13px' },  // New smaller size
+  label: { mobile: '20px', desktop: '20px' },
+  button: { mobile: '20px', desktop: '20px' },
+  caption: { mobile: '20px', desktop: '20px' },
 
   // Spacing
   spacing: {
