@@ -137,7 +137,7 @@ export default function Privacy() {
             Contact
           </h2>
           <p style={{ color: colors.text, fontSize: '18px', lineHeight: '1.6' }}>
-            If you have questions about this privacy policy or want to exercise your data rights, contact us at privacy@ledgersplit.com
+            If you have questions about this privacy policy or want to exercise your data rights, contact us at hello@ledgersplit.com
           </p>
         </section>
 
