@@ -483,19 +483,20 @@ export default function EventDetail() {
           paddingTop: isMobile ? '12px' : '20px',
           borderTop: `1px solid ${colors.border}`,
           display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          gap: '12px'
+          flexDirection: 'column',
+          gap: '12px',
+          maxWidth: isMobile ? '100%' : '300px'
         }}>
           <button onClick={handleCopyShareLink} style={{
-            padding: isMobile ? '8px 16px' : '10px 20px',
-            fontSize: isMobile ? '16px' : '18px',
+            padding: '10px 20px',
+            fontSize: '18px',
             background: colors.purple,
             color: '#fff',
             border: 'none',
             borderRadius: '6px',
             cursor: 'pointer',
             fontWeight: '600',
-            ...getResponsiveButtonWidth(isMobile)
+            width: '100%'
           }}>
             Share Invite Link
           </button>
@@ -504,9 +505,9 @@ export default function EventDetail() {
               onClick={() => setShowLeaveEventModal(true)}
               style={{
                 ...buttonStyles.secondary,
-                padding: isMobile ? '8px 16px' : '10px 20px',
-                fontSize: isMobile ? '16px' : '18px',
-                ...getResponsiveButtonWidth(isMobile)
+                padding: '10px 20px',
+                fontSize: '18px',
+                width: '100%'
               }}
             >
               Leave Event
@@ -517,9 +518,9 @@ export default function EventDetail() {
               onClick={() => setShowDeleteEventModal(true)}
               style={{
                 ...buttonStyles.secondary,
-                padding: isMobile ? '8px 16px' : '10px 20px',
-                fontSize: isMobile ? '16px' : '18px',
-                ...getResponsiveButtonWidth(isMobile)
+                padding: '10px 20px',
+                fontSize: '18px',
+                width: '100%'
               }}
             >
               Delete Event
