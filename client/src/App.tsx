@@ -14,6 +14,7 @@ import EditSplit from './pages/EditSplit';
 import CreateEvent from './pages/CreateEvent';
 import EventDetail from './pages/EventDetail';
 import Settings from './pages/Settings';
+import Privacy from './pages/Privacy';
 import CookieConsent from './components/CookieConsent';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -43,6 +44,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/accept-invite" element={<AcceptInvite />} />
           <Route path="/join/:token" element={<JoinRedirect />} />
+          <Route path="/privacy" element={<Privacy />} />
 
           <Route element={<Layout />}>
             <Route
