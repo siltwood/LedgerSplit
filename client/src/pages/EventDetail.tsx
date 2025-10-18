@@ -245,7 +245,15 @@ export default function EventDetail() {
     return <div style={{ padding: '20px' }}></div>;
   }
 
-  const isMobile = window.innerWidth < 600;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
 
   // Calculate balances (who owes whom)
@@ -401,32 +409,32 @@ export default function EventDetail() {
       {/* Event Header */}
       <div style={{
         background: colors.surface,
-        padding: window.innerWidth < 600 ? '12px' : '20px',
+        padding: isMobile ? '12px' : '20px',
         borderRadius: '8px',
         border: `1px solid ${colors.border}`,
-        marginBottom: window.innerWidth < 600 ? '16px' : '24px'
+        marginBottom: isMobile ? '16px' : '24px'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '8px' : '16px', marginBottom: window.innerWidth < 600 ? '8px' : '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: isMobile ? '8px' : '16px', marginBottom: isMobile ? '8px' : '16px' }}>
           <div style={{ flex: 1, minWidth: '250px' }}>
-            <h1 style={{ margin: '0 0 4px 0', color: colors.text, fontSize: window.innerWidth < 600 ? '22px' : '28px' }}>{event.name}</h1>
+            <h1 style={{ margin: '0 0 4px 0', color: colors.text, fontSize: isMobile ? '22px' : '28px' }}>{event.name}</h1>
             {event.description && (
-              <p style={{ color: colors.text, margin: '0', fontSize: window.innerWidth < 600 ? '16px' : '20px', opacity: 0.9 }}>
+              <p style={{ color: colors.text, margin: '0', fontSize: isMobile ? '16px' : '20px', opacity: 0.9 }}>
                 {event.description}
               </p>
             )}
           </div>
-          <div style={{ fontSize: window.innerWidth < 600 ? '20px' : '24px', fontWeight: 'bold', color: colors.primary }}>
+          <div style={{ fontSize: isMobile ? '20px' : '24px', fontWeight: 'bold', color: colors.primary }}>
             ${totalAmount.toFixed(2)}
           </div>
         </div>
 
         {/* Participants */}
         {event.participants && event.participants.length > 0 && (
-          <div style={{ marginTop: window.innerWidth < 600 ? '12px' : '20px', paddingTop: window.innerWidth < 600 ? '12px' : '20px', borderTop: `1px solid ${colors.border}` }}>
-            <div style={{ fontSize: window.innerWidth < 600 ? '16px' : '20px', color: colors.text, opacity: 0.8, marginBottom: window.innerWidth < 600 ? '6px' : '8px' }}>
+          <div style={{ marginTop: isMobile ? '12px' : '20px', paddingTop: isMobile ? '12px' : '20px', borderTop: `1px solid ${colors.border}` }}>
+            <div style={{ fontSize: isMobile ? '16px' : '20px', color: colors.text, opacity: 0.8, marginBottom: isMobile ? '6px' : '8px' }}>
               {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: window.innerWidth < 600 ? '6px' : '8px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? '6px' : '8px' }}>
               {event.participants.map((p) => {
                 const isCreator = event.created_by === user?.id;
                 const isParticipantCreator = p.user_id === event.created_by;
@@ -436,11 +444,11 @@ export default function EventDetail() {
                   <span
                     key={p.user_id}
                     style={{
-                      padding: window.innerWidth < 600 ? '4px 8px' : '6px 12px',
-                      paddingRight: canRemove ? (window.innerWidth < 600 ? '24px' : '28px') : (window.innerWidth < 600 ? '8px' : '12px'),
+                      padding: isMobile ? '4px 8px' : '6px 12px',
+                      paddingRight: canRemove ? (isMobile ? '24px' : '28px') : (isMobile ? '8px' : '12px'),
                       background: getParticipantColor(p.user_id),
                       borderRadius: '6px',
-                      fontSize: window.innerWidth < 600 ? '16px' : '20px',
+                      fontSize: isMobile ? '16px' : '20px',
                       color: '#000',
                       fontWeight: '500',
                       wordBreak: 'break-word',
@@ -613,14 +621,14 @@ export default function EventDetail() {
       {event.participants && event.participants.length > 0 && splits.length > 0 && (
         <div style={{
           background: colors.surface,
-          padding: window.innerWidth < 600 ? '12px' : '20px',
+          padding: isMobile ? '12px' : '20px',
           borderRadius: '8px',
           border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
-          marginBottom: window.innerWidth < 600 ? '16px' : '24px'
+          marginBottom: isMobile ? '16px' : '24px'
         }}>
-          <div style={{ marginBottom: window.innerWidth < 600 ? '10px' : '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: window.innerWidth < 600 && event.is_settled ? '8px' : '0' }}>
-              <h3 style={{ margin: 0, color: colors.text, fontSize: window.innerWidth < 600 ? '18px' : '22px' }}>
+          <div style={{ marginBottom: isMobile ? '10px' : '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: isMobile && event.is_settled ? '8px' : '0' }}>
+              <h3 style={{ margin: 0, color: colors.text, fontSize: isMobile ? '18px' : '22px' }}>
                 Settle Event
               </h3>
               {event.is_settled && (
@@ -672,7 +680,7 @@ export default function EventDetail() {
             )}
           </div>
 
-          <div style={{ fontSize: window.innerWidth < 600 ? '16px' : '18px', color: colors.text, marginBottom: window.innerWidth < 600 ? '10px' : '16px', opacity: 0.9 }}>
+          <div style={{ fontSize: isMobile ? '16px' : '18px', color: colors.text, marginBottom: isMobile ? '10px' : '16px', opacity: 0.9 }}>
             {event.is_settled
               ? 'Everyone has confirmed this event is settled.'
               : 'Once all participants confirm, this event will be marked as settled.'}
@@ -751,11 +759,11 @@ export default function EventDetail() {
           </div>
 
           <div style={{
-            marginTop: window.innerWidth < 600 ? '10px' : '16px',
-            fontSize: window.innerWidth < 600 ? '16px' : '20px',
+            marginTop: isMobile ? '10px' : '16px',
+            fontSize: isMobile ? '16px' : '20px',
             color: colors.text,
             opacity: 0.7,
-            textAlign: window.innerWidth < 600 ? 'center' : 'left'
+            textAlign: isMobile ? 'center' : 'left'
           }}>
             {settledConfirmations.length} of {event.participants.length} participants confirmed
           </div>

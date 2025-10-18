@@ -287,7 +287,7 @@ export default function Dashboard() {
         <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'normal', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
           Search Events and Participants
         </label>
-        <div style={{ position: 'relative', width: '100%', maxWidth: window.innerWidth < 600 ? '100%' : '600px' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: isMobile ? '100%' : '600px' }}>
           {/* Ghost text for in-place suggestion */}
           {suggestion && searchQuery && (
             <div style={{
