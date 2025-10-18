@@ -16,6 +16,7 @@ import EventDetail from './pages/EventDetail';
 import Settings from './pages/Settings';
 import Privacy from './pages/Privacy';
 import CookieConsent from './components/CookieConsent';
+import GoogleAnalytics from './components/GoogleAnalytics';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -116,6 +117,7 @@ function App() {
           {/* Catch-all route for 404 */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        <GoogleAnalytics />
         <CookieConsent />
       </AuthProvider>
     </BrowserRouter>
