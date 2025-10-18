@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
+import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -65,7 +66,10 @@ export default function ForgotPassword() {
           marginBottom: '12px',
           fontSize: typography.getFontSize('body', isMobile)
         }}>
-          {message}
+          <div>{message}</div>
+          <div style={{ marginTop: '8px', fontSize: typography.getFontSize('small', isMobile), opacity: 0.9 }}>
+            Check your spam folder if you don't see it.
+          </div>
         </div>
       )}
 
@@ -94,13 +98,10 @@ export default function ForgotPassword() {
           type="submit"
           disabled={loading}
           style={{
+            ...buttonStyles.primary,
             width: '100%',
-            padding: '8px',
-            fontSize: typography.getFontSize('body', isMobile),
-            background: colors.primary,
-            color: colors.text,
-            border: 'none',
-            borderRadius: '4px',
+            padding: isMobile ? '8px 16px' : '10px 20px',
+            fontSize: isMobile ? '16px' : '18px',
             cursor: loading ? 'not-allowed' : 'pointer'
           }}
         >

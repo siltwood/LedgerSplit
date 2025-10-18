@@ -66,6 +66,14 @@ export default function Layout() {
                 }}>
                   Dashboard
                 </Link>
+                <Link to="/history" style={{
+                  color: colors.text,
+                  textDecoration: 'none',
+                  fontWeight: location.pathname === '/history' ? 'bold' : 'normal',
+                  fontSize: '20px'
+                }}>
+                  History
+                </Link>
                 <Link to="/settings" style={{
                   color: colors.text,
                   textDecoration: 'none',
@@ -134,6 +142,15 @@ export default function Layout() {
               fontSize: '20px'
             }}>
               Dashboard
+            </Link>
+            <Link to="/history" onClick={() => setMobileMenuOpen(false)} style={{
+              color: colors.text,
+              textDecoration: 'none',
+              padding: '10px',
+              fontWeight: location.pathname === '/history' ? 'bold' : 'normal',
+              fontSize: '20px'
+            }}>
+              History
             </Link>
             <Link to="/settings" onClick={() => setMobileMenuOpen(false)} style={{
               color: colors.text,

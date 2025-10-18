@@ -11,6 +11,8 @@ import Caret from '../components/Caret';
 type SortOption = 'newest' | 'oldest' | 'name';
 type FilterOption = 'all' | 'active' | 'settled' | 'dismissed';
 
+const EVENTS_PER_PAGE = 15;
+
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ export default function Dashboard() {
   const [filterBy, setFilterBy] = useState<FilterOption>('all');
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleDismiss = async (eventId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -248,6 +251,22 @@ export default function Dashboard() {
 
   const suggestion = getInlineSuggestion();
 
+  // Reset to page 1 when filters/search/sort change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortBy, filterBy]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredEvents.length / EVENTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * EVENTS_PER_PAGE;
+  const endIndex = startIndex + EVENTS_PER_PAGE;
+  const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ color: colors.text, marginBottom: '12px', fontSize: typography.getFontSize('h1', isMobile) }}>Dashboard</h1>
@@ -371,9 +390,9 @@ export default function Dashboard() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <h2 style={{ color: colors.text, margin: 0, fontSize: typography.getFontSize('h2', isMobile) }}>Your Events</h2>
-            {filteredEvents.length > 0 && (
+            {paginatedEvents.length > 0 && (
               <div onClick={toggleAllEvents}>
-                <Caret direction={expandedEvents.size === filteredEvents.length ? 'up' : 'down'} />
+                <Caret direction={expandedEvents.size === paginatedEvents.length ? 'up' : 'down'} />
               </div>
             )}
           </div>
@@ -407,6 +426,13 @@ export default function Dashboard() {
             )}
           </div>
         </div>
+
+        {/* Results count */}
+        {filteredEvents.length > 0 && (
+          <div style={{ marginBottom: '12px', fontSize: typography.getFontSize('body', isMobile), color: colors.text, opacity: 0.7 }}>
+            Showing {startIndex + 1}-{Math.min(endIndex, filteredEvents.length)} of {filteredEvents.length} events
+          </div>
+        )}
 
         {events.length === 0 ? (
           <div style={{
@@ -457,7 +483,7 @@ export default function Dashboard() {
             flexDirection: 'column',
             gap: '8px'
           }}>
-            {filteredEvents.map((event) => {
+            {paginatedEvents.map((event) => {
               const isExpanded = expandedEvents.has(event.event_id);
 
               return (
@@ -768,6 +794,97 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '8px',
+          marginTop: '24px',
+          flexWrap: 'wrap'
+        }}>
+          <button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            style={{
+              padding: '8px 16px',
+              background: currentPage === 1 ? colors.surface : colors.purple,
+              color: currentPage === 1 ? colors.text : '#fff',
+              border: `2px solid ${colors.border}`,
+              borderRadius: '4px',
+              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+              fontSize: typography.getFontSize('body', isMobile),
+              opacity: currentPage === 1 ? 0.5 : 1
+            }}
+          >
+            Previous
+          </button>
+
+          {/* Page numbers */}
+          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+              // Show first page, last page, current page, and pages around current
+              const showPage = page === 1 ||
+                               page === totalPages ||
+                               (page >= currentPage - 1 && page <= currentPage + 1);
+
+              // Show ellipsis
+              const showEllipsisBefore = page === currentPage - 2 && currentPage > 3;
+              const showEllipsisAfter = page === currentPage + 2 && currentPage < totalPages - 2;
+
+              if (!showPage && !showEllipsisBefore && !showEllipsisAfter) {
+                return null;
+              }
+
+              if (showEllipsisBefore || showEllipsisAfter) {
+                return (
+                  <span key={page} style={{ padding: '8px 4px', color: colors.text }}>
+                    ...
+                  </span>
+                );
+              }
+
+              return (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  style={{
+                    padding: '8px 12px',
+                    background: currentPage === page ? colors.purple : colors.surface,
+                    color: currentPage === page ? '#fff' : colors.text,
+                    border: `2px solid ${currentPage === page ? colors.purple : colors.border}`,
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: typography.getFontSize('body', isMobile),
+                    fontWeight: currentPage === page ? 'bold' : 'normal'
+                  }}
+                >
+                  {page}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            style={{
+              padding: '8px 16px',
+              background: currentPage === totalPages ? colors.surface : colors.purple,
+              color: currentPage === totalPages ? colors.text : '#fff',
+              border: `2px solid ${colors.border}`,
+              borderRadius: '4px',
+              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+              fontSize: typography.getFontSize('body', isMobile),
+              opacity: currentPage === totalPages ? 0.5 : 1
+            }}
+          >
+            Next
+          </button>
         </div>
       )}
     </div>

@@ -7,6 +7,8 @@ import { buttonStyles, getResponsiveButtonWidth, getResponsiveCardWidth } from '
 import { useAuth } from '../context/AuthContext';
 import Caret from '../components/Caret';
 
+const BILLS_PER_PAGE = 10;
+
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
@@ -26,6 +28,7 @@ export default function EventDetail() {
   const [expandedBills, setExpandedBills] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState<string>('date-newest');
   const [filterBy, setFilterBy] = useState<string>('all');
+  const [billsPage, setBillsPage] = useState(1);
 
   useEffect(() => {
     loadData();
@@ -300,6 +303,98 @@ export default function EventDetail() {
     };
     return category ? categoryMap[category] || category : null;
   };
+
+  // Filter and sort bills
+  const filteredBills = splits
+    .filter(split => {
+      // Apply filter
+      if (filterBy === 'all') return true;
+      if (filterBy === 'my-bills') return split.created_by === user?.id;
+      if (filterBy === 'i-owe') {
+        return split.paid_by !== user?.id && split.split_participants?.some((p: any) => p.user_id === user?.id);
+      }
+      if (filterBy === 'i-paid') return split.paid_by === user?.id;
+      if (filterBy.startsWith('cat-')) {
+        const category = filterBy.replace('cat-', '');
+        if (category === 'uncategorized') return !split.category;
+        return split.category === category;
+      }
+      return true;
+    })
+    .filter(split => {
+      // Apply search filter
+      if (!billSearchQuery.trim()) return true;
+      const query = billSearchQuery.toLowerCase();
+
+      // Check for "me", "you", "my bills" keywords to show user's bills
+      if (query === 'me' || query === 'you' || query === 'my bills') {
+        return split.created_by === user?.id;
+      }
+
+      // Search in title
+      if (split.title.toLowerCase().includes(query)) return true;
+
+      // Search in payer name
+      if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
+      if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
+
+      // Search in notes
+      if (split.notes?.toLowerCase().includes(query)) return true;
+
+      // Search in participant names
+      if (split.split_participants?.some((p: any) => {
+        const participant = event?.participants?.find(ep => ep.user_id === p.user_id);
+        return participant?.user?.name?.toLowerCase().includes(query) ||
+               participant?.user?.email?.toLowerCase().includes(query);
+      })) return true;
+
+      return false;
+    })
+    .sort((a, b) => {
+      // Apply sort
+      if (sortBy === 'date-newest') {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      }
+      if (sortBy === 'date-oldest') {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      }
+      if (sortBy === 'amount-high') {
+        return b.amount - a.amount;
+      }
+      if (sortBy === 'amount-low') {
+        return a.amount - b.amount;
+      }
+      if (sortBy === 'category') {
+        const catA = a.category || 'zzz'; // Put uncategorized at end
+        const catB = b.category || 'zzz';
+        return catA.localeCompare(catB);
+      }
+      if (sortBy === 'creator') {
+        const creatorA = event?.participants?.find(p => p.user_id === a.created_by);
+        const creatorB = event?.participants?.find(p => p.user_id === b.created_by);
+        const nameA = creatorA?.user?.name || creatorA?.user?.email || '';
+        const nameB = creatorB?.user?.name || creatorB?.user?.email || '';
+        return nameA.localeCompare(nameB);
+      }
+      return 0;
+    });
+
+  // Pagination
+  const totalBillsPages = Math.ceil(filteredBills.length / BILLS_PER_PAGE);
+  const billsStartIndex = (billsPage - 1) * BILLS_PER_PAGE;
+  const billsEndIndex = billsStartIndex + BILLS_PER_PAGE;
+  const paginatedBills = filteredBills.slice(billsStartIndex, billsEndIndex);
+
+  const goToBillsPage = (page: number) => {
+    setBillsPage(page);
+    // Scroll to bills section
+    document.getElementById('bills-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Reset page when search/filter/sort changes
+  useEffect(() => {
+    setBillsPage(1);
+  }, [billSearchQuery, sortBy, filterBy]);
 
   return (
     <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -667,7 +762,7 @@ export default function EventDetail() {
       )}
 
       {/* Bills Section */}
-      <div>
+      <div id="bills-section">
         <div style={{ marginBottom: '12px' }}>
           <h2 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>
             Bills
@@ -783,6 +878,13 @@ export default function EventDetail() {
           </div>
         )}
 
+        {/* Results count */}
+        {filteredBills.length > 0 && (
+          <div style={{ marginBottom: '12px', fontSize: '16px', color: colors.text, opacity: 0.7 }}>
+            Showing {billsStartIndex + 1}-{Math.min(billsEndIndex, filteredBills.length)} of {filteredBills.length} bills
+          </div>
+        )}
+
         {splits.length === 0 ? (
           <div style={{
             padding: '48px',
@@ -796,82 +898,27 @@ export default function EventDetail() {
           }}>
             No bills yet. Add one to get started!
           </div>
+        ) : filteredBills.length === 0 ? (
+          <div style={{
+            padding: '40px',
+            background: colors.surface,
+            border: `1px solid ${colors.border}`,
+            borderRadius: '8px',
+            textAlign: 'center',
+            color: colors.text,
+            fontSize: '18px'
+          }}>
+            <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>No bills found</div>
+            {billSearchQuery ? (
+              <div>No bills match "{billSearchQuery}"</div>
+            ) : (
+              <div>Try changing your filter settings</div>
+            )}
+          </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {splits
-              .filter(split => {
-                // Apply filter
-                if (filterBy === 'all') return true;
-                if (filterBy === 'my-bills') return split.created_by === user?.id;
-                if (filterBy === 'i-owe') {
-                  return split.paid_by !== user?.id && split.split_participants?.some((p: any) => p.user_id === user?.id);
-                }
-                if (filterBy === 'i-paid') return split.paid_by === user?.id;
-                if (filterBy.startsWith('cat-')) {
-                  const category = filterBy.replace('cat-', '');
-                  if (category === 'uncategorized') return !split.category;
-                  return split.category === category;
-                }
-                return true;
-              })
-              .filter(split => {
-                // Apply search filter
-                if (!billSearchQuery.trim()) return true;
-                const query = billSearchQuery.toLowerCase();
-
-                // Check for "me", "you", "my bills" keywords to show user's bills
-                if (query === 'me' || query === 'you' || query === 'my bills') {
-                  return split.created_by === user?.id;
-                }
-
-                // Search in title
-                if (split.title.toLowerCase().includes(query)) return true;
-
-                // Search in payer name
-                if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
-                if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
-
-                // Search in notes
-                if (split.notes?.toLowerCase().includes(query)) return true;
-
-                // Search in participant names
-                if (split.split_participants?.some((p: any) => {
-                  const participant = event.participants?.find(ep => ep.user_id === p.user_id);
-                  return participant?.user?.name?.toLowerCase().includes(query) ||
-                         participant?.user?.email?.toLowerCase().includes(query);
-                })) return true;
-
-                return false;
-              })
-              .sort((a, b) => {
-                // Apply sort
-                if (sortBy === 'date-newest') {
-                  return new Date(b.date).getTime() - new Date(a.date).getTime();
-                }
-                if (sortBy === 'date-oldest') {
-                  return new Date(a.date).getTime() - new Date(b.date).getTime();
-                }
-                if (sortBy === 'amount-high') {
-                  return b.amount - a.amount;
-                }
-                if (sortBy === 'amount-low') {
-                  return a.amount - b.amount;
-                }
-                if (sortBy === 'category') {
-                  const catA = a.category || 'zzz'; // Put uncategorized at end
-                  const catB = b.category || 'zzz';
-                  return catA.localeCompare(catB);
-                }
-                if (sortBy === 'creator') {
-                  const creatorA = event.participants?.find(p => p.user_id === a.created_by);
-                  const creatorB = event.participants?.find(p => p.user_id === b.created_by);
-                  const nameA = creatorA?.user?.name || creatorA?.user?.email || '';
-                  const nameB = creatorB?.user?.name || creatorB?.user?.email || '';
-                  return nameA.localeCompare(nameB);
-                }
-                return 0;
-              })
-              .map((split) => {
+            {paginatedBills.map((split) => {
               const isExpanded = expandedBills.has(split.split_id);
               const payerName = split.paid_by === user?.id ? 'you' : (split.paid_by_user?.name || split.paid_by_user?.email);
 
@@ -1074,6 +1121,97 @@ export default function EventDetail() {
           );
         })}
       </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalBillsPages > 1 && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '8px',
+            marginTop: '24px',
+            flexWrap: 'wrap'
+          }}>
+            <button
+              onClick={() => goToBillsPage(billsPage - 1)}
+              disabled={billsPage === 1}
+              style={{
+                padding: '8px 16px',
+                background: billsPage === 1 ? colors.surface : colors.purple,
+                color: billsPage === 1 ? colors.text : '#fff',
+                border: `2px solid ${colors.border}`,
+                borderRadius: '4px',
+                cursor: billsPage === 1 ? 'not-allowed' : 'pointer',
+                fontSize: '16px',
+                opacity: billsPage === 1 ? 0.5 : 1
+              }}
+            >
+              Previous
+            </button>
+
+            {/* Page numbers */}
+            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+              {Array.from({ length: totalBillsPages }, (_, i) => i + 1).map(page => {
+                // Show first page, last page, current page, and pages around current
+                const showPage = page === 1 ||
+                                 page === totalBillsPages ||
+                                 (page >= billsPage - 1 && page <= billsPage + 1);
+
+                // Show ellipsis
+                const showEllipsisBefore = page === billsPage - 2 && billsPage > 3;
+                const showEllipsisAfter = page === billsPage + 2 && billsPage < totalBillsPages - 2;
+
+                if (!showPage && !showEllipsisBefore && !showEllipsisAfter) {
+                  return null;
+                }
+
+                if (showEllipsisBefore || showEllipsisAfter) {
+                  return (
+                    <span key={page} style={{ padding: '8px 4px', color: colors.text }}>
+                      ...
+                    </span>
+                  );
+                }
+
+                return (
+                  <button
+                    key={page}
+                    onClick={() => goToBillsPage(page)}
+                    style={{
+                      padding: '8px 12px',
+                      background: billsPage === page ? colors.purple : colors.surface,
+                      color: billsPage === page ? '#fff' : colors.text,
+                      border: `2px solid ${billsPage === page ? colors.purple : colors.border}`,
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '16px',
+                      fontWeight: billsPage === page ? 'bold' : 'normal'
+                    }}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => goToBillsPage(billsPage + 1)}
+              disabled={billsPage === totalBillsPages}
+              style={{
+                padding: '8px 16px',
+                background: billsPage === totalBillsPages ? colors.surface : colors.purple,
+                color: billsPage === totalBillsPages ? colors.text : '#fff',
+                border: `2px solid ${colors.border}`,
+                borderRadius: '4px',
+                cursor: billsPage === totalBillsPages ? 'not-allowed' : 'pointer',
+                fontSize: '16px',
+                opacity: billsPage === totalBillsPages ? 0.5 : 1
+              }}
+            >
+              Next
+            </button>
+          </div>
         )}
       </div>
 

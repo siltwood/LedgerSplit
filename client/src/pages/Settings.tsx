@@ -90,7 +90,7 @@ export default function Settings() {
               Change Password
             </button>
             <p style={{ fontSize: typography.getFontSize('body', isMobile), color: colors.text, marginTop: '5px' }}>
-              We'll send you an email with a secure link to change your password
+              We'll send you an email with a secure link to change your password.
             </p>
           </div>
         )}
@@ -117,8 +117,8 @@ export default function Settings() {
       }}>
         <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text, fontSize: typography.getFontSize('h2', isMobile) }}>Danger Zone</h2>
         <p style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), marginBottom: '15px' }}>
-          Once you delete your account, there is no going back. Your name will be grayed out in
-          splits, but your data will remain for other users' records.
+          Once you delete your account, there is no going back. Your name will remain visible in
+          events and splits you participated in, but you won't be able to log in again.
         </p>
 
         {!showDeleteConfirm ? (

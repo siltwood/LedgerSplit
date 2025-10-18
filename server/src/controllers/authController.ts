@@ -4,92 +4,6 @@ import { googleClient } from '../config/google';
 import { db } from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 
-// Helper function to auto-accept pending email invites
-const autoAcceptPendingInvites = async (userId: string, userEmail: string) => {
-  try {
-    // Find all pending invites for this email
-    const { data: pendingInvites } = await db
-      .from('event_invites')
-      .select('*')
-      .eq('invited_email', userEmail.toLowerCase())
-      .eq('status', 'pending');
-
-    if (!pendingInvites || pendingInvites.length === 0) {
-      return;
-    }
-
-    // Process each invite
-    for (const invite of pendingInvites) {
-      try {
-        // Update invite to link to user and mark as accepted
-        await db
-          .from('event_invites')
-          .update({
-            invited_user: userId,
-            status: 'accepted',
-            responded_at: new Date().toISOString(),
-          })
-          .eq('invite_id', invite.invite_id);
-
-        // Add user to event
-        await db
-          .from('event_participants')
-          .insert({
-            event_id: invite.event_id,
-            user_id: userId,
-          });
-
-        // Get all existing splits in this event
-        const { data: splits } = await db
-          .from('splits')
-          .select('split_id, amount')
-          .eq('event_id', invite.event_id)
-          .is('deleted_at', null);
-
-        // Add user to all existing splits
-        if (splits && splits.length > 0) {
-          for (const split of splits) {
-            // Get current split participants to recalculate amount_owed
-            const { data: currentParticipants } = await db
-              .from('split_participants')
-              .select('user_id')
-              .eq('split_id', split.split_id);
-
-            const totalParticipants = (currentParticipants?.length || 0) + 1;
-            const newAmountOwed = split.amount / totalParticipants;
-
-            // Update existing participants' amount_owed
-            if (currentParticipants && currentParticipants.length > 0) {
-              for (const participant of currentParticipants) {
-                await db
-                  .from('split_participants')
-                  .update({ amount_owed: newAmountOwed })
-                  .eq('split_id', split.split_id)
-                  .eq('user_id', participant.user_id);
-              }
-            }
-
-            // Add new participant
-            await db
-              .from('split_participants')
-              .insert({
-                split_id: split.split_id,
-                user_id: userId,
-                amount_owed: newAmountOwed,
-              });
-          }
-        }
-      } catch (error) {
-        console.error(`Failed to auto-accept invite ${invite.invite_id}:`, error);
-        // Continue processing other invites even if one fails
-      }
-    }
-  } catch (error) {
-    console.error('Error in autoAcceptPendingInvites:', error);
-    // Don't throw - this is a background operation
-  }
-};
-
 // Register with email/password
 export const register = async (req: AuthRequest, res: Response) => {
   const { email, password, name } = req.body;
@@ -161,14 +75,11 @@ export const register = async (req: AuthRequest, res: Response) => {
       };
 
       // Save session before continuing
-      req.session.save(async (saveErr) => {
+      req.session.save((saveErr) => {
         if (saveErr) {
           console.error('Session save error:', saveErr);
           return res.status(500).json({ error: 'Session error.' });
         }
-
-        // Auto-accept any pending email invites
-        await autoAcceptPendingInvites(user.user_id, user.email);
 
         res.status(201).json({
           message: 'User created successfully',
@@ -200,6 +111,7 @@ export const login = async (req: AuthRequest, res: Response) => {
       .from('users')
       .select('*')
       .eq('email', email.toLowerCase())
+      .is('deleted_at', null)
       .single();
 
     if (error || !user) {
@@ -359,11 +271,6 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
         name: user.name,
         google_id: user.google_id,
       };
-
-      // Auto-accept any pending email invites
-      autoAcceptPendingInvites(user.user_id, user.email).catch(e => {
-        console.error('Error auto-accepting invites:', e);
-      });
 
       // Save session before redirect
       req.session.save((saveErr) => {
@@ -546,15 +453,22 @@ export const requestPasswordChange = async (req: AuthRequest, res: Response) => 
   }
 };
 
-// Delete account
+// Delete account (soft delete)
 export const deleteAccount = async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
 
   try {
-    // Hard delete user
+    // Soft delete user - keep their data for other users' records
     const { error } = await db
       .from('users')
-      .delete()
+      .update({
+        deleted_at: new Date().toISOString(),
+        // Clear sensitive data
+        password_hash: null,
+        google_id: null,
+        email: `deleted_${userId}@ledgersplit.com`,
+        avatar_url: null
+      })
       .eq('user_id', userId);
 
     if (error) {
