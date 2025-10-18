@@ -264,7 +264,6 @@ export default function Dashboard() {
 
   const goToPage = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -802,86 +801,41 @@ export default function Dashboard() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '8px',
-          marginTop: '24px',
-          flexWrap: 'wrap'
+          gap: '12px',
+          marginTop: '24px'
         }}>
           <button
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
             style={{
-              padding: '8px 12px',
-              minWidth: '44px',
+              padding: '8px 16px',
               background: currentPage === 1 ? colors.surface : colors.purple,
               color: currentPage === 1 ? colors.text : '#fff',
               border: `2px solid ${colors.border}`,
               borderRadius: '4px',
               cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-              fontSize: '16px',
+              fontSize: '18px',
               opacity: currentPage === 1 ? 0.5 : 1
             }}
           >
             ←
           </button>
 
-          {/* Page numbers */}
-          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
-              // Show first page, last page, current page, and pages around current
-              const showPage = page === 1 ||
-                               page === totalPages ||
-                               (page >= currentPage - 1 && page <= currentPage + 1);
-
-              // Show ellipsis
-              const showEllipsisBefore = page === currentPage - 2 && currentPage > 3;
-              const showEllipsisAfter = page === currentPage + 2 && currentPage < totalPages - 2;
-
-              if (!showPage && !showEllipsisBefore && !showEllipsisAfter) {
-                return null;
-              }
-
-              if (showEllipsisBefore || showEllipsisAfter) {
-                return (
-                  <span key={page} style={{ padding: '8px 4px', color: colors.text }}>
-                    ...
-                  </span>
-                );
-              }
-
-              return (
-                <button
-                  key={page}
-                  onClick={() => goToPage(page)}
-                  style={{
-                    padding: '8px 12px',
-                    minWidth: '44px',
-                    background: currentPage === page ? colors.purple : colors.surface,
-                    color: currentPage === page ? '#fff' : colors.text,
-                    border: `2px solid ${currentPage === page ? colors.purple : colors.border}`,
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    fontWeight: currentPage === page ? 'bold' : 'normal'
-                  }}
-                >
-                  {page}
-                </button>
-              );
-            })}
-          </div>
+          <span style={{ color: colors.text, fontSize: '18px', fontWeight: '600' }}>
+            Page {currentPage} of {totalPages}
+          </span>
 
           <button
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === totalPages}
             style={{
-              padding: '8px 12px',
-              minWidth: '44px',
+              padding: '8px 16px',
               background: currentPage === totalPages ? colors.surface : colors.purple,
               color: currentPage === totalPages ? colors.text : '#fff',
               border: `2px solid ${colors.border}`,
               borderRadius: '4px',
               cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-              fontSize: '16px',
+              fontSize: '18px',
               opacity: currentPage === totalPages ? 0.5 : 1
             }}
           >

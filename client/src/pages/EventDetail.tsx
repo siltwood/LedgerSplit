@@ -1129,86 +1129,41 @@ export default function EventDetail() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '8px',
-            marginTop: '24px',
-            flexWrap: 'wrap'
+            gap: '12px',
+            marginTop: '24px'
           }}>
             <button
               onClick={() => goToBillsPage(billsPage - 1)}
               disabled={billsPage === 1}
               style={{
-                padding: '8px 12px',
-                minWidth: '44px',
+                padding: '8px 16px',
                 background: billsPage === 1 ? colors.surface : colors.purple,
                 color: billsPage === 1 ? colors.text : '#fff',
                 border: `2px solid ${colors.border}`,
                 borderRadius: '4px',
                 cursor: billsPage === 1 ? 'not-allowed' : 'pointer',
-                fontSize: '16px',
+                fontSize: '18px',
                 opacity: billsPage === 1 ? 0.5 : 1
               }}
             >
               ←
             </button>
 
-            {/* Page numbers */}
-            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-              {Array.from({ length: totalBillsPages }, (_, i) => i + 1).map(page => {
-                // Show first page, last page, current page, and pages around current
-                const showPage = page === 1 ||
-                                 page === totalBillsPages ||
-                                 (page >= billsPage - 1 && page <= billsPage + 1);
-
-                // Show ellipsis
-                const showEllipsisBefore = page === billsPage - 2 && billsPage > 3;
-                const showEllipsisAfter = page === billsPage + 2 && billsPage < totalBillsPages - 2;
-
-                if (!showPage && !showEllipsisBefore && !showEllipsisAfter) {
-                  return null;
-                }
-
-                if (showEllipsisBefore || showEllipsisAfter) {
-                  return (
-                    <span key={page} style={{ padding: '8px 4px', color: colors.text }}>
-                      ...
-                    </span>
-                  );
-                }
-
-                return (
-                  <button
-                    key={page}
-                    onClick={() => goToBillsPage(page)}
-                    style={{
-                      padding: '8px 12px',
-                      minWidth: '44px',
-                      background: billsPage === page ? colors.purple : colors.surface,
-                      color: billsPage === page ? '#fff' : colors.text,
-                      border: `2px solid ${billsPage === page ? colors.purple : colors.border}`,
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '16px',
-                      fontWeight: billsPage === page ? 'bold' : 'normal'
-                    }}
-                  >
-                    {page}
-                  </button>
-                );
-              })}
-            </div>
+            <span style={{ color: colors.text, fontSize: '18px', fontWeight: '600' }}>
+              Page {billsPage} of {totalBillsPages}
+            </span>
 
             <button
               onClick={() => goToBillsPage(billsPage + 1)}
               disabled={billsPage === totalBillsPages}
               style={{
-                padding: '8px 12px',
-                minWidth: '44px',
+                padding: '8px 16px',
                 background: billsPage === totalBillsPages ? colors.surface : colors.purple,
                 color: billsPage === totalBillsPages ? colors.text : '#fff',
                 border: `2px solid ${colors.border}`,
                 borderRadius: '4px',
                 cursor: billsPage === totalBillsPages ? 'not-allowed' : 'pointer',
-                fontSize: '16px',
+                fontSize: '18px',
                 opacity: billsPage === totalBillsPages ? 0.5 : 1
               }}
             >
