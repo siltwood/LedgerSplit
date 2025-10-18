@@ -34,6 +34,11 @@ export default function EventDetail() {
     loadData();
   }, [id]);
 
+  // Reset to page 1 when search/filter/sort changes
+  useEffect(() => {
+    setBillsPage(1);
+  }, [billSearchQuery, sortBy, filterBy]);
+
   const loadData = async () => {
     if (!id) return;
 
@@ -390,11 +395,6 @@ export default function EventDetail() {
     // Scroll to bills section
     document.getElementById('bills-section')?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  // Reset page when search/filter/sort changes
-  useEffect(() => {
-    setBillsPage(1);
-  }, [billSearchQuery, sortBy, filterBy]);
 
   return (
     <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
