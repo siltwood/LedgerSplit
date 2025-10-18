@@ -119,6 +119,11 @@ export default function Dashboard() {
     loadData();
   }, [user]);
 
+  // Reset to page 1 when filters/search/sort change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortBy, filterBy]);
+
   const loadData = async () => {
     if (!user) return;
 
@@ -250,11 +255,6 @@ export default function Dashboard() {
   };
 
   const suggestion = getInlineSuggestion();
-
-  // Reset to page 1 when filters/search/sort change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, sortBy, filterBy]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEvents.length / EVENTS_PER_PAGE);
