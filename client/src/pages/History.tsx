@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { eventsAPI } from '../services/api';
-import type { Event } from '../types/index';
+import type { Event, EventParticipant } from '../types/index';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
 import Caret from '../components/Caret';
@@ -71,7 +71,7 @@ export default function History() {
               paid_by: split.paid_by,
               event_id: event.event_id,
               event_name: event.name,
-              payer_name: event.participants?.find(p => p.user_id === split.paid_by)?.user?.name,
+              payer_name: event.participants?.find((p: EventParticipant) => p.user_id === split.paid_by)?.user?.name,
               participant_count: split.participants?.length || 0
             });
           }
