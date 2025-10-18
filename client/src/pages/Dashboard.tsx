@@ -297,7 +297,7 @@ export default function Dashboard() {
               left: '12px',
               color: colors.text,
               opacity: 0.4,
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               pointerEvents: 'none',
               whiteSpace: 'nowrap',
               overflow: 'hidden'
@@ -318,7 +318,7 @@ export default function Dashboard() {
             style={{
               width: '100%',
               padding: '8px 12px',
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               border: `2px solid ${colors.border}`,
               borderRadius: '8px',
               background: colors.surface,
@@ -574,7 +574,7 @@ export default function Dashboard() {
                               background: colors.purple,
                               color: '#fff',
                               borderRadius: '12px',
-                              fontSize: typography.getFontSize('body', isMobile),
+                              fontSize: '16px',
                               fontWeight: '600'
                             }}>
                               ✓ Settled
@@ -614,7 +614,7 @@ export default function Dashboard() {
                                 padding: '4px 8px',
                                 background: getParticipantColor(event, p.user_id),
                                 borderRadius: '6px',
-                                fontSize: typography.getFontSize('body', isMobile),
+                                fontSize: '16px',
                                 color: '#000',
                                 fontWeight: '500',
                                 wordBreak: 'break-word'
@@ -817,7 +817,7 @@ export default function Dashboard() {
               border: `2px solid ${colors.border}`,
               borderRadius: '4px',
               cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               opacity: currentPage === 1 ? 0.5 : 1
             }}
           >
@@ -860,7 +860,7 @@ export default function Dashboard() {
                     border: `2px solid ${currentPage === page ? colors.purple : colors.border}`,
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    fontSize: typography.getFontSize('body', isMobile),
+                    fontSize: '16px',
                     fontWeight: currentPage === page ? 'bold' : 'normal'
                   }}
                 >
@@ -881,7 +881,7 @@ export default function Dashboard() {
               border: `2px solid ${colors.border}`,
               borderRadius: '4px',
               cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               opacity: currentPage === totalPages ? 0.5 : 1
             }}
           >

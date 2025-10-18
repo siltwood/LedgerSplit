@@ -145,7 +145,7 @@ export default function Login() {
             style={{
               width: '100%',
               padding: isMobile ? '6px' : '8px',
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}
@@ -162,7 +162,7 @@ export default function Login() {
             style={{
               width: '100%',
               padding: isMobile ? '6px' : '8px',
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px'
             }}

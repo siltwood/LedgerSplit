@@ -107,7 +107,7 @@ export default function ResetPassword() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: typography.getFontSize('body', isMobile),
+                fontSize: '16px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -128,7 +128,7 @@ export default function ResetPassword() {
               style={{
                 width: '100%',
                 padding: '6px',
-                fontSize: typography.getFontSize('body', isMobile),
+                fontSize: '16px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text

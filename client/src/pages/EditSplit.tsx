@@ -182,7 +182,7 @@ export default function EditSplit() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -204,7 +204,7 @@ export default function EditSplit() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,
@@ -330,7 +330,7 @@ export default function EditSplit() {
                     )}
                   </div>
                   <span style={{
-                    fontSize: typography.getFontSize('body', isMobile),
+                    fontSize: '16px',
                     color: isSelected ? '#fff' : colors.text,
                     fontWeight: isSelected ? '600' : '500'
                   }}>

@@ -243,7 +243,7 @@ export default function History() {
             border: `2px solid ${viewType === 'events' ? colors.purple : colors.border}`,
             borderRadius: '8px',
             cursor: 'pointer',
-            fontSize: typography.getFontSize('body', isMobile),
+            fontSize: '16px',
             fontWeight: viewType === 'events' ? 'bold' : 'normal'
           }}
         >
@@ -258,7 +258,7 @@ export default function History() {
             border: `2px solid ${viewType === 'bills' ? colors.purple : colors.border}`,
             borderRadius: '8px',
             cursor: 'pointer',
-            fontSize: typography.getFontSize('body', isMobile),
+            fontSize: '16px',
             fontWeight: viewType === 'bills' ? 'bold' : 'normal'
           }}
         >
@@ -273,7 +273,7 @@ export default function History() {
             border: `2px solid ${viewType === 'payments' ? colors.purple : colors.border}`,
             borderRadius: '8px',
             cursor: 'pointer',
-            fontSize: typography.getFontSize('body', isMobile),
+            fontSize: '16px',
             fontWeight: viewType === 'payments' ? 'bold' : 'normal'
           }}
         >
@@ -294,7 +294,7 @@ export default function History() {
             width: '100%',
             maxWidth: '600px',
             padding: '8px 12px',
-            fontSize: typography.getFontSize('body', isMobile),
+            fontSize: '16px',
             border: `2px solid ${colors.border}`,
             borderRadius: '8px',
             background: colors.surface,
@@ -432,7 +432,7 @@ export default function History() {
                                   padding: '4px 8px',
                                   background: getParticipantColor(event, p.user_id),
                                   borderRadius: '6px',
-                                  fontSize: typography.getFontSize('body', isMobile),
+                                  fontSize: '16px',
                                   color: '#000',
                                   fontWeight: '500'
                                 }}
@@ -582,7 +582,7 @@ export default function History() {
               border: `2px solid ${colors.border}`,
               borderRadius: '4px',
               cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               opacity: currentPage === 1 ? 0.5 : 1
             }}
           >
@@ -625,7 +625,7 @@ export default function History() {
                     border: `2px solid ${currentPage === page ? colors.purple : colors.border}`,
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    fontSize: typography.getFontSize('body', isMobile),
+                    fontSize: '16px',
                     fontWeight: currentPage === page ? 'bold' : 'normal'
                   }}
                 >
@@ -646,7 +646,7 @@ export default function History() {
               border: `2px solid ${colors.border}`,
               borderRadius: '4px',
               cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-              fontSize: typography.getFontSize('body', isMobile),
+              fontSize: '16px',
               opacity: currentPage === totalPages ? 0.5 : 1
             }}
           >

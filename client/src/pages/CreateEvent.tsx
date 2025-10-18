@@ -73,7 +73,7 @@ export default function CreateEvent() {
             style={{
               width: '100%',
               padding: '8px',
-              fontSize: typography.getFontSize('bodyLarge', isMobile),
+              fontSize: '16px',
               border: `1px solid ${colors.border}`,
               borderRadius: '4px',
               background: colors.surface,

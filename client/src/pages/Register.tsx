@@ -108,7 +108,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: isMobile ? '6px' : '8px',
-                fontSize: typography.getFontSize('body', isMobile),
+                fontSize: '16px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -126,7 +126,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: isMobile ? '6px' : '8px',
-                fontSize: typography.getFontSize('body', isMobile),
+                fontSize: '16px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -145,7 +145,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: isMobile ? '6px' : '8px',
-                fontSize: typography.getFontSize('body', isMobile),
+                fontSize: '16px',
                 border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
@@ -164,7 +164,7 @@ export default function Register() {
               style={{
                 width: '100%',
                 padding: isMobile ? '6px' : '8px',
-                fontSize: typography.getFontSize('body', isMobile),
+                fontSize: '16px',
                 border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
                 borderRadius: '4px',
                 color: colors.text
