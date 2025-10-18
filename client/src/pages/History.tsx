@@ -288,7 +288,6 @@ export default function History() {
         </label>
         <input
           type="text"
-          placeholder={`Search by ${viewType === 'events' ? 'name, description, or participant' : 'description, category, event, or payer'}...`}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{

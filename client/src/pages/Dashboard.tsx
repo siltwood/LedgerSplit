@@ -307,7 +307,6 @@ export default function Dashboard() {
           )}
           <input
             type="text"
-            placeholder=""
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {

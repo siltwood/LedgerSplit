@@ -161,7 +161,6 @@ export default function CreateSplit() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            placeholder="Dinner, Uber, etc."
             style={{
               width: '100%',
               padding: '8px',
@@ -184,7 +183,6 @@ export default function CreateSplit() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
-            placeholder="0.00"
             style={{
               width: '100%',
               padding: '8px',

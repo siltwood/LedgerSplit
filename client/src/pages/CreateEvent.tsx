@@ -70,7 +70,6 @@ export default function CreateEvent() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="Trip, Concert, etc."
             style={{
               width: '100%',
               padding: '8px',
@@ -90,7 +89,6 @@ export default function CreateEvent() {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Add details..."
             rows={3}
             style={{
               width: '100%',

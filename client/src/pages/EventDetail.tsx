@@ -864,7 +864,6 @@ export default function EventDetail() {
               type="text"
               value={billSearchQuery}
               onChange={(e) => setBillSearchQuery(e.target.value)}
-              placeholder=""
               style={{
                 width: '100%',
                 padding: '8px 12px',
