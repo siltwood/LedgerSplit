@@ -120,7 +120,7 @@ export const login = async (req: AuthRequest, res: Response) => {
 
     // Check if user registered with Google
     if (!user.password_hash) {
-      return res.status(400).json({ error: 'Please login with Google.' });
+      return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
     // Verify password

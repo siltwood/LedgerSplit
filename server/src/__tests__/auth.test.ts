@@ -241,8 +241,8 @@ describe('Auth Routes', () => {
           password: 'password123',
         });
 
-      expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Please login with Google.');
+      expect(response.status).toBe(401);
+      expect(response.body.error).toBe('Invalid credentials.');
     });
   });
 

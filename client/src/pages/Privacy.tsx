@@ -38,9 +38,9 @@ export default function Privacy() {
             LedgerSplit collects the following information:
           </p>
           <ul style={{ color: colors.text, fontSize: '18px', lineHeight: '1.8', paddingLeft: '24px' }}>
-            <li>Account information (email, name, password)</li>
-            <li>Event and expense data you create</li>
-            <li>Usage data through Google Analytics (if you consent)</li>
+            <li>Account information (email, name, password).</li>
+            <li>Event and expense data you create.</li>
+            <li>Usage data through Google Analytics (if you consent).</li>
           </ul>
         </section>
 
@@ -59,8 +59,8 @@ export default function Privacy() {
             These cookies are necessary for the website to function and cannot be disabled:
           </p>
           <ul style={{ color: colors.text, fontSize: '18px', lineHeight: '1.8', paddingLeft: '24px', marginBottom: '12px' }}>
-            <li><strong>Authentication cookies:</strong> Keep you logged in to your account</li>
-            <li><strong>Session storage:</strong> Store temporary data like form inputs</li>
+            <li><strong>Authentication cookies:</strong> Keep you logged in to your account.</li>
+            <li><strong>Session storage:</strong> Store temporary data like form inputs.</li>
           </ul>
 
           <h3 style={{ color: colors.text, fontSize: '20px', marginBottom: '8px', marginTop: '16px' }}>
@@ -70,9 +70,9 @@ export default function Privacy() {
             With your consent, we use Google Analytics to understand how people use our service:
           </p>
           <ul style={{ color: colors.text, fontSize: '18px', lineHeight: '1.8', paddingLeft: '24px', marginBottom: '12px' }}>
-            <li><strong>Google Analytics:</strong> Tracks page views, user interactions, and helps us improve the app</li>
-            <li><strong>Data collected:</strong> Pages visited, time spent, browser type, approximate location (city-level)</li>
-            <li><strong>Your control:</strong> You can decline analytics cookies and the app will work exactly the same</li>
+            <li><strong>Google Analytics:</strong> Tracks page views, user interactions, and helps us improve the app.</li>
+            <li><strong>Data collected:</strong> Pages visited, time spent, browser type, approximate location (city-level).</li>
+            <li><strong>Your control:</strong> You can decline analytics cookies and the app will work exactly the same.</li>
           </ul>
           <p style={{ color: colors.text, fontSize: '18px', lineHeight: '1.6' }}>
             Google Analytics data is anonymized and never sold to third parties.
@@ -87,11 +87,11 @@ export default function Privacy() {
             You have the right to:
           </p>
           <ul style={{ color: colors.text, fontSize: '18px', lineHeight: '1.8', paddingLeft: '24px' }}>
-            <li>Access your personal data</li>
-            <li>Correct inaccurate data</li>
-            <li>Delete your account and all associated data</li>
-            <li>Export your data</li>
-            <li>Withdraw cookie consent at any time</li>
+            <li>Access your personal data.</li>
+            <li>Correct inaccurate data.</li>
+            <li>Delete your account and all associated data.</li>
+            <li>Export your data.</li>
+            <li>Withdraw cookie consent at any time.</li>
           </ul>
         </section>
 
@@ -112,11 +112,11 @@ export default function Privacy() {
             You can delete your account at any time from the Settings page. When you delete your account:
           </p>
           <ul style={{ color: colors.text, fontSize: '18px', lineHeight: '1.8', paddingLeft: '24px', marginTop: '12px' }}>
-            <li>Your email is changed to a system-generated address (deleted_[id]@ledgersplit.com)</li>
-            <li>Your password and login credentials are permanently deleted</li>
-            <li>Your name remains visible in events you participated in (displayed with strikethrough and "Account deleted" label)</li>
-            <li>You can no longer log in or access your account</li>
-            <li>Event history with your participation is preserved for other users</li>
+            <li>Your email is changed to a system-generated address (deleted_[id]@ledgersplit.com).</li>
+            <li>Your password and login credentials are permanently deleted.</li>
+            <li>Your name remains visible in events you participated in (displayed with strikethrough and "Account deleted" label).</li>
+            <li>You can no longer log in or access your account.</li>
+            <li>Event history with your participation is preserved for other users.</li>
           </ul>
         </section>
 
@@ -128,9 +128,9 @@ export default function Privacy() {
             To change your cookie preferences:
           </p>
           <ol style={{ color: colors.text, fontSize: '18px', lineHeight: '1.8', paddingLeft: '24px' }}>
-            <li>Clear your browser's localStorage for this site</li>
-            <li>Refresh the page</li>
-            <li>The cookie consent banner will appear again</li>
+            <li>Clear your browser's localStorage for this site.</li>
+            <li>Refresh the page.</li>
+            <li>The cookie consent banner will appear again.</li>
           </ol>
         </section>
 
@@ -139,7 +139,7 @@ export default function Privacy() {
             Contact
           </h2>
           <p style={{ color: colors.text, fontSize: '18px', lineHeight: '1.6' }}>
-            If you have questions about this privacy policy or want to exercise your data rights, contact us at hello@ledgersplit.com
+            If you have questions about this privacy policy or want to exercise your data rights, contact us at hello@ledgersplit.com.
           </p>
         </section>
 
