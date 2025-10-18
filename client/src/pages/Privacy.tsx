@@ -112,9 +112,11 @@ export default function Privacy() {
             You can delete your account at any time from the Settings page. When you delete your account:
           </p>
           <ul style={{ color: colors.text, fontSize: '18px', lineHeight: '1.8', paddingLeft: '24px', marginTop: '12px' }}>
-            <li>Your email is anonymized</li>
-            <li>Your name remains visible in events you participated in (shown as "Account deleted")</li>
-            <li>Your personal data is no longer accessible</li>
+            <li>Your email is changed to a system-generated address (deleted_[id]@ledgersplit.com)</li>
+            <li>Your password and login credentials are permanently deleted</li>
+            <li>Your name remains visible in events you participated in (displayed with strikethrough and "Account deleted" label)</li>
+            <li>You can no longer log in or access your account</li>
+            <li>Event history with your participation is preserved for other users</li>
           </ul>
         </section>
 
