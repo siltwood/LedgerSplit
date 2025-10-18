@@ -6,13 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LedgerSplit - expense tracker</title>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8HGMBD1PJJ"></script>
+    <!-- Google tag (gtag.js) - Only loaded if user consents -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-8HGMBD1PJJ');
+      // Check if user has accepted cookies before loading analytics
+      const cookieConsent = localStorage.getItem('cookie-consent');
+
+      if (cookieConsent === 'accepted') {
+        // Load Google Analytics
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-8HGMBD1PJJ';
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8HGMBD1PJJ');
+      }
     </script>
   </head>
   <body>

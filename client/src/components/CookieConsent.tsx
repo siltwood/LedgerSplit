@@ -15,6 +15,8 @@ export default function CookieConsent() {
   const handleAccept = () => {
     localStorage.setItem('cookie-consent', 'accepted');
     setShowBanner(false);
+    // Reload page to load analytics script
+    window.location.reload();
   };
 
   const handleDecline = () => {
