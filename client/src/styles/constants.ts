@@ -1,11 +1,11 @@
 export const UI_CONSTANTS = {
-  // Font sizes - MINIMUM 18px for all text
+  // Font sizes
   fontSize: {
-    input: '18px',
+    input: '16px',
     button: '18px',
-    label: '20px',
+    label: '18px',
     body: '18px',
-    small: '18px',
+    small: '16px',
   },
 
   // Input styles
@@ -27,3 +27,15 @@ export const UI_CONSTANTS = {
     textFontSize: '18px',
   },
 } as const;
+
+// Standard input style helper
+export const getInputStyle = (colors: any, isMobile?: boolean) => ({
+  width: '100%',
+  padding: isMobile ? '6px' : '8px',
+  fontSize: UI_CONSTANTS.fontSize.input,
+  border: `1px solid ${colors.border}`,
+  borderRadius: '4px',
+  background: colors.surface,
+  color: colors.text,
+  outline: 'none',
+});

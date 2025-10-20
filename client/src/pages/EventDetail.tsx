@@ -29,6 +29,7 @@ export default function EventDetail() {
   const [sortBy, setSortBy] = useState<string>('date-newest');
   const [filterBy, setFilterBy] = useState<string>('all');
   const [billsPage, setBillsPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   useEffect(() => {
     loadData();
@@ -238,15 +239,6 @@ export default function EventDetail() {
     }
   };
 
-  if (loading) return <div style={{ padding: '20px' }}></div>;
-  if (!event) {
-    // If event is null after loading, redirect to dashboard
-    navigate('/dashboard');
-    return <div style={{ padding: '20px' }}></div>;
-  }
-
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
-
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 600);
@@ -254,6 +246,13 @@ export default function EventDetail() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  if (loading) return <div style={{ padding: '20px' }}></div>;
+  if (!event) {
+    // If event is null after loading, redirect to dashboard
+    navigate('/dashboard');
+    return <div style={{ padding: '20px' }}></div>;
+  }
   const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
 
   // Calculate balances (who owes whom)
