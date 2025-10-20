@@ -1,14 +1,24 @@
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
+import Footer from './Footer';
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -65,14 +75,6 @@ export default function Layout() {
                   fontSize: '20px'
                 }}>
                   Dashboard
-                </Link>
-                <Link to="/history" style={{
-                  color: colors.text,
-                  textDecoration: 'none',
-                  fontWeight: location.pathname === '/history' ? 'bold' : 'normal',
-                  fontSize: '20px'
-                }}>
-                  History
                 </Link>
                 <Link to="/settings" style={{
                   color: colors.text,
@@ -143,15 +145,6 @@ export default function Layout() {
             }}>
               Dashboard
             </Link>
-            <Link to="/history" onClick={() => setMobileMenuOpen(false)} style={{
-              color: colors.text,
-              textDecoration: 'none',
-              padding: '10px',
-              fontWeight: location.pathname === '/history' ? 'bold' : 'normal',
-              fontSize: '20px'
-            }}>
-              History
-            </Link>
             <Link to="/settings" onClick={() => setMobileMenuOpen(false)} style={{
               color: colors.text,
               textDecoration: 'none',
@@ -161,7 +154,7 @@ export default function Layout() {
             }}>
               Settings
             </Link>
-            <div style={{ padding: '10px', color: colors.text, fontSize: '20px', fontWeight: 'bold', borderTop: `1px solid ${colors.border}`, marginTop: '5px', paddingTop: '15px' }}>
+            <div style={{ padding: '10px', color: colors.text, fontSize: '20px', fontWeight: 'bold', borderTop: `1px solid ${colors.border}`, marginTop: '5px', paddingTop: '15px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user.name}
             </div>
             <button
@@ -203,19 +196,7 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer style={{
-        background: colors.surface,
-        padding: '15px 20px',
-        textAlign: 'center',
-        borderTop: `1px solid ${colors.border}`
-      }}>
-        <div style={{ color: colors.text, fontSize: '20px' }}>
-          Need help? Contact us at{' '}
-          <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
-            hello@ledgersplit.com
-          </a>
-        </div>
-      </footer>
+      <Footer isMobile={isMobile} />
     </div>
   );
 }

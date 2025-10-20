@@ -5,7 +5,8 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
 import { typography } from '../styles/typography';
-import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
+import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT } from '../styles/constants';
+import Footer from '../components/Footer';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -107,8 +108,7 @@ export default function Login() {
       {/* LedgerSplit Header */}
       <div style={{
         textAlign: 'center',
-        padding: isMobile ? '12px 0 8px' : '16px 0 12px',
-        borderBottom: `1px solid ${colors.border}`
+        padding: isMobile ? '12px 0 8px' : '16px 0 12px'
       }}>
         <h1 style={{
           color: colors.text,
@@ -121,8 +121,6 @@ export default function Login() {
       </div>
 
       <div style={{ flex: 1, maxWidth: '400px', margin: '0 auto', padding: isMobile ? '16px 10px' : '20px 10px', width: '100%' }}>
-        <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: typography.getFontSize('h2', isMobile) }}>Login</h2>
-
         {error && (
         <div style={{
           padding: INPUT_PADDING,
@@ -137,7 +135,7 @@ export default function Login() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Email</label>
+          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>Email</label>
           <input
             type="email"
             value={email}
@@ -154,7 +152,7 @@ export default function Login() {
         </div>
 
         <div style={{ marginBottom: isMobile ? '6px' : '8px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Password</label>
+          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>Password</label>
           <input
             type="password"
             value={password}
@@ -171,7 +169,7 @@ export default function Login() {
         </div>
 
         <div style={{ marginBottom: isMobile ? '8px' : '12px', textAlign: 'left' }}>
-          <Link to="/forgot-password" style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
+          <Link to="/forgot-password" style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), textDecoration: 'underline', fontWeight: LABEL_FONT_WEIGHT }}>
             Forgot password?
           </Link>
         </div>
@@ -191,7 +189,7 @@ export default function Login() {
       </form>
 
       <div style={{ margin: isMobile ? '8px 0' : '12px 0', textAlign: 'center', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
-        <span>or</span>
+        <span style={{ fontWeight: LABEL_FONT_WEIGHT }}>or</span>
       </div>
 
       <button
@@ -206,23 +204,11 @@ export default function Login() {
       </button>
 
         <p style={{ marginTop: isMobile ? '8px' : '12px', textAlign: 'center', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
-          Don't have an account? <Link to="/register" style={{ color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: 'bold' }}>Register</Link>
+          Don't have an account? <Link to="/register" style={{ color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT, textDecoration: 'underline' }}>Register</Link>
         </p>
       </div>
 
-      <footer style={{
-        background: colors.surface,
-        padding: isMobile ? '8px' : '10px',
-        textAlign: 'center',
-        borderTop: `1px solid ${colors.border}`
-      }}>
-        <div style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile) }}>
-          Need help? Contact us at{' '}
-          <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
-            hello@ledgersplit.com
-          </a>
-        </div>
-      </footer>
+      <Footer isMobile={isMobile} />
     </div>
   );
 }

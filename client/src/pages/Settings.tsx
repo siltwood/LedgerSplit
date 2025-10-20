@@ -5,7 +5,7 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
-import { BORDER_RADIUS } from '../styles/constants';
+import { BORDER_RADIUS, LABEL_FONT_WEIGHT } from '../styles/constants';
 
 export default function Settings() {
   const { user } = useAuth();
@@ -46,13 +46,13 @@ export default function Settings() {
       }}>
         <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text, fontSize: typography.getFontSize('h2', isMobile) }}>Profile</h2>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+          <label style={{ display: 'block', marginBottom: '5px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
             Name
           </label>
           <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), color: colors.text }}>{user?.name}</div>
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+          <label style={{ display: 'block', marginBottom: '5px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
             Email
           </label>
           <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), color: colors.text }}>{user?.email}</div>

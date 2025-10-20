@@ -187,8 +187,8 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: 'Event name is required.' });
     }
 
-    // Validate and sanitize name
-    const nameValidation = sanitizeText(name, 200);
+    // Validate and sanitize name (max 20 characters)
+    const nameValidation = sanitizeText(name, 20);
     if (!nameValidation.valid) {
       return res.status(400).json({ error: nameValidation.error });
     }
@@ -329,7 +329,15 @@ export const updateEvent = async (req: AuthRequest, res: Response) => {
 
     // Build update object (no longer includes is_dismissed)
     const updateData: any = {};
-    if (name !== undefined) updateData.name = name;
+    if (name !== undefined) {
+      // Import validation utilities
+      const { sanitizeText } = await import('../utils/validation');
+      const nameValidation = sanitizeText(name, 20);
+      if (!nameValidation.valid) {
+        return res.status(400).json({ error: nameValidation.error });
+      }
+      updateData.name = nameValidation.sanitized;
+    }
     if (description !== undefined) updateData.description = description;
     if (is_settled !== undefined) updateData.is_settled = is_settled;
 

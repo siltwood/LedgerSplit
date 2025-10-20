@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
 import { typography } from '../styles/typography';
+import Footer from '../components/Footer';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -77,19 +78,7 @@ export default function Landing() {
         </div>
       </div>
 
-      <footer style={{
-        background: colors.surface,
-        padding: '15px 20px',
-        textAlign: 'center',
-        borderTop: `1px solid ${colors.border}`
-      }}>
-        <div style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile) }}>
-          Need help? Contact us at{' '}
-          <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
-            hello@ledgersplit.com
-          </a>
-        </div>
-      </footer>
+      <Footer isMobile={isMobile} />
     </div>
   );
 }

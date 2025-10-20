@@ -72,6 +72,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://ledgersplit.com',
   'https://www.ledgersplit.com',
+  'https://localtest.ngrok-free.app',
+  'https://chromous-unattributabley-yee.ngrok-free.dev',
 ];
 
 app.use(

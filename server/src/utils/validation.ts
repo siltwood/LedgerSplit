@@ -28,7 +28,7 @@ export const validatePassword = (password: string): { valid: boolean; error?: st
   return { valid: true };
 };
 
-// Validate and sanitize name
+// Validate and sanitize name (for register endpoint - 20 char limit)
 export const validateName = (name: string): { valid: boolean; sanitized: string; error?: string } => {
   const sanitized = sanitizeString(name);
 
@@ -36,8 +36,8 @@ export const validateName = (name: string): { valid: boolean; sanitized: string;
     return { valid: false, sanitized: '', error: 'Name is required.' };
   }
 
-  if (sanitized.length > 100) {
-    return { valid: false, sanitized: '', error: 'Name must be less than 100 characters.' };
+  if (sanitized.length > 20) {
+    return { valid: false, sanitized: '', error: 'Name must be 20 characters or less.' };
   }
 
   return { valid: true, sanitized };

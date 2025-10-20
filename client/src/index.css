@@ -6,13 +6,11 @@
 
 body {
   margin: 0;
-  font-family: 'Press Start 2P', monospace;
-  -webkit-font-smoothing: none;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #bcd4de;
   color: #000000;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
   font-size: 14px;
   line-height: 1.6;
 }
@@ -39,22 +37,21 @@ a:hover {
   text-decoration: none;
 }
 
-/* Pixel-perfect buttons */
+/* Buttons */
 button {
-  font-family: 'Press Start 2P', monospace;
+  font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: all 0.1s;
 }
 
 /* Input styles */
 input, textarea, select {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
   background: #a5ccd1;
-  border: 4px solid #9dacb2;
+  border: 2px solid #9dacb2;
   color: #000000;
-  padding: 12px;
-  image-rendering: pixelated;
+  padding: 8px;
   line-height: 1.6;
 }
 

@@ -8,7 +8,6 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import AcceptInvite from './pages/AcceptInvite';
 import Dashboard from './pages/Dashboard';
-import History from './pages/History';
 import CreateSplit from './pages/CreateSplit';
 import EditSplit from './pages/EditSplit';
 import CreateEvent from './pages/CreateEvent';
@@ -93,14 +92,6 @@ function App() {
               element={
                 <PrivateRoute>
                   <EditSplit />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/history"
-              element={
-                <PrivateRoute>
-                  <History />
                 </PrivateRoute>
               }
             />

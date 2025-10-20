@@ -4,7 +4,7 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
 import { buttonStyles } from '../styles/buttons';
-import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
+import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT } from '../styles/constants';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -76,7 +76,7 @@ export default function ForgotPassword() {
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+          <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
             Email
           </label>
           <input

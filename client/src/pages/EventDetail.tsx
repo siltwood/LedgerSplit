@@ -4,9 +4,10 @@ import { eventsAPI, splitsAPI, paymentsAPI, settledAPI } from '../services/api';
 import type { Event, Split, EventSettledConfirmation } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth, getResponsiveCardWidth } from '../styles/buttons';
-import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
+import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT } from '../styles/constants';
 import { useAuth } from '../context/AuthContext';
 import Caret from '../components/Caret';
+import SearchInput from '../components/SearchInput';
 
 const BILLS_PER_PAGE = 5;
 
@@ -28,7 +29,6 @@ export default function EventDetail() {
   const [billSearchQuery, setBillSearchQuery] = useState('');
   const [expandedBills, setExpandedBills] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState<string>('date-newest');
-  const [filterBy, setFilterBy] = useState<string>('all');
   const [billsPage, setBillsPage] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
@@ -39,7 +39,7 @@ export default function EventDetail() {
   // Reset to page 1 when search/filter/sort changes
   useEffect(() => {
     setBillsPage(1);
-  }, [billSearchQuery, sortBy, filterBy]);
+  }, [billSearchQuery, sortBy]);
 
   const loadData = async () => {
     if (!id) return;
@@ -320,21 +320,6 @@ export default function EventDetail() {
   // Filter and sort bills
   const filteredBills = splits
     .filter(split => {
-      // Apply filter
-      if (filterBy === 'all') return true;
-      if (filterBy === 'my-bills') return split.created_by === user?.id;
-      if (filterBy === 'i-owe') {
-        return split.paid_by !== user?.id && split.split_participants?.some((p: any) => p.user_id === user?.id);
-      }
-      if (filterBy === 'i-paid') return split.paid_by === user?.id;
-      if (filterBy.startsWith('cat-')) {
-        const category = filterBy.replace('cat-', '');
-        if (category === 'uncategorized') return !split.category;
-        return split.category === category;
-      }
-      return true;
-    })
-    .filter(split => {
       // Apply search filter
       if (!billSearchQuery.trim()) return true;
       const query = billSearchQuery.toLowerCase();
@@ -467,7 +452,7 @@ export default function EventDetail() {
                           background: 'transparent',
                           border: 'none',
                           cursor: 'pointer',
-                          fontSize: '14px',
+                          fontSize: '16px',
                           color: '#000',
                           fontWeight: 'bold',
                           padding: '2px',
@@ -509,7 +494,7 @@ export default function EventDetail() {
             fontWeight: '600',
             width: '100%'
           }}>
-            Share Invite Link
+            Invite to Event
           </button>
           {event.created_by !== user?.id && (
             <button
@@ -640,7 +625,7 @@ export default function EventDetail() {
                   background: colors.purple,
                   color: '#fff',
                   borderRadius: '12px',
-                  fontSize: '14px',
+                  fontSize: '16px',
                   fontWeight: '600',
                   flexShrink: 0
                 }}>
@@ -776,117 +761,35 @@ export default function EventDetail() {
       {/* Bills Section */}
       <div id="bills-section">
         <div style={{ marginBottom: '12px' }}>
-          <h2 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>
-            Bills
-          </h2>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none' }}>
-              <button style={{
-                ...buttonStyles.primary,
-                padding: isMobile ? '8px 16px' : '10px 20px',
-                fontSize: isMobile ? '16px' : '18px',
-                ...getResponsiveButtonWidth(isMobile)
-              }}>
-                Add Bill
-              </button>
-            </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
             {splits.length > 0 && (
-              <div onClick={toggleAllBills}>
+              <div onClick={toggleAllBills} style={{ cursor: 'pointer' }}>
                 <Caret direction={expandedBills.size === splits.length ? 'up' : 'down'} />
               </div>
             )}
+            <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>
+              Bills
+            </h2>
           </div>
+          <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none' }}>
+            <button style={{
+              ...buttonStyles.primary,
+              width: 'auto',
+              padding: isMobile ? '8px 16px' : '10px 20px',
+              fontSize: isMobile ? '16px' : '18px'
+            }}>
+              + New Bill
+            </button>
+          </Link>
         </div>
-
-        {/* Sort and Filter */}
-        {splits.length > 0 && (
-          <div style={{ marginBottom: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            <div style={{ flex: '1', minWidth: '200px' }}>
-              <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px', fontWeight: 'bold' }}>
-                Sort By
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  fontSize: '16px',
-                  border: `2px solid ${colors.border}`,
-                  borderRadius: '8px',
-                  background: colors.surface,
-                  color: colors.text,
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="date-newest">Date (Newest)</option>
-                <option value="date-oldest">Date (Oldest)</option>
-                <option value="amount-high">Amount (High to Low)</option>
-                <option value="amount-low">Amount (Low to High)</option>
-                <option value="category">Category</option>
-                <option value="creator">Bill Creator</option>
-              </select>
-            </div>
-            <div style={{ flex: '1', minWidth: '200px' }}>
-              <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px', fontWeight: 'bold' }}>
-                Filter By
-              </label>
-              <select
-                value={filterBy}
-                onChange={(e) => setFilterBy(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  fontSize: '16px',
-                  border: `2px solid ${colors.border}`,
-                  borderRadius: '8px',
-                  background: colors.surface,
-                  color: colors.text,
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="all">All Bills</option>
-                <option value="my-bills">My Bills</option>
-                <option value="i-owe">Bills I Owe On</option>
-                <option value="i-paid">Bills I Paid For</option>
-                <optgroup label="By Category">
-                  <option value="cat-food">Food</option>
-                  <option value="cat-transportation">Transport</option>
-                  <option value="cat-lodging">Lodging</option>
-                  <option value="cat-entertainment">Fun</option>
-                  <option value="cat-groceries">Groceries</option>
-                  <option value="cat-other">Other</option>
-                  <option value="cat-uncategorized">Uncategorized</option>
-                </optgroup>
-              </select>
-            </div>
-          </div>
-        )}
 
         {/* Bill Search */}
         {splits.length > 0 && (
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: '18px', fontWeight: 'bold' }}>
-              Search Bills
-            </label>
-            <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '4px' }}>
-              Search by description or payer...
-            </div>
-            <input
-              type="text"
-              value={billSearchQuery}
-              onChange={(e) => setBillSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                fontSize: '16px',
-                border: `2px solid ${colors.border}`,
-                borderRadius: '8px',
-                background: colors.surface,
-                color: colors.text
-              }}
-            />
-          </div>
+          <SearchInput
+            value={billSearchQuery}
+            onChange={setBillSearchQuery}
+            isMobile={isMobile}
+          />
         )}
 
         {/* Results count */}
@@ -999,7 +902,7 @@ export default function EventDetail() {
                           background: colors.skyBlue,
                           color: '#000',
                           borderRadius: '16px',
-                          fontSize: '14px',
+                          fontSize: '16px',
                           fontWeight: '600'
                         }}>
                           {getCategoryLabel(split.category)}
@@ -1028,7 +931,7 @@ export default function EventDetail() {
                                 background: colors.purple,
                                 color: '#fff',
                                 borderRadius: '16px',
-                                fontSize: '14px',
+                                fontSize: '16px',
                                 fontWeight: '600'
                               }}>
                                 ✓ Settled

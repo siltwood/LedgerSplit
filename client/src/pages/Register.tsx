@@ -5,7 +5,8 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
 import { typography } from '../styles/typography';
-import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
+import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT } from '../styles/constants';
+import Footer from '../components/Footer';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -14,6 +15,8 @@ export default function Register() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -70,8 +73,7 @@ export default function Register() {
       {/* LedgerSplit Header */}
       <div style={{
         textAlign: 'center',
-        padding: isMobile ? '12px 0 8px' : '16px 0 12px',
-        borderBottom: `1px solid ${colors.border}`
+        padding: isMobile ? '12px 0 8px' : '16px 0 12px'
       }}>
         <h1 style={{
           color: colors.text,
@@ -84,8 +86,6 @@ export default function Register() {
       </div>
 
       <div style={{ flex: 1, maxWidth: '400px', margin: '0 auto', padding: isMobile ? '16px 10px' : '20px 10px', width: '100%' }}>
-        <h2 style={{ color: colors.text, marginBottom: '12px', fontSize: typography.getFontSize('h2', isMobile) }}>Register</h2>
-
         {error && (
           <div style={{
             padding: INPUT_PADDING,
@@ -100,11 +100,18 @@ export default function Register() {
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Name</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>Name</label>
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (e.target.value.length > 20) {
+                  setNameError('Max name length is 20');
+                } else {
+                  setNameError('');
+                }
+              }}
               required
               style={{
                 width: '100%',
@@ -115,14 +122,32 @@ export default function Register() {
                 color: colors.text
               }}
             />
+            {nameError && (
+              <div style={{
+                color: colors.text,
+                fontSize: '16px',
+                fontWeight: LABEL_FONT_WEIGHT,
+                marginTop: '4px'
+              }}>
+                {nameError}
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Email</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>Email</label>
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (e.target.value && !emailRegex.test(e.target.value)) {
+                  setEmailError('Please enter a valid email address');
+                } else {
+                  setEmailError('');
+                }
+              }}
               required
               style={{
                 width: '100%',
@@ -133,49 +158,80 @@ export default function Register() {
                 color: colors.text
               }}
             />
+            {emailError && (
+              <div style={{
+                color: colors.text,
+                fontSize: '16px',
+                fontWeight: LABEL_FONT_WEIGHT,
+                marginTop: '4px'
+              }}>
+                {emailError}
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Password</label>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>Password</label>
             <input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              style={{
-                width: '100%',
-                padding: isMobile ? '6px' : '8px',
-                fontSize: '16px',
-                border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
-                borderRadius: BORDER_RADIUS,
-                color: colors.text
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (e.target.value.length > 0 && e.target.value.length < 8) {
+                  setPasswordError('Password must be at least 8 characters');
+                } else if (confirmPassword && e.target.value !== confirmPassword) {
+                  setPasswordError('Passwords do not match');
+                } else {
+                  setPasswordError('');
+                }
               }}
-            />
-          </div>
-
-          <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>Confirm Password</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              minLength={6}
               style={{
                 width: '100%',
                 padding: isMobile ? '6px' : '8px',
                 fontSize: '16px',
-                border: `1px solid ${passwordError ? '#ff6b6b' : colors.border}`,
+                border: `1px solid ${colors.border}`,
                 borderRadius: BORDER_RADIUS,
                 color: colors.text
               }}
             />
             {passwordError && (
-              <div style={{ color: '#ff6b6b', fontSize: typography.getFontSize('bodySmall', isMobile), marginTop: '4px' }}>
+              <div style={{
+                color: colors.text,
+                fontSize: '16px',
+                fontWeight: LABEL_FONT_WEIGHT,
+                marginTop: '4px'
+              }}>
                 {passwordError}
               </div>
             )}
+          </div>
+
+          <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
+            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                if (password && e.target.value !== password) {
+                  setPasswordError('Passwords do not match');
+                } else if (password.length > 0 && password.length < 8) {
+                  setPasswordError('Password must be at least 8 characters');
+                } else {
+                  setPasswordError('');
+                }
+              }}
+              required
+              style={{
+                width: '100%',
+                padding: isMobile ? '6px' : '8px',
+                fontSize: '16px',
+                border: `1px solid ${colors.border}`,
+                borderRadius: BORDER_RADIUS,
+                color: colors.text
+              }}
+            />
           </div>
 
           <button
@@ -185,7 +241,8 @@ export default function Register() {
               ...buttonStyles.primary,
               padding: isMobile ? '8px' : '10px',
               fontSize: isMobile ? '16px' : '18px',
-              cursor: loading ? 'not-allowed' : 'pointer'
+              cursor: loading ? 'not-allowed' : 'pointer',
+              marginTop: '20px'
             }}
           >
             {loading ? 'Creating account...' : 'Register'}
@@ -193,7 +250,7 @@ export default function Register() {
         </form>
 
         <div style={{ margin: isMobile ? '8px 0' : '12px 0', textAlign: 'center', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
-          <span>or</span>
+          <span style={{ fontWeight: LABEL_FONT_WEIGHT }}>or</span>
         </div>
 
         <button
@@ -208,23 +265,11 @@ export default function Register() {
         </button>
 
         <p style={{ marginTop: isMobile ? '8px' : '12px', textAlign: 'center', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
-          Already have an account? <Link to="/login" style={{ color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: 'bold' }}>Login</Link>
+          Already have an account? <Link to="/login" style={{ color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT, textDecoration: 'underline' }}>Login</Link>
         </p>
       </div>
 
-      <footer style={{
-        background: colors.surface,
-        padding: isMobile ? '8px' : '10px',
-        textAlign: 'center',
-        borderTop: `1px solid ${colors.border}`
-      }}>
-        <div style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile) }}>
-          Need help? Contact us at{' '}
-          <a href="mailto:hello@ledgersplit.com" style={{ color: colors.text, textDecoration: 'underline' }}>
-            hello@ledgersplit.com
-          </a>
-        </div>
-      </footer>
+      <Footer isMobile={isMobile} />
     </div>
   );
 }

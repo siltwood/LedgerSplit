@@ -6,7 +6,7 @@ import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 import { typography } from '../styles/typography';
-import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
+import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT } from '../styles/constants';
 
 export default function EditSplit() {
   const { user } = useAuth();
@@ -135,19 +135,15 @@ export default function EditSplit() {
           color: colors.text,
           borderRadius: BORDER_RADIUS,
           marginBottom: '20px',
-          fontSize: typography.getFontSize('body', isMobile)
+          fontSize: typography.getFontSize('h2', isMobile),
+          fontWeight: LABEL_FONT_WEIGHT,
+          textAlign: 'center'
         }}>
           {error || 'Event not found'}
         </div>
-        <button
-          onClick={() => navigate('/dashboard')}
-          style={{
-            ...buttonStyles.primary,
-            ...getResponsiveButtonWidth(isMobile)
-          }}
-        >
-          Back to Dashboard
-        </button>
+        <Link to="/dashboard" style={{ textDecoration: 'underline', color: colors.text, fontSize: typography.getFontSize('body', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
+          Go to <span style={{ textDecoration: 'underline' }}>Dashboard</span>
+        </Link>
       </div>
     );
   }
@@ -172,7 +168,7 @@ export default function EditSplit() {
       <form onSubmit={handleSubmit}>
 
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+          <label style={{ display: 'block', marginBottom: '5px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
             Description *
           </label>
           <input
@@ -193,7 +189,7 @@ export default function EditSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+          <label style={{ display: 'block', marginBottom: '5px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
             Amount *
           </label>
           <input
@@ -215,7 +211,7 @@ export default function EditSplit() {
         </div>
 
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+          <label style={{ display: 'block', marginBottom: '8px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
             Category (optional)
           </label>
           <div style={{
@@ -278,7 +274,7 @@ export default function EditSplit() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+          <label style={{ display: 'block', marginBottom: '10px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
             Split between *
           </label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

@@ -164,15 +164,17 @@ describe('Auth Routes', () => {
       db.from.mockImplementation(() => ({
         select: jest.fn(() => ({
           eq: jest.fn(() => ({
-            single: jest.fn().mockResolvedValue({
-              data: {
-                user_id: '123',
-                email: 'test@example.com',
-                name: 'Test User',
-                password_hash: hashedPassword,
-              },
-              error: null,
-            }),
+            is: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: {
+                  user_id: '123',
+                  email: 'test@example.com',
+                  name: 'Test User',
+                  password_hash: hashedPassword,
+                },
+                error: null,
+              }),
+            })),
           })),
         })),
       }));
@@ -195,10 +197,12 @@ describe('Auth Routes', () => {
       db.from.mockImplementation(() => ({
         select: jest.fn(() => ({
           eq: jest.fn(() => ({
-            single: jest.fn().mockResolvedValue({
-              data: null,
-              error: { message: 'Not found' },
-            }),
+            is: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: null,
+                error: { message: 'Not found' },
+              }),
+            })),
           })),
         })),
       }));
@@ -220,16 +224,18 @@ describe('Auth Routes', () => {
       db.from.mockImplementation(() => ({
         select: jest.fn(() => ({
           eq: jest.fn(() => ({
-            single: jest.fn().mockResolvedValue({
-              data: {
-                user_id: '123',
-                email: 'google@example.com',
-                name: 'Google User',
-                google_id: 'google-123',
-                password_hash: null,
-              },
-              error: null,
-            }),
+            is: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: {
+                  user_id: '123',
+                  email: 'google@example.com',
+                  name: 'Google User',
+                  google_id: 'google-123',
+                  password_hash: null,
+                },
+                error: null,
+              }),
+            })),
           })),
         })),
       }));

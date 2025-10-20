@@ -6,11 +6,11 @@ import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 import { typography } from '../styles/typography';
-import { BORDER_RADIUS } from '../styles/constants';
+import { BORDER_RADIUS, LABEL_FONT_WEIGHT } from '../styles/constants';
 import Caret from '../components/Caret';
+import SearchInput from '../components/SearchInput';
 
 type SortOption = 'newest' | 'oldest' | 'name';
-type FilterOption = 'all' | 'active' | 'settled' | 'dismissed';
 
 const EVENTS_PER_PAGE = 5;
 
@@ -23,7 +23,7 @@ export default function Dashboard() {
   const [showLeaveEventModal, setShowLeaveEventModal] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
-  const [filterBy, setFilterBy] = useState<FilterOption>('all');
+  const [filterBy, setFilterBy] = useState<'all' | 'active' | 'settled' | 'dismissed'>('all');
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   const [currentPage, setCurrentPage] = useState(1);
@@ -167,7 +167,7 @@ export default function Dashboard() {
   // Filter and sort events
   const filteredEvents = events
     .filter(event => {
-      // Apply status filter
+      // Apply filter by status
       if (filterBy === 'active' && (event.is_dismissed || event.is_settled)) return false;
       if (filterBy === 'settled' && !event.is_settled) return false;
       if (filterBy === 'dismissed' && !event.is_dismissed) return false;
@@ -217,6 +217,7 @@ export default function Dashboard() {
   // Calculate stats
   const activeEvents = events.filter(e => !e.is_dismissed && !e.is_settled).length;
   const settledEvents = events.filter(e => e.is_settled).length;
+  const dismissedEvents = events.filter(e => e.is_dismissed && !e.is_settled).length;
 
   // Format number with k suffix for 1000+
   const formatCount = (num: number): string => {
@@ -276,155 +277,92 @@ export default function Dashboard() {
         <Link to="/events/new" style={{ textDecoration: 'none' }}>
           <button style={{
             ...buttonStyles.primary,
-            ...getResponsiveButtonWidth(isMobile)
+            width: 'auto',
+            padding: isMobile ? '8px 16px' : '10px 20px'
           }}>
-            Add New Event
+            + New Event
           </button>
         </Link>
       </div>
 
-      {/* Search and Filter */}
-      <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'normal', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
-          Search Events and Participants
-        </label>
-        <div style={{ position: 'relative', width: '100%', maxWidth: isMobile ? '100%' : '600px' }}>
-          {/* Ghost text for in-place suggestion */}
-          {suggestion && searchQuery && (
-            <div style={{
-              position: 'absolute',
-              top: '8px',
-              left: '12px',
-              color: colors.text,
-              opacity: 0.4,
-              fontSize: '16px',
-              pointerEvents: 'none',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden'
-            }}>
-              <span style={{ visibility: 'hidden' }}>{searchQuery}</span>{suggestion.slice(searchQuery.length)}
-            </div>
-          )}
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Tab' && suggestion) {
-                e.preventDefault();
-                setSearchQuery(suggestion);
-              }
-            }}
-            style={{
-              width: '100%',
-              padding: '8px 12px',
-              fontSize: '16px',
-              border: `2px solid ${colors.border}`,
-              borderRadius: '8px',
-              background: colors.surface,
-              color: colors.text,
-              outline: 'none',
-              marginBottom: '8px',
-              position: 'relative',
-              zIndex: 1
-            }}
-          />
-        </div>
-
-        {/* Filter and Sort Controls */}
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '12px', flexWrap: isMobile ? 'wrap' : 'nowrap', width: '100%' }}>
-          <div style={{ flex: isMobile ? '1' : 'none', minWidth: isMobile ? '200px' : 'auto', maxWidth: isMobile ? '100%' : '300px', width: isMobile ? 'auto' : '300px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
-              Filter
-            </label>
-            <select
-              value={filterBy}
-              onChange={(e) => setFilterBy(e.target.value as FilterOption)}
-              style={{
-                width: '100%',
-                padding: '8px 32px 8px 12px',
-                fontSize: isMobile ? '16px' : '16px',
-                border: `2px solid ${colors.border}`,
-                borderRadius: '8px',
-                background: colors.surface,
-                color: colors.text,
-                cursor: 'pointer'
-              }}
-            >
-              <option value="all">All Events</option>
-              <option value="active">Active Only</option>
-              <option value="settled">Settled Only</option>
-              <option value="dismissed">Dismissed Only</option>
-            </select>
-          </div>
-
-          <div style={{ flex: isMobile ? '1' : 'none', minWidth: isMobile ? '200px' : 'auto', maxWidth: isMobile ? '100%' : '300px', width: isMobile ? 'auto' : '300px' }}>
-            <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
-              Sort By
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
-              style={{
-                width: '100%',
-                padding: '8px 32px 8px 12px',
-                fontSize: isMobile ? '16px' : '16px',
-                border: `2px solid ${colors.border}`,
-                borderRadius: '8px',
-                background: colors.surface,
-                color: colors.text,
-                cursor: 'pointer'
-              }}
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="name">Name (A-Z)</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
       {/* Events */}
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <h2 style={{ color: colors.text, margin: 0, fontSize: typography.getFontSize('h2', isMobile) }}>Your Events</h2>
-            {paginatedEvents.length > 0 && (
-              <div onClick={toggleAllEvents}>
-                <Caret direction={expandedEvents.size === paginatedEvents.length ? 'up' : 'down'} />
-              </div>
-            )}
-          </div>
+        {/* Header with title and caret */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+          {/* Expand/Collapse Caret */}
+          {paginatedEvents.length > 0 && (
+            <div onClick={toggleAllEvents} style={{ cursor: 'pointer' }}>
+              <Caret direction={expandedEvents.size === paginatedEvents.length ? 'up' : 'down'} />
+            </div>
+          )}
+          <h2 style={{ color: colors.text, margin: 0, fontSize: typography.getFontSize('h2', isMobile) }}>Your Events</h2>
+        </div>
 
-          {/* Event Count Badges */}
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-            {activeEvents > 0 && (
-              <span style={{
+        {/* Event Count Badges on new line */}
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
+          {activeEvents > 0 && (
+            <span
+              onClick={() => setFilterBy(filterBy === 'active' ? 'all' : 'active')}
+              style={{
                 padding: '4px 10px',
                 background: colors.surface,
                 color: colors.text,
-                border: `2px solid ${colors.border}`,
+                border: filterBy === 'active' ? `2px solid #000000` : `2px solid ${colors.border}`,
                 borderRadius: '12px',
                 fontSize: '18px',
-                fontWeight: '500'
-              }}>
-                {formatCount(activeEvents)} active
-              </span>
-            )}
-            {settledEvents > 0 && (
-              <span style={{
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'border-color 0.2s'
+              }}
+            >
+              {formatCount(activeEvents)} active
+            </span>
+          )}
+          {settledEvents > 0 && (
+            <span
+              onClick={() => setFilterBy(filterBy === 'settled' ? 'all' : 'settled')}
+              style={{
                 padding: '4px 10px',
                 background: colors.purple,
                 color: '#fff',
+                border: filterBy === 'settled' ? `2px solid #000000` : `2px solid ${colors.purple}`,
                 borderRadius: '12px',
                 fontSize: '18px',
-                fontWeight: '500'
-              }}>
-                {formatCount(settledEvents)} settled
-              </span>
-            )}
-          </div>
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'border-color 0.2s'
+              }}
+            >
+              {formatCount(settledEvents)} settled
+            </span>
+          )}
+          {dismissedEvents > 0 && (
+            <span
+              onClick={() => setFilterBy(filterBy === 'dismissed' ? 'all' : 'dismissed')}
+              style={{
+                padding: '4px 10px',
+                background: '#949ba0',
+                color: '#fff',
+                border: filterBy === 'dismissed' ? `2px solid #000000` : `2px solid #949ba0`,
+                borderRadius: '12px',
+                fontSize: '18px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'border-color 0.2s'
+              }}
+            >
+              {formatCount(dismissedEvents)} dismissed
+            </span>
+          )}
         </div>
+
+        {/* Search Input */}
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          suggestion={suggestion}
+          isMobile={isMobile}
+        />
 
         {/* Results count */}
         {filteredEvents.length > 0 && (
@@ -528,17 +466,14 @@ export default function Dashboard() {
                             ✓
                           </span>
                         )}
-                        <span style={{ fontSize: '16px', color: colors.text, opacity: 0.6, flexShrink: 0 }}>
-                          {new Date(event.created_at).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
-                        </span>
-                        <span style={{ fontSize: '16px', color: colors.text, opacity: 0.6, flexShrink: 0 }}>
-                          {event.participants?.length || 0} {(event.participants?.length || 0) === 1 ? 'person' : 'people'}
-                        </span>
                       </div>
+                      <span style={{ fontSize: '16px', color: colors.text, opacity: 0.6, flexShrink: 0, marginLeft: 'auto' }}>
+                        {new Date(event.created_at).toLocaleDateString('en-US', {
+                          month: '2-digit',
+                          day: '2-digit',
+                          year: '2-digit'
+                        })}
+                      </span>
                       <div
                         onClick={(e) => {
                           e.stopPropagation();
@@ -593,9 +528,9 @@ export default function Dashboard() {
 
                       <div style={{ fontSize: '16px', color: colors.text, opacity: 0.7, marginBottom: '8px' }}>
                         {new Date(event.created_at).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
+                          month: '2-digit',
+                          day: '2-digit',
+                          year: '2-digit'
                         })}
                       </div>
 

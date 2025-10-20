@@ -5,8 +5,9 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
 import { typography } from '../styles/typography';
-import { BORDER_RADIUS } from '../styles/constants';
+import { BORDER_RADIUS, LABEL_FONT_WEIGHT } from '../styles/constants';
 import axios from 'axios';
+import ErrorMessage from '../components/ErrorMessage';
 
 export default function AcceptInvite() {
   const [searchParams] = useSearchParams();
@@ -19,6 +20,7 @@ export default function AcceptInvite() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [nameError, setNameError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const token = searchParams.get('token');
@@ -135,8 +137,7 @@ export default function AcceptInvite() {
         {/* LedgerSplit Header */}
         <div style={{
           textAlign: 'center',
-          padding: isMobile ? '12px 0 8px' : '16px 0 12px',
-          borderBottom: `1px solid ${colors.border}`
+          padding: isMobile ? '12px 0 8px' : '16px 0 12px'
         }}>
           <h1 style={{
             color: colors.text,
@@ -160,8 +161,7 @@ export default function AcceptInvite() {
         {/* LedgerSplit Header */}
         <div style={{
           textAlign: 'center',
-          padding: isMobile ? '12px 0 8px' : '16px 0 12px',
-          borderBottom: `1px solid ${colors.border}`
+          padding: isMobile ? '12px 0 8px' : '16px 0 12px'
         }}>
           <h1 style={{
             color: colors.text,
@@ -173,21 +173,17 @@ export default function AcceptInvite() {
           </h1>
         </div>
         <div style={{ maxWidth: '500px', margin: '20px auto', padding: '20px' }}>
-          <div style={{
-            padding: '20px',
-            background: colors.error,
-            color: colors.text,
-            borderRadius: BORDER_RADIUS,
-            marginBottom: '20px',
-            fontSize: typography.getFontSize('body', isMobile),
-            textAlign: 'center'
-          }}>
-            {error}
-          </div>
+          <ErrorMessage message={error} isMobile={isMobile} />
           <div style={{ textAlign: 'center' }}>
-            <Link to="/dashboard" style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
-              Go to Dashboard
-            </Link>
+            {user ? (
+              <Link to="/dashboard" style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), textDecoration: 'underline', fontWeight: LABEL_FONT_WEIGHT }}>
+                Go to <span style={{ textDecoration: 'underline' }}>Dashboard</span>
+              </Link>
+            ) : (
+              <Link to="/login" style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), textDecoration: 'underline', fontWeight: LABEL_FONT_WEIGHT }}>
+                Go to <span style={{ textDecoration: 'underline' }}>Login</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -203,8 +199,7 @@ export default function AcceptInvite() {
       {/* LedgerSplit Header */}
       <div style={{
         textAlign: 'center',
-        padding: isMobile ? '12px 0 8px' : '16px 0 12px',
-        borderBottom: `1px solid ${colors.border}`
+        padding: isMobile ? '12px 0 8px' : '16px 0 12px'
       }}>
         <h1 style={{
           color: colors.text,
@@ -234,18 +229,7 @@ export default function AcceptInvite() {
         </p>
       </div>
 
-      {error && (
-        <div style={{
-          padding: isMobile ? '8px' : '10px',
-          background: colors.error,
-          color: colors.text,
-          borderRadius: BORDER_RADIUS,
-          marginBottom: isMobile ? '12px' : '16px',
-          fontSize: typography.getFontSize('body', isMobile)
-        }}>
-          {error}
-        </div>
-      )}
+      {error && <ErrorMessage message={error} isMobile={isMobile} />}
 
       {/* Register/Login Forms */}
       {!user && (
@@ -264,13 +248,20 @@ export default function AcceptInvite() {
 
               <form onSubmit={handleRegister}>
                 <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+                  <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
                     Name
                   </label>
                   <input
                     type="text"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      if (e.target.value.length > 20) {
+                        setNameError('Max name length is 20');
+                      } else {
+                        setNameError('');
+                      }
+                    }}
                     required
                     style={{
                       width: '100%',
@@ -282,10 +273,20 @@ export default function AcceptInvite() {
                       color: colors.text
                     }}
                   />
+                  {nameError && (
+                    <div style={{
+                      color: colors.text,
+                      fontSize: '16px',
+                      fontWeight: LABEL_FONT_WEIGHT,
+                      marginTop: '4px'
+                    }}>
+                      {nameError}
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+                  <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
                     Email
                   </label>
                   <input
@@ -306,7 +307,7 @@ export default function AcceptInvite() {
                 </div>
 
                 <div style={{ marginBottom: isMobile ? '10px' : '14px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+                  <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
                     Password
                   </label>
                   <input
@@ -342,7 +343,7 @@ export default function AcceptInvite() {
                 </button>
 
                 <div style={{ textAlign: 'center', marginBottom: isMobile ? '10px' : '12px', marginTop: '4px' }}>
-                  <span style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>or</span>
+                  <span style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>or</span>
                 </div>
 
                 <button
@@ -384,7 +385,7 @@ export default function AcceptInvite() {
 
               <form onSubmit={handleLogin}>
                 <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+                  <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
                     Email
                   </label>
                   <input
@@ -405,7 +406,7 @@ export default function AcceptInvite() {
                 </div>
 
                 <div style={{ marginBottom: isMobile ? '10px' : '14px' }}>
-                  <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+                  <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
                     Password
                   </label>
                   <input
@@ -440,13 +441,13 @@ export default function AcceptInvite() {
                 </button>
 
                 <div style={{ textAlign: 'left', marginBottom: isMobile ? '10px' : '12px' }}>
-                  <Link to="/forgot-password" style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile), textDecoration: 'underline' }}>
+                  <Link to="/forgot-password" style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile), textDecoration: 'underline', fontWeight: LABEL_FONT_WEIGHT }}>
                     Forgot password?
                   </Link>
                 </div>
 
                 <div style={{ textAlign: 'center', marginBottom: isMobile ? '10px' : '12px', marginTop: '4px' }}>
-                  <span style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>or</span>
+                  <span style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>or</span>
                 </div>
 
                 <button
@@ -462,19 +463,24 @@ export default function AcceptInvite() {
                   Continue with Google
                 </button>
 
-                <div style={{ textAlign: 'center' }}>
-                  <button
+                <p style={{ marginTop: isMobile ? '8px' : '12px', textAlign: 'center', color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
+                  Don't have an account? <button
                     type="button"
                     onClick={() => setShowRegister(true)}
                     style={{
-                      ...buttonStyles.primary,
-                      padding: isMobile ? '8px' : '10px',
-                      fontSize: typography.getFontSize('body', isMobile)
+                      background: 'none',
+                      border: 'none',
+                      color: colors.text,
+                      fontSize: typography.getFontSize('label', isMobile),
+                      fontWeight: LABEL_FONT_WEIGHT,
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      padding: 0
                     }}
                   >
-                    Don't have an account? Create one
+                    Register
                   </button>
-                </div>
+                </p>
               </form>
             </div>
           )}
