@@ -3,6 +3,7 @@ import { colors } from '../styles/colors';
 
 export default function CookieConsent() {
   const [showBanner, setShowBanner] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   useEffect(() => {
     // Check if user has already consented
@@ -10,6 +11,14 @@ export default function CookieConsent() {
     if (!consent) {
       setShowBanner(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleAccept = () => {
@@ -25,8 +34,6 @@ export default function CookieConsent() {
   };
 
   if (!showBanner) return null;
-
-  const isMobile = window.innerWidth < 600;
 
   return (
     <div style={{
