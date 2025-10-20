@@ -2,16 +2,16 @@
 export const typography = {
   // Font sizes - mobile first, desktop in comments
   h1: { mobile: '24px', desktop: '28px' },
-  h2: { mobile: '22px', desktop: '24px' },
-  h3: { mobile: '20px', desktop: '22px' },
+  h2: { mobile: '20px', desktop: '22px' },
+  h3: { mobile: '18px', desktop: '20px' },
 
-  body: { mobile: '20px', desktop: '20px' },
-  bodyLarge: { mobile: '22px', desktop: '22px' },
-  bodySmall: { mobile: '20px', desktop: '20px' },
+  body: { mobile: '16px', desktop: '16px' },
+  bodyLarge: { mobile: '16px', desktop: '16px' },
+  bodySmall: { mobile: '14px', desktop: '14px' },
 
-  label: { mobile: '20px', desktop: '20px' },
-  button: { mobile: '20px', desktop: '20px' },
-  caption: { mobile: '20px', desktop: '20px' },
+  label: { mobile: '16px', desktop: '16px' },
+  button: { mobile: '18px', desktop: '18px' },
+  caption: { mobile: '14px', desktop: '14px' },
 
   // Spacing
   spacing: {
