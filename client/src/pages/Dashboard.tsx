@@ -6,7 +6,7 @@ import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 import { typography } from '../styles/typography';
-import { BORDER_RADIUS, LABEL_FONT_WEIGHT } from '../styles/constants';
+import { BORDER_RADIUS } from '../styles/constants';
 import Caret from '../components/Caret';
 import SearchInput from '../components/SearchInput';
 
@@ -22,7 +22,7 @@ export default function Dashboard() {
   const [showDeleteModal, setShowDeleteModal] = useState<string | null>(null);
   const [showLeaveEventModal, setShowLeaveEventModal] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<SortOption>('newest');
+  const [sortBy] = useState<SortOption>('newest');
   const [filterBy, setFilterBy] = useState<'all' | 'active' | 'settled' | 'dismissed'>('all');
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);

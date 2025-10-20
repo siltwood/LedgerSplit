@@ -3,8 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { eventsAPI, splitsAPI, paymentsAPI, settledAPI } from '../services/api';
 import type { Event, Split, EventSettledConfirmation } from '../types/index';
 import { colors } from '../styles/colors';
-import { buttonStyles, getResponsiveButtonWidth, getResponsiveCardWidth } from '../styles/buttons';
-import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT } from '../styles/constants';
+import { buttonStyles, getResponsiveCardWidth } from '../styles/buttons';
+import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
 import { useAuth } from '../context/AuthContext';
 import Caret from '../components/Caret';
 import SearchInput from '../components/SearchInput';
@@ -28,7 +28,7 @@ export default function EventDetail() {
   const [removeParticipantModal, setRemoveParticipantModal] = useState<{ show: boolean; userId: string | null; userName: string | null }>({ show: false, userId: null, userName: null });
   const [billSearchQuery, setBillSearchQuery] = useState('');
   const [expandedBills, setExpandedBills] = useState<Set<string>>(new Set());
-  const [sortBy, setSortBy] = useState<string>('date-newest');
+  const [sortBy] = useState<string>('date-newest');
   const [billsPage, setBillsPage] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
