@@ -280,7 +280,7 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
         }
 
         // Redirect to client with success
-        const clientUrl = 'https://www.ledgersplit.com';
+        const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
         res.redirect(`${clientUrl}/dashboard`);
       });
     });
