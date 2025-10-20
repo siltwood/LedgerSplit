@@ -5,6 +5,7 @@ import { eventsAPI } from '../services/api';
 import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
+import { BORDER_RADIUS } from '../styles/constants';
 
 export default function Events() {
   const { user } = useAuth();
@@ -52,7 +53,7 @@ export default function Events() {
             background: colors.primary,
             color: colors.text,
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: BORDER_RADIUS,
             cursor: 'pointer',
             fontSize: typography.getFontSize('h3', isMobile),
             fontWeight: 'bold'

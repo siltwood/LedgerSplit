@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
+import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -70,7 +71,7 @@ export default function ResetPassword() {
           padding: '10px',
           background: colors.success,
           color: colors.text,
-          borderRadius: '4px',
+          borderRadius: BORDER_RADIUS,
           marginBottom: '12px',
           fontSize: typography.getFontSize('body', isMobile),
           textAlign: 'center'
@@ -81,10 +82,10 @@ export default function ResetPassword() {
 
       {error && (
         <div style={{
-          padding: '8px',
+          padding: INPUT_PADDING,
           background: colors.error,
           color: colors.text,
-          borderRadius: '4px',
+          borderRadius: BORDER_RADIUS,
           marginBottom: '12px',
           fontSize: typography.getFontSize('body', isMobile)
         }}>
@@ -109,7 +110,7 @@ export default function ResetPassword() {
                 padding: '6px',
                 fontSize: '16px',
                 border: `1px solid ${colors.border}`,
-                borderRadius: '4px',
+                borderRadius: BORDER_RADIUS,
                 color: colors.text
               }}
             />
@@ -130,7 +131,7 @@ export default function ResetPassword() {
                 padding: '6px',
                 fontSize: '16px',
                 border: `1px solid ${colors.border}`,
-                borderRadius: '4px',
+                borderRadius: BORDER_RADIUS,
                 color: colors.text
               }}
             />
@@ -141,12 +142,12 @@ export default function ResetPassword() {
             disabled={loading}
             style={{
               width: '100%',
-              padding: '8px',
+              padding: INPUT_PADDING,
               fontSize: typography.getFontSize('body', isMobile),
               background: colors.primary,
               color: colors.text,
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: BORDER_RADIUS,
               cursor: loading ? 'not-allowed' : 'pointer'
             }}
           >

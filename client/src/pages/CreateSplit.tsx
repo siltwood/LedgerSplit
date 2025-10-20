@@ -6,6 +6,7 @@ import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 import { typography } from '../styles/typography';
+import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
 
 export default function CreateSplit() {
   const { user } = useAuth();
@@ -114,7 +115,7 @@ export default function CreateSplit() {
           padding: '10px',
           background: colors.error,
           color: colors.text,
-          borderRadius: '4px',
+          borderRadius: BORDER_RADIUS,
           marginBottom: '20px',
           fontSize: typography.getFontSize('body', isMobile)
         }}>
@@ -142,7 +143,7 @@ export default function CreateSplit() {
           padding: '10px',
           background: colors.error,
           color: colors.text,
-          borderRadius: '4px',
+          borderRadius: BORDER_RADIUS,
           marginBottom: '20px',
           fontSize: typography.getFontSize('body', isMobile)
         }}>
@@ -163,10 +164,10 @@ export default function CreateSplit() {
             required
             style={{
               width: '100%',
-              padding: '8px',
+              padding: INPUT_PADDING,
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
-              borderRadius: '4px',
+              borderRadius: BORDER_RADIUS,
               background: colors.surface,
               color: colors.text
             }}
@@ -185,10 +186,10 @@ export default function CreateSplit() {
             required
             style={{
               width: '100%',
-              padding: '8px',
+              padding: INPUT_PADDING,
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
-              borderRadius: '4px',
+              borderRadius: BORDER_RADIUS,
               background: colors.surface,
               color: colors.text
             }}
@@ -299,7 +300,7 @@ export default function CreateSplit() {
                   <div style={{
                     width: '24px',
                     height: '24px',
-                    borderRadius: '4px',
+                    borderRadius: BORDER_RADIUS,
                     border: `2px solid ${isSelected ? '#fff' : colors.border}`,
                     background: isSelected ? colors.purple : 'transparent',
                     display: 'flex',

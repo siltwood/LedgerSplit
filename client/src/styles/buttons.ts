@@ -1,4 +1,5 @@
 import { colors } from './colors';
+import { BORDER_RADIUS } from './constants';
 
 export const buttonStyles = {
   primary: {
@@ -48,7 +49,7 @@ export const buttonStyles = {
     background: colors.purple,
     color: '#fff',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: BORDER_RADIUS,
     cursor: 'pointer',
     fontSize: '18px',
     fontWeight: '600',

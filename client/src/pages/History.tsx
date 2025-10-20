@@ -5,6 +5,7 @@ import { eventsAPI } from '../services/api';
 import type { Event, EventParticipant } from '../types/index';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
+import { BORDER_RADIUS } from '../styles/constants';
 import Caret from '../components/Caret';
 
 type ViewType = 'events' | 'bills' | 'payments';
@@ -452,7 +453,7 @@ export default function History() {
                             background: colors.purple,
                             color: '#fff',
                             border: 'none',
-                            borderRadius: '4px',
+                            borderRadius: BORDER_RADIUS,
                             cursor: 'pointer',
                             fontSize: '16px'
                           }}>
@@ -555,7 +556,7 @@ export default function History() {
                       background: colors.purple,
                       color: '#fff',
                       border: 'none',
-                      borderRadius: '4px',
+                      borderRadius: BORDER_RADIUS,
                       cursor: 'pointer',
                       fontSize: '14px'
                     }}>
@@ -586,7 +587,7 @@ export default function History() {
               background: currentPage === 1 ? colors.surface : colors.purple,
               color: currentPage === 1 ? colors.text : '#fff',
               border: `2px solid ${colors.border}`,
-              borderRadius: '4px',
+              borderRadius: BORDER_RADIUS,
               cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
               fontSize: '18px',
               opacity: currentPage === 1 ? 0.5 : 1
@@ -607,7 +608,7 @@ export default function History() {
               background: currentPage === totalPages ? colors.surface : colors.purple,
               color: currentPage === totalPages ? colors.text : '#fff',
               border: `2px solid ${colors.border}`,
-              borderRadius: '4px',
+              borderRadius: BORDER_RADIUS,
               cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
               fontSize: '18px',
               opacity: currentPage === totalPages ? 0.5 : 1

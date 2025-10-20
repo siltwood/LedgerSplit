@@ -4,6 +4,7 @@ import { eventsAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 import { typography } from '../styles/typography';
+import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -49,10 +50,10 @@ export default function CreateEvent() {
 
       {error && (
         <div style={{
-          padding: '8px',
+          padding: INPUT_PADDING,
           background: colors.error,
           color: colors.text,
-          borderRadius: '4px',
+          borderRadius: BORDER_RADIUS,
           marginBottom: '12px',
           fontSize: '18px'
         }}>
@@ -72,10 +73,10 @@ export default function CreateEvent() {
             required
             style={{
               width: '100%',
-              padding: '8px',
+              padding: INPUT_PADDING,
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
-              borderRadius: '4px',
+              borderRadius: BORDER_RADIUS,
               background: colors.surface,
               color: colors.text
             }}
@@ -92,10 +93,10 @@ export default function CreateEvent() {
             rows={3}
             style={{
               width: '100%',
-              padding: '8px',
+              padding: INPUT_PADDING,
               fontSize: typography.getFontSize('bodyLarge', isMobile),
               border: `1px solid ${colors.border}`,
-              borderRadius: '4px',
+              borderRadius: BORDER_RADIUS,
               background: colors.surface,
               color: colors.text,
               resize: 'vertical'

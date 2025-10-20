@@ -5,6 +5,7 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
 import { typography } from '../styles/typography';
+import { BORDER_RADIUS } from '../styles/constants';
 import axios from 'axios';
 
 export default function AcceptInvite() {
@@ -176,7 +177,7 @@ export default function AcceptInvite() {
             padding: '20px',
             background: colors.error,
             color: colors.text,
-            borderRadius: '4px',
+            borderRadius: BORDER_RADIUS,
             marginBottom: '20px',
             fontSize: typography.getFontSize('body', isMobile),
             textAlign: 'center'
@@ -238,7 +239,7 @@ export default function AcceptInvite() {
           padding: isMobile ? '8px' : '10px',
           background: colors.error,
           color: colors.text,
-          borderRadius: '4px',
+          borderRadius: BORDER_RADIUS,
           marginBottom: isMobile ? '12px' : '16px',
           fontSize: typography.getFontSize('body', isMobile)
         }}>
@@ -276,7 +277,7 @@ export default function AcceptInvite() {
                       padding: isMobile ? '6px' : '8px',
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
-                      borderRadius: '4px',
+                      borderRadius: BORDER_RADIUS,
                       background: colors.columbiaBlue,
                       color: colors.text
                     }}
@@ -297,7 +298,7 @@ export default function AcceptInvite() {
                       padding: isMobile ? '6px' : '8px',
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
-                      borderRadius: '4px',
+                      borderRadius: BORDER_RADIUS,
                       background: colors.columbiaBlue,
                       color: colors.text
                     }}
@@ -319,7 +320,7 @@ export default function AcceptInvite() {
                       padding: isMobile ? '6px' : '8px',
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
-                      borderRadius: '4px',
+                      borderRadius: BORDER_RADIUS,
                       background: colors.columbiaBlue,
                       color: colors.text
                     }}
@@ -396,7 +397,7 @@ export default function AcceptInvite() {
                       padding: isMobile ? '6px' : '8px',
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
-                      borderRadius: '4px',
+                      borderRadius: BORDER_RADIUS,
                       background: colors.columbiaBlue,
                       color: colors.text
                     }}
@@ -417,7 +418,7 @@ export default function AcceptInvite() {
                       padding: isMobile ? '6px' : '8px',
                       fontSize: '16px',
                       border: `1px solid ${colors.border}`,
-                      borderRadius: '4px',
+                      borderRadius: BORDER_RADIUS,
                       background: colors.columbiaBlue,
                       color: colors.text
                     }}

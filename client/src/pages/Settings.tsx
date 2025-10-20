@@ -5,6 +5,7 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
+import { BORDER_RADIUS } from '../styles/constants';
 
 export default function Settings() {
   const { user } = useAuth();
@@ -60,7 +61,7 @@ export default function Settings() {
           <div style={{
             padding: '10px',
             background: colors.surfaceLight,
-            borderRadius: '4px',
+            borderRadius: BORDER_RADIUS,
             marginTop: '15px',
             fontSize: typography.getFontSize('body', isMobile),
             color: colors.text
@@ -103,7 +104,7 @@ export default function Settings() {
           marginBottom: '15px',
           background: colors.success,
           color: colors.text,
-          borderRadius: '4px',
+          borderRadius: BORDER_RADIUS,
           fontSize: '20px'
         }}>
           {status}
@@ -129,7 +130,7 @@ export default function Settings() {
               background: colors.background,
               color: colors.text,
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: BORDER_RADIUS,
               cursor: 'pointer',
               fontSize: '20px'
             }}
@@ -149,7 +150,7 @@ export default function Settings() {
                   background: colors.background,
                   color: colors.text,
                   border: 'none',
-                  borderRadius: '4px',
+                  borderRadius: BORDER_RADIUS,
                   cursor: 'pointer',
                   fontSize: typography.getFontSize('body', isMobile),
                   fontWeight: 'bold'
@@ -164,7 +165,7 @@ export default function Settings() {
                   background: colors.textSecondary,
                   color: colors.text,
                   border: 'none',
-                  borderRadius: '4px',
+                  borderRadius: BORDER_RADIUS,
                   cursor: 'pointer',
                   fontSize: '20px'
                 }}

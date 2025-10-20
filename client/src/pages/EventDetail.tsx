@@ -4,6 +4,7 @@ import { eventsAPI, splitsAPI, paymentsAPI, settledAPI } from '../services/api';
 import type { Event, Split, EventSettledConfirmation } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth, getResponsiveCardWidth } from '../styles/buttons';
+import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
 import { useAuth } from '../context/AuthContext';
 import Caret from '../components/Caret';
 
@@ -721,7 +722,7 @@ export default function EventDetail() {
                   <div style={{
                     width: isMobile ? '20px' : '24px',
                     height: isMobile ? '20px' : '24px',
-                    borderRadius: '4px',
+                    borderRadius: BORDER_RADIUS,
                     border: `2px solid ${hasConfirmed ? '#fff' : colors.border}`,
                     background: hasConfirmed ? colors.purple : 'transparent',
                     display: 'flex',
@@ -1104,7 +1105,7 @@ export default function EventDetail() {
                       })()}
                     </div>
                     {split.notes && (
-                      <div style={{ fontSize: '20px', color: '#000', marginTop: '8px', padding: '8px', background: 'rgba(255, 255, 255, 0.3)', borderRadius: '4px', fontStyle: 'italic' }}>
+                      <div style={{ fontSize: '20px', color: '#000', marginTop: '8px', padding: INPUT_PADDING, background: 'rgba(255, 255, 255, 0.3)', borderRadius: BORDER_RADIUS, fontStyle: 'italic' }}>
                         {split.notes}
                       </div>
                     )}
@@ -1150,7 +1151,7 @@ export default function EventDetail() {
                 background: billsPage === 1 ? colors.surface : colors.purple,
                 color: billsPage === 1 ? colors.text : '#fff',
                 border: `2px solid ${colors.border}`,
-                borderRadius: '4px',
+                borderRadius: BORDER_RADIUS,
                 cursor: billsPage === 1 ? 'not-allowed' : 'pointer',
                 fontSize: '18px',
                 opacity: billsPage === 1 ? 0.5 : 1
@@ -1171,7 +1172,7 @@ export default function EventDetail() {
                 background: billsPage === totalBillsPages ? colors.surface : colors.purple,
                 color: billsPage === totalBillsPages ? colors.text : '#fff',
                 border: `2px solid ${colors.border}`,
-                borderRadius: '4px',
+                borderRadius: BORDER_RADIUS,
                 cursor: billsPage === totalBillsPages ? 'not-allowed' : 'pointer',
                 fontSize: '18px',
                 opacity: billsPage === totalBillsPages ? 0.5 : 1

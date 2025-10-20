@@ -4,6 +4,7 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
 import { buttonStyles } from '../styles/buttons';
+import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -46,10 +47,10 @@ export default function ForgotPassword() {
 
       {error && (
         <div style={{
-          padding: '8px',
+          padding: INPUT_PADDING,
           background: colors.error,
           color: colors.text,
-          borderRadius: '4px',
+          borderRadius: BORDER_RADIUS,
           marginBottom: '12px',
           fontSize: typography.getFontSize('body', isMobile)
         }}>
@@ -59,10 +60,10 @@ export default function ForgotPassword() {
 
       {message && (
         <div style={{
-          padding: '8px',
+          padding: INPUT_PADDING,
           background: colors.success,
           color: colors.text,
-          borderRadius: '4px',
+          borderRadius: BORDER_RADIUS,
           marginBottom: '12px',
           fontSize: typography.getFontSize('body', isMobile)
         }}>
@@ -88,7 +89,7 @@ export default function ForgotPassword() {
               padding: '6px',
               fontSize: '16px',
               border: `1px solid ${colors.border}`,
-              borderRadius: '4px',
+              borderRadius: BORDER_RADIUS,
               color: colors.text
             }}
           />
