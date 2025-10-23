@@ -684,7 +684,7 @@ export default function EventDetail() {
             {/* Summary View (Always visible) */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
               <span style={{
-                fontSize: isMobile ? '18px' : '20px',
+                fontSize: isMobile ? '14px' : '20px',
                 fontWeight: 'bold',
                 color: '#000'
               }}>
