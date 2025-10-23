@@ -695,12 +695,12 @@ export default function EventDetail() {
                   const calculateSettlements = () => {
                     const creditors = event.participants
                       ?.filter(p => (balances[p.user_id] || 0) > 0.01)
-                      .map(p => ({ userId: p.user_id, amount: balances[p.user_id], name: p.user?.name || p.user?.email }))
+                      .map(p => ({ userId: p.user_id, amount: balances[p.user_id], name: p.user?.name || p.user?.email || 'Unknown' }))
                       .sort((a, b) => b.amount - a.amount) || [];
 
                     const debtors = event.participants
                       ?.filter(p => (balances[p.user_id] || 0) < -0.01)
-                      .map(p => ({ userId: p.user_id, amount: Math.abs(balances[p.user_id]), name: p.user?.name || p.user?.email }))
+                      .map(p => ({ userId: p.user_id, amount: Math.abs(balances[p.user_id]), name: p.user?.name || p.user?.email || 'Unknown' }))
                       .sort((a, b) => b.amount - a.amount) || [];
 
                     const settlements: { from: string; fromName: string; to: string; toName: string; amount: number }[] = [];
@@ -760,12 +760,12 @@ export default function EventDetail() {
                     // Get all people with positive balances (creditors) and negative balances (debtors)
                     const creditors = event.participants
                       ?.filter(p => (balances[p.user_id] || 0) > 0.01)
-                      .map(p => ({ userId: p.user_id, amount: balances[p.user_id], name: p.user?.name || p.user?.email }))
+                      .map(p => ({ userId: p.user_id, amount: balances[p.user_id], name: p.user?.name || p.user?.email || 'Unknown' }))
                       .sort((a, b) => b.amount - a.amount) || [];
 
                     const debtors = event.participants
                       ?.filter(p => (balances[p.user_id] || 0) < -0.01)
-                      .map(p => ({ userId: p.user_id, amount: Math.abs(balances[p.user_id]), name: p.user?.name || p.user?.email }))
+                      .map(p => ({ userId: p.user_id, amount: Math.abs(balances[p.user_id]), name: p.user?.name || p.user?.email || 'Unknown' }))
                       .sort((a, b) => b.amount - a.amount) || [];
 
                     const settlements: { from: string; fromName: string; to: string; toName: string; amount: number }[] = [];

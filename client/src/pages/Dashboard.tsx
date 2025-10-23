@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { eventsAPI } from '../services/api';
 import type { Event } from '../types/index';
 import { colors } from '../styles/colors';
-import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
+import { buttonStyles } from '../styles/buttons';
 import { typography } from '../styles/typography';
 import { BORDER_RADIUS } from '../styles/constants';
 import Caret from '../components/Caret';
