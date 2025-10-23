@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { eventsAPI, splitsAPI, paymentsAPI, settledAPI } from '../services/api';
 import type { Event, Split, EventSettledConfirmation } from '../types/index';
 import { colors } from '../styles/colors';
-import { buttonStyles, getResponsiveCardWidth } from '../styles/buttons';
+import { buttonStyles } from '../styles/buttons';
 import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
 import { useAuth } from '../context/AuthContext';
 import Caret from '../components/Caret';
@@ -21,14 +21,14 @@ export default function EventDetail() {
   const [loading, setLoading] = useState(true);
   const [copyStatus, setCopyStatus] = useState('');
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; splitId: string | null }>({ show: false, splitId: null });
-  const [showAllBalances] = useState(true);
+  const [showAllBalances, setShowAllBalances] = useState(false);
   const [settledConfirmations, setSettledConfirmations] = useState<EventSettledConfirmation[]>([]);
   const [showDeleteEventModal, setShowDeleteEventModal] = useState(false);
   const [showLeaveEventModal, setShowLeaveEventModal] = useState(false);
   const [removeParticipantModal, setRemoveParticipantModal] = useState<{ show: boolean; userId: string | null; userName: string | null }>({ show: false, userId: null, userName: null });
   const [billSearchQuery, setBillSearchQuery] = useState('');
   const [expandedBills, setExpandedBills] = useState<Set<string>>(new Set());
-  const [sortBy] = useState<string>('date-newest');
+  const [sortBy] = useState<string>('payer');
   const [billsPage, setBillsPage] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
@@ -254,7 +254,6 @@ export default function EventDetail() {
     navigate('/dashboard');
     return <div style={{ padding: '20px' }}></div>;
   }
-  const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
 
   // Calculate balances (who owes whom)
   const balances: Record<string, number> = {};
@@ -305,17 +304,6 @@ export default function EventDetail() {
     return index !== -1 ? participantColors[index % participantColors.length] : colors.surface;
   };
 
-  const getCategoryLabel = (category?: string) => {
-    const categoryMap: Record<string, string> = {
-      'food': 'Food',
-      'transportation': 'Transport',
-      'lodging': 'Lodging',
-      'entertainment': 'Fun',
-      'groceries': 'Groceries',
-      'other': 'Other'
-    };
-    return category ? categoryMap[category] || category : null;
-  };
 
   // Filter and sort bills
   const filteredBills = splits
@@ -329,10 +317,22 @@ export default function EventDetail() {
         return split.created_by === user?.id;
       }
 
+      // Check for "[name] paid" pattern - show bills paid by that person
+      if (query.includes('paid')) {
+        const nameQuery = query.replace(/\s*paid\s*/g, '').trim();
+        if (nameQuery === 'i' || nameQuery === 'you') {
+          return split.paid_by === user?.id;
+        }
+        if (nameQuery) {
+          return split.paid_by_user?.name?.toLowerCase().includes(nameQuery) ||
+                 split.paid_by_user?.email?.toLowerCase().includes(nameQuery);
+        }
+      }
+
       // Search in title
       if (split.title.toLowerCase().includes(query)) return true;
 
-      // Search in payer name
+      // Search in payer name (searching someone's name returns bills they paid for)
       if (split.paid_by_user?.name?.toLowerCase().includes(query)) return true;
       if (split.paid_by_user?.email?.toLowerCase().includes(query)) return true;
 
@@ -362,10 +362,10 @@ export default function EventDetail() {
       if (sortBy === 'amount-low') {
         return a.amount - b.amount;
       }
-      if (sortBy === 'category') {
-        const catA = a.category || 'zzz'; // Put uncategorized at end
-        const catB = b.category || 'zzz';
-        return catA.localeCompare(catB);
+      if (sortBy === 'payer') {
+        const payerA = a.paid_by_user?.name || a.paid_by_user?.email || '';
+        const payerB = b.paid_by_user?.name || b.paid_by_user?.email || '';
+        return payerA.localeCompare(payerB);
       }
       if (sortBy === 'creator') {
         const creatorA = event?.participants?.find(p => p.user_id === a.created_by);
@@ -399,23 +399,18 @@ export default function EventDetail() {
         border: `1px solid ${colors.border}`,
         marginBottom: isMobile ? '16px' : '24px'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: isMobile ? '8px' : '16px', marginBottom: isMobile ? '8px' : '16px' }}>
-          <div style={{ flex: 1, minWidth: '250px' }}>
-            <h1 style={{ margin: '0 0 4px 0', color: colors.text, fontSize: isMobile ? '22px' : '28px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{event.name}</h1>
-            {event.description && (
-              <p style={{ color: colors.text, margin: '0', fontSize: isMobile ? '16px' : '20px', opacity: 0.9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {event.description}
-              </p>
-            )}
-          </div>
-          <div style={{ fontSize: isMobile ? '20px' : '24px', fontWeight: 'bold', color: colors.primary }}>
-            ${totalAmount.toFixed(2)}
-          </div>
+        <div style={{ marginBottom: isMobile ? '8px' : '16px' }}>
+          <h1 style={{ margin: '0 0 4px 0', color: colors.text, fontSize: isMobile ? '22px' : '28px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{event.name}</h1>
+          {event.description && (
+            <p style={{ color: colors.text, margin: '0', fontSize: isMobile ? '16px' : '20px', opacity: 0.9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {event.description}
+            </p>
+          )}
         </div>
 
         {/* Participants */}
         {event.participants && event.participants.length > 0 && (
-          <div style={{ marginTop: isMobile ? '12px' : '20px', paddingTop: isMobile ? '12px' : '20px', borderTop: `1px solid ${colors.border}` }}>
+          <div style={{ marginTop: isMobile ? '8px' : '12px', paddingTop: isMobile ? '8px' : '12px', borderTop: `1px solid ${colors.border}` }}>
             <div style={{ fontSize: isMobile ? '16px' : '20px', color: colors.text, opacity: 0.8, marginBottom: isMobile ? '6px' : '8px' }}>
               {event.participants.length} participant{event.participants.length !== 1 ? 's' : ''}
             </div>
@@ -473,56 +468,180 @@ export default function EventDetail() {
           </div>
         )}
 
-        {/* Share Invite Link, Leave Event, and Delete Event Buttons */}
-        <div style={{
-          marginTop: isMobile ? '12px' : '20px',
-          paddingTop: isMobile ? '12px' : '20px',
-          borderTop: `1px solid ${colors.border}`,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          maxWidth: isMobile ? '100%' : '300px'
-        }}>
-          <button onClick={handleCopyShareLink} style={{
-            padding: '10px 20px',
-            fontSize: '18px',
-            background: colors.purple,
-            color: '#fff',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontWeight: '600',
-            width: '100%'
+        {/* Settle Event and Action Buttons Container */}
+        {event.participants && event.participants.length > 0 && splits.length > 0 && (
+          <div style={{
+            marginTop: isMobile ? '8px' : '12px',
+            paddingTop: isMobile ? '8px' : '12px',
+            borderTop: `1px solid ${colors.border}`,
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            justifyContent: 'space-between',
+            gap: isMobile ? '8px' : '16px'
           }}>
-            Invite to Event
-          </button>
-          {event.created_by !== user?.id && (
-            <button
-              onClick={() => setShowLeaveEventModal(true)}
-              style={{
-                ...buttonStyles.secondary,
-                padding: '10px 20px',
-                fontSize: '18px',
-                width: '100%'
-              }}
-            >
-              Leave Event
+            {/* Settle Event Section */}
+            <div style={{ flex: isMobile ? 'none' : '1' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                <h3 style={{ margin: 0, color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+                  Settle Event
+                </h3>
+              </div>
+              <div style={{ fontSize: isMobile ? '13px' : '14px', color: colors.text, marginBottom: '8px', opacity: 0.8 }}>
+                {settledConfirmations.length} of {event.participants.length} confirmed
+              </div>
+              {/* Current User Checkbox Only */}
+              {user && (
+                <div
+                  onClick={handleToggleSettledConfirmation}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: isMobile ? '6px 10px' : '8px 12px',
+                    background: settledConfirmations.some(c => c.user_id === user.id) ? colors.purple : colors.background,
+                    borderRadius: '6px',
+                    border: `1px solid ${settledConfirmations.some(c => c.user_id === user.id) ? colors.purple : colors.border}`,
+                    cursor: 'pointer',
+                    fontSize: isMobile ? '14px' : '16px',
+                    maxWidth: '100%'
+                  }}
+                >
+                  <div style={{
+                    width: isMobile ? '16px' : '18px',
+                    height: isMobile ? '16px' : '18px',
+                    borderRadius: '3px',
+                    border: `2px solid ${settledConfirmations.some(c => c.user_id === user.id) ? '#fff' : colors.border}`,
+                    background: settledConfirmations.some(c => c.user_id === user.id) ? colors.purple : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    {settledConfirmations.some(c => c.user_id === user.id) && (
+                      <span style={{ color: '#fff', fontSize: isMobile ? '13px' : '14px', fontWeight: 'bold' }}>✓</span>
+                    )}
+                  </div>
+                  <span style={{
+                    color: settledConfirmations.some(c => c.user_id === user.id) ? '#fff' : colors.text,
+                    fontWeight: settledConfirmations.some(c => c.user_id === user.id) ? '600' : '500',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {settledConfirmations.some(c => c.user_id === user.id) ? 'Confirmed settled' : 'Confirm settled'}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons (right side on desktop, below on mobile) */}
+            <div style={{
+              display: 'flex',
+              flexDirection: isMobile ? 'row' : 'column',
+              gap: isMobile ? '8px' : '10px',
+              alignItems: isMobile ? 'stretch' : 'flex-end',
+              minWidth: isMobile ? '100%' : '200px'
+            }}>
+              <button onClick={handleCopyShareLink} style={{
+                padding: isMobile ? '8px 16px' : '10px 20px',
+                fontSize: isMobile ? '16px' : '18px',
+                background: colors.purple,
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                width: isMobile ? '50%' : '200px',
+                flex: isMobile ? '1' : 'none'
+              }}>
+                Invite to Event
+              </button>
+              {event.created_by !== user?.id && (
+                <button
+                  onClick={() => setShowLeaveEventModal(true)}
+                  style={{
+                    ...buttonStyles.secondary,
+                    padding: isMobile ? '8px 16px' : '10px 20px',
+                    fontSize: isMobile ? '16px' : '18px',
+                    width: isMobile ? '50%' : '200px',
+                    flex: isMobile ? '1' : 'none'
+                  }}
+                >
+                  Leave Event
+                </button>
+              )}
+              {event.created_by === user?.id && (
+                <button
+                  onClick={() => setShowDeleteEventModal(true)}
+                  style={{
+                    ...buttonStyles.secondary,
+                    padding: isMobile ? '8px 16px' : '10px 20px',
+                    fontSize: isMobile ? '16px' : '18px',
+                    width: isMobile ? '50%' : '200px',
+                    flex: isMobile ? '1' : 'none'
+                  }}
+                >
+                  Delete Event
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Separator for mobile only (when there are no bills/settle event) */}
+        {isMobile && (!event.participants || event.participants.length === 0 || splits.length === 0) && (
+          <div style={{
+            marginTop: '8px',
+            paddingTop: '8px',
+            borderTop: `1px solid ${colors.border}`,
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '8px'
+          }}>
+            <button onClick={handleCopyShareLink} style={{
+              padding: '8px 16px',
+              fontSize: '16px',
+              background: colors.purple,
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              width: '50%',
+              flex: '1'
+            }}>
+              Invite to Event
             </button>
-          )}
-          {event.created_by === user?.id && (
-            <button
-              onClick={() => setShowDeleteEventModal(true)}
-              style={{
-                ...buttonStyles.secondary,
-                padding: '10px 20px',
-                fontSize: '18px',
-                width: '100%'
-              }}
-            >
-              Delete Event
-            </button>
-          )}
-        </div>
+            {event.created_by !== user?.id && (
+              <button
+                onClick={() => setShowLeaveEventModal(true)}
+                style={{
+                  ...buttonStyles.secondary,
+                  padding: '8px 16px',
+                  fontSize: '16px',
+                  width: '50%',
+                  flex: '1'
+                }}
+              >
+                Leave Event
+              </button>
+            )}
+            {event.created_by === user?.id && (
+              <button
+                onClick={() => setShowDeleteEventModal(true)}
+                style={{
+                  ...buttonStyles.secondary,
+                  padding: '8px 16px',
+                  fontSize: '16px',
+                  width: '50%',
+                  flex: '1'
+                }}
+              >
+                Delete Event
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Toast Notification for Copy Status */}
@@ -548,212 +667,198 @@ export default function EventDetail() {
         </div>
       )}
 
-      {/* All Balances Section */}
-      {splits.length > 0 && event.participants && event.participants.length > 1 && showAllBalances && (
-        <div style={{ marginBottom: '24px' }}>
+      {/* All Balances Section - Collapsible */}
+      {splits.length > 0 && event.participants && event.participants.length > 1 && (
+        <div style={{ marginBottom: '16px' }}>
           <div style={{
             background: colors.surface,
-            padding: '20px',
+            padding: isMobile ? '12px' : '16px',
             borderRadius: '8px',
-            border: `1px solid ${colors.border}`
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {event.participants
-                .sort((a, b) => {
-                  // Sort so current user appears first
-                  if (a.user_id === user?.id) return -1;
-                  if (b.user_id === user?.id) return 1;
-                  return 0;
-                })
-                .map(p => {
-                const balance = balances[p.user_id] || 0;
-                const isCurrentUser = p.user_id === user?.id;
-                return (
-                  <div key={p.user_id} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px',
-                    background: isCurrentUser ? getParticipantColor(p.user_id) : colors.background,
-                    borderRadius: '6px',
-                    border: isCurrentUser ? `2px solid ${colors.primary}` : 'none',
-                    flexWrap: 'wrap',
-                    gap: '8px'
-                  }}>
-                    <span style={{ fontSize: '20px', color: isCurrentUser ? '#000' : colors.text, fontWeight: isCurrentUser ? '600' : '500', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {p.user?.name || p.user?.email}{isCurrentUser ? ' (you)' : ''}
-                    </span>
-                    <span style={{
-                      fontSize: '22px',
-                      fontWeight: 'bold',
-                      color: Math.abs(balance) > 0.01 ? colors.purple : (isCurrentUser ? '#000' : colors.text)
-                    }}>
-                      {(() => {
-                        if (balance > 0.01) {
-                          return isCurrentUser ? `People owe you $${balance.toFixed(2)}` : `People owe $${balance.toFixed(2)}`;
-                        } else if (balance < -0.01) {
-                          return isCurrentUser ? `You owe $${Math.abs(balance).toFixed(2)}` : `Owes $${Math.abs(balance).toFixed(2)}`;
-                        }
-                        return isCurrentUser ? `You owe $0.00` : `$0.00`;
-                      })()}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Settling Vote Section */}
-      {event.participants && event.participants.length > 0 && splits.length > 0 && (
-        <div style={{
-          background: colors.surface,
-          padding: isMobile ? '12px' : '20px',
-          borderRadius: '8px',
-          border: `2px solid ${event.is_settled ? colors.purple : colors.border}`,
-          marginBottom: isMobile ? '16px' : '24px'
-        }}>
-          <div style={{ marginBottom: isMobile ? '10px' : '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: isMobile && event.is_settled ? '8px' : '0' }}>
-              <h3 style={{ margin: 0, color: colors.text, fontSize: isMobile ? '18px' : '22px' }}>
-                Settle Event
-              </h3>
-              {event.is_settled && (
-                <span style={{
-                  padding: '4px 8px',
-                  background: colors.purple,
-                  color: '#fff',
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  flexShrink: 0
-                }}>
-                  ✓
-                </span>
-              )}
-              {!isMobile && (
-                <span style={{
-                  padding: '8px 16px',
-                  background: event.is_settled ? colors.purple : 'transparent',
-                  color: event.is_settled ? '#fff' : 'transparent',
-                  borderRadius: '20px',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  visibility: event.is_settled ? 'visible' : 'hidden',
-                  marginLeft: 'auto'
-                }}>
-                  All settled up!
-                </span>
-              )}
-            </div>
-            {isMobile && (
-              <div style={{
-                height: event.is_settled ? 'auto' : '0',
-                overflow: 'hidden',
-                transition: 'height 0.2s ease'
+            border: `1px solid ${colors.border}`,
+            cursor: 'pointer',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+            onClick={() => setShowAllBalances(!showAllBalances)}
+          >
+            {/* Summary View (Always visible) */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+              <span style={{
+                fontSize: isMobile ? '18px' : '20px',
+                fontWeight: 'bold',
+                color: '#000'
               }}>
-                <span style={{
-                  padding: '6px 12px',
-                  background: colors.purple,
-                  color: '#fff',
-                  borderRadius: '20px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  display: 'inline-block'
-                }}>
-                  All settled up!
-                </span>
+                {(() => {
+                  const currentUserBalance = balances[user?.id || ''] || 0;
+
+                  // Calculate settlements to get specific people
+                  const calculateSettlements = () => {
+                    const creditors = event.participants
+                      ?.filter(p => (balances[p.user_id] || 0) > 0.01)
+                      .map(p => ({ userId: p.user_id, amount: balances[p.user_id], name: p.user?.name || p.user?.email }))
+                      .sort((a, b) => b.amount - a.amount) || [];
+
+                    const debtors = event.participants
+                      ?.filter(p => (balances[p.user_id] || 0) < -0.01)
+                      .map(p => ({ userId: p.user_id, amount: Math.abs(balances[p.user_id]), name: p.user?.name || p.user?.email }))
+                      .sort((a, b) => b.amount - a.amount) || [];
+
+                    const settlements: { from: string; fromName: string; to: string; toName: string; amount: number }[] = [];
+                    const creditorsCopy = creditors.map(c => ({ ...c }));
+                    const debtorsCopy = debtors.map(d => ({ ...d }));
+
+                    for (const debtor of debtorsCopy) {
+                      let remainingDebt = debtor.amount;
+                      for (const creditor of creditorsCopy) {
+                        if (remainingDebt < 0.01 || creditor.amount < 0.01) continue;
+                        const paymentAmount = Math.min(remainingDebt, creditor.amount);
+                        settlements.push({
+                          from: debtor.userId,
+                          fromName: debtor.name,
+                          to: creditor.userId,
+                          toName: creditor.name,
+                          amount: paymentAmount
+                        });
+                        creditor.amount -= paymentAmount;
+                        remainingDebt -= paymentAmount;
+                      }
+                    }
+                    return settlements;
+                  };
+
+                  const settlements = calculateSettlements();
+
+                  if (currentUserBalance > 0.01) {
+                    const peopleWhoOweYou = settlements.filter(s => s.to === user?.id);
+                    if (peopleWhoOweYou.length === 1) {
+                      return `${peopleWhoOweYou[0].fromName} owes you $${currentUserBalance.toFixed(2)}`;
+                    } else if (peopleWhoOweYou.length > 1) {
+                      return `${peopleWhoOweYou.length} people owe you $${currentUserBalance.toFixed(2)}`;
+                    }
+                    return `People owe you $${currentUserBalance.toFixed(2)}`;
+                  } else if (currentUserBalance < -0.01) {
+                    const peopleYouOwe = settlements.filter(s => s.from === user?.id);
+                    if (peopleYouOwe.length === 1) {
+                      return `You owe ${peopleYouOwe[0].toName} $${Math.abs(currentUserBalance).toFixed(2)}`;
+                    } else if (peopleYouOwe.length > 1) {
+                      return `You owe ${peopleYouOwe.length} people $${Math.abs(currentUserBalance).toFixed(2)}`;
+                    }
+                    return `You owe $${Math.abs(currentUserBalance).toFixed(2)}`;
+                  }
+                  return `All settled up`;
+                })()}
+              </span>
+              <Caret direction={showAllBalances ? 'up' : 'down'} />
+            </div>
+
+            {/* Detailed View (Expandable) */}
+            {showAllBalances && (
+              <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {(() => {
+                  // Calculate pairwise settlements (who specifically owes whom)
+                  const calculateSettlements = () => {
+                    // Get all people with positive balances (creditors) and negative balances (debtors)
+                    const creditors = event.participants
+                      ?.filter(p => (balances[p.user_id] || 0) > 0.01)
+                      .map(p => ({ userId: p.user_id, amount: balances[p.user_id], name: p.user?.name || p.user?.email }))
+                      .sort((a, b) => b.amount - a.amount) || [];
+
+                    const debtors = event.participants
+                      ?.filter(p => (balances[p.user_id] || 0) < -0.01)
+                      .map(p => ({ userId: p.user_id, amount: Math.abs(balances[p.user_id]), name: p.user?.name || p.user?.email }))
+                      .sort((a, b) => b.amount - a.amount) || [];
+
+                    const settlements: { from: string; fromName: string; to: string; toName: string; amount: number }[] = [];
+
+                    // Make copies to work with
+                    const creditorsCopy = creditors.map(c => ({ ...c }));
+                    const debtorsCopy = debtors.map(d => ({ ...d }));
+
+                    // Greedy algorithm: match largest debtor with largest creditor
+                    for (const debtor of debtorsCopy) {
+                      let remainingDebt = debtor.amount;
+
+                      for (const creditor of creditorsCopy) {
+                        if (remainingDebt < 0.01 || creditor.amount < 0.01) continue;
+
+                        const paymentAmount = Math.min(remainingDebt, creditor.amount);
+
+                        settlements.push({
+                          from: debtor.userId,
+                          fromName: debtor.name,
+                          to: creditor.userId,
+                          toName: creditor.name,
+                          amount: paymentAmount
+                        });
+
+                        creditor.amount -= paymentAmount;
+                        remainingDebt -= paymentAmount;
+                      }
+                    }
+
+                    return settlements;
+                  };
+
+                  const settlements = calculateSettlements();
+
+                  // Show all settlements
+                  if (settlements.length === 0) {
+                    return (
+                      <div style={{
+                        padding: isMobile ? '8px' : '10px',
+                        textAlign: 'center',
+                        color: colors.text,
+                        opacity: 0.7,
+                        fontSize: isMobile ? '15px' : '16px'
+                      }}>
+                        Everyone is settled up!
+                      </div>
+                    );
+                  }
+
+                  // Sort settlements: current user's settlements first
+                  const sortedSettlements = [...settlements].sort((a, b) => {
+                    const aInvolvesUser = a.from === user?.id || a.to === user?.id;
+                    const bInvolvesUser = b.from === user?.id || b.to === user?.id;
+
+                    if (aInvolvesUser && !bInvolvesUser) return -1;
+                    if (!aInvolvesUser && bInvolvesUser) return 1;
+                    return 0;
+                  });
+
+                  return sortedSettlements.map((settlement, idx) => {
+                    const isCurrentUserDebtor = settlement.from === user?.id;
+                    const isCurrentUserCreditor = settlement.to === user?.id;
+                    const isCurrentUserInvolved = isCurrentUserDebtor || isCurrentUserCreditor;
+
+                    return (
+                      <div key={idx} style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: isMobile ? '8px' : '10px',
+                        background: isCurrentUserInvolved ? colors.background : 'rgba(0, 0, 0, 0.05)',
+                        borderRadius: '6px',
+                        flexWrap: 'wrap',
+                        gap: '8px',
+                        border: isCurrentUserInvolved ? `2px solid ${colors.purple}` : 'none'
+                      }}>
+                        <span style={{ fontSize: isMobile ? '16px' : '18px', color: colors.text, fontWeight: '500', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {isCurrentUserDebtor ? 'You' : settlement.fromName} → {isCurrentUserCreditor ? 'You' : settlement.toName}
+                        </span>
+                        <span style={{
+                          fontSize: isMobile ? '15px' : '16px',
+                          fontWeight: '600',
+                          color: isCurrentUserInvolved ? colors.purple : colors.text
+                        }}>
+                          ${settlement.amount.toFixed(2)}
+                        </span>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             )}
-          </div>
-
-          <div style={{ fontSize: isMobile ? '16px' : '18px', color: colors.text, marginBottom: isMobile ? '10px' : '16px', opacity: 0.9 }}>
-            {event.is_settled
-              ? 'Everyone has confirmed this event is settled.'
-              : 'Once all participants confirm, this event will be marked as settled.'}
-          </div>
-
-          {/* Participant Checkboxes */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '8px' : '12px' }}>
-            {[...event.participants]
-              .sort((a, b) => {
-                // Sort so current user appears first
-                if (a.user_id === user?.id) return -1;
-                if (b.user_id === user?.id) return 1;
-                return 0;
-              })
-              .map((participant) => {
-              const hasConfirmed = settledConfirmations.some(c => c.user_id === participant.user_id);
-              const isCurrentUser = participant.user_id === user?.id;
-
-              return (
-                <div
-                  key={participant.user_id}
-                  onClick={isCurrentUser ? handleToggleSettledConfirmation : undefined}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: isMobile ? '8px' : '12px',
-                    padding: isMobile ? '8px 12px' : '12px 16px',
-                    background: hasConfirmed ? colors.purple : colors.background,
-                    borderRadius: isMobile ? '6px' : '8px',
-                    border: `2px solid ${hasConfirmed ? colors.purple : colors.border}`,
-                    cursor: isCurrentUser ? 'pointer' : 'default',
-                    transition: 'all 0.2s ease',
-                    ...getResponsiveCardWidth(isMobile)
-                  }}
-                >
-                  <div style={{
-                    width: isMobile ? '20px' : '24px',
-                    height: isMobile ? '20px' : '24px',
-                    borderRadius: BORDER_RADIUS,
-                    border: `2px solid ${hasConfirmed ? '#fff' : colors.border}`,
-                    background: hasConfirmed ? colors.purple : 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
-                  }}>
-                    {hasConfirmed && (
-                      <span style={{ color: '#fff', fontSize: isMobile ? '16px' : '18px', fontWeight: 'bold' }}>✓</span>
-                    )}
-                  </div>
-                  <span style={{
-                    fontSize: isMobile ? '16px' : '20px',
-                    color: hasConfirmed ? '#fff' : colors.text,
-                    fontWeight: hasConfirmed ? '600' : '500',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    flex: 1
-                  }}>
-                    {participant.user?.name || participant.user?.email}
-                    {isCurrentUser && ' (you)'}
-                  </span>
-                  {hasConfirmed && !isMobile && (
-                    <span style={{
-                      fontSize: '20px',
-                      color: '#fff',
-                      opacity: 0.9,
-                      flexShrink: 0
-                    }}>
-                      Confirmed
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div style={{
-            marginTop: isMobile ? '10px' : '16px',
-            fontSize: isMobile ? '16px' : '20px',
-            color: colors.text,
-            opacity: 0.7,
-            textAlign: isMobile ? 'center' : 'left'
-          }}>
-            {settledConfirmations.length} of {event.participants.length} participants confirmed
           </div>
         </div>
       )}
@@ -761,26 +866,42 @@ export default function EventDetail() {
       {/* Bills Section */}
       <div id="bills-section">
         <div style={{ marginBottom: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-            {splits.length > 0 && (
-              <div onClick={toggleAllBills} style={{ cursor: 'pointer' }}>
-                <Caret direction={expandedBills.size === splits.length ? 'up' : 'down'} />
-              </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'flex-start', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {splits.length > 0 && (
+                <div onClick={toggleAllBills} style={{ cursor: 'pointer' }}>
+                  <Caret direction={expandedBills.size === splits.length ? 'up' : 'down'} />
+                </div>
+              )}
+              <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>
+                Bills
+              </h2>
+              {!isMobile && (
+                <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none' }}>
+                  <button style={{
+                    ...buttonStyles.primary,
+                    width: 'auto',
+                    padding: '10px 20px',
+                    fontSize: '18px'
+                  }}>
+                    + New Bill
+                  </button>
+                </Link>
+              )}
+            </div>
+            {isMobile && (
+              <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none' }}>
+                <button style={{
+                  ...buttonStyles.primary,
+                  width: 'auto',
+                  padding: '8px 16px',
+                  fontSize: '16px'
+                }}>
+                  + New Bill
+                </button>
+              </Link>
             )}
-            <h2 style={{ margin: 0, color: colors.text, fontSize: '20px' }}>
-              Bills
-            </h2>
           </div>
-          <Link to={`/events/${id}/splits/new`} style={{ textDecoration: 'none' }}>
-            <button style={{
-              ...buttonStyles.primary,
-              width: 'auto',
-              padding: isMobile ? '8px 16px' : '10px 20px',
-              fontSize: isMobile ? '16px' : '18px'
-            }}>
-              + New Bill
-            </button>
-          </Link>
         </div>
 
         {/* Bill Search */}
@@ -859,18 +980,35 @@ export default function EventDetail() {
                       justifyContent: 'space-between'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
-                      <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#000', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {split.title}
+                    <span style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      color: '#000',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      flex: '1',
+                      minWidth: 0
+                    }}>
+                      {split.title}
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                      <span style={{
+                        fontSize: '14px',
+                        color: '#000',
+                        opacity: 0.6,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        maxWidth: isMobile ? '100px' : 'none'
+                      }}>
+                        {payerName}
                       </span>
-                      <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#000', opacity: 0.8, flexShrink: 0 }}>
+                      <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#000', opacity: 0.8 }}>
                         ${split.amount.toFixed(2)}
                       </span>
-                      <span style={{ fontSize: '14px', color: '#000', opacity: 0.6, flexShrink: 0 }}>
-                        by {payerName}
-                      </span>
+                      <Caret direction="down" />
                     </div>
-                    <Caret direction="down" />
                   </div>
                 )}
 
@@ -896,18 +1034,6 @@ export default function EventDetail() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px', flexWrap: 'wrap' }}>
                       <div style={{ flex: 1, minWidth: '250px' }}>
                     <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                      {split.category && (
-                        <span style={{
-                          padding: '4px 12px',
-                          background: colors.skyBlue,
-                          color: '#000',
-                          borderRadius: '16px',
-                          fontSize: '16px',
-                          fontWeight: '600'
-                        }}>
-                          {getCategoryLabel(split.category)}
-                        </span>
-                      )}
                       {(() => {
                         // Check if this split is settled for the current user
                         const perPersonAmount = split.split_participants && split.split_participants.length > 0

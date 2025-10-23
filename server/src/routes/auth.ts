@@ -20,7 +20,10 @@ router.post('/register', register);
 router.post('/login', login);
 
 // Google OAuth
-router.get('/google', getGoogleAuthUrl);
+router.get('/google', (req, res, next) => {
+  console.log('🔵 HIT /google route');
+  getGoogleAuthUrl(req, res, next);
+});
 router.get('/google/callback', handleGoogleCallback);
 
 // Password reset/change

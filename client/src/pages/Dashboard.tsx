@@ -382,18 +382,8 @@ export default function Dashboard() {
           }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>📅</div>
             <div style={{ fontSize: typography.getFontSize('h2', isMobile), fontWeight: 'bold', marginBottom: '12px' }}>No events yet</div>
-            <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), opacity: 0.7, marginBottom: '24px' }}>
+            <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), opacity: 0.7 }}>
               Create your first event to start tracking shared expenses with friends and family
-            </div>
-            <div style={{ display: 'flex', justifyContent: isMobile ? 'flex-start' : 'center' }}>
-              <Link to="/events/new" style={{ textDecoration: 'none' }}>
-                <button style={{
-                  ...buttonStyles.primary,
-                  ...getResponsiveButtonWidth(isMobile)
-                }}>
-                  Create Event
-                </button>
-              </Link>
             </div>
           </div>
         ) : filteredEvents.length === 0 ? (

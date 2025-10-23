@@ -105,6 +105,21 @@ export default function CreateEvent() {
           />
         </div>
 
+        {/* Info message about auto-splitting */}
+        <div style={{
+          marginBottom: '12px',
+          padding: INPUT_PADDING,
+          background: colors.surface,
+          border: `1px solid ${colors.border}`,
+          borderRadius: BORDER_RADIUS,
+          fontSize: isMobile ? '14px' : '16px',
+          color: colors.text,
+          opacity: 0.9,
+          lineHeight: '1.4'
+        }}>
+          <strong style={{ fontWeight: LABEL_FONT_WEIGHT }}>Note:</strong> When you invite people to your event, they'll be automatically included in any bills you've already added. This makes it easy to split expenses retroactively.
+        </div>
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <button
             type="submit"

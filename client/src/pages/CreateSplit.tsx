@@ -15,7 +15,6 @@ export default function CreateSplit() {
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState<string>('');
   const [event, setEvent] = useState<Event | null>(null);
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -90,7 +89,6 @@ export default function CreateSplit() {
         amount: parseFloat(amount),
         paid_by: user.id,
         date: new Date().toISOString().split('T')[0],
-        category: category || undefined,
         participant_ids: selectedParticipants,
       });
 
@@ -192,69 +190,6 @@ export default function CreateSplit() {
           />
         </div>
 
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
-            Category (optional)
-          </label>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr',
-            gap: '8px'
-          }}>
-            {[
-              { value: 'food', label: 'Food' },
-              { value: 'transportation', label: 'Transport' },
-              { value: 'lodging', label: 'Lodging' },
-              { value: 'entertainment', label: 'Fun' },
-              { value: 'groceries', label: 'Groceries' },
-              { value: 'other', label: 'Other' }
-            ].map(cat => (
-              <div
-                key={cat.value}
-                onClick={() => setCategory(category === cat.value ? '' : cat.value)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 10px',
-                  background: colors.surface,
-                  borderRadius: '6px',
-                  border: `2px solid ${category === cat.value ? colors.purple : colors.border}`,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <div style={{
-                  width: '16px',
-                  height: '16px',
-                  borderRadius: '50%',
-                  border: `2px solid ${category === cat.value ? colors.purple : colors.border}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}>
-                  {category === cat.value && (
-                    <div style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      background: colors.purple
-                    }} />
-                  )}
-                </div>
-                <span style={{
-                  fontSize: typography.getFontSize('bodySmall', isMobile),
-                  color: colors.text,
-                  fontWeight: category === cat.value ? '600' : '500'
-                }}>
-                  {cat.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div style={{ marginBottom: '20px' }}>
           <label style={{ display: 'block', marginBottom: '10px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
             Split between *
@@ -324,6 +259,19 @@ export default function CreateSplit() {
               ${parseFloat(amount || '0').toFixed(2)} ÷ {selectedParticipants.length} = ${(parseFloat(amount || '0') / selectedParticipants.length).toFixed(2)} per person
             </div>
           )}
+          <div style={{
+            marginTop: '10px',
+            padding: '8px 12px',
+            background: colors.surface,
+            border: `1px solid ${colors.border}`,
+            borderRadius: BORDER_RADIUS,
+            fontSize: isMobile ? '13px' : '14px',
+            color: colors.text,
+            opacity: 0.9,
+            lineHeight: '1.4'
+          }}>
+            <strong style={{ fontWeight: LABEL_FONT_WEIGHT }}>Note:</strong> New members added later will be included in this split automatically.
+          </div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

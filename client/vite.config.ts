@@ -9,7 +9,7 @@ export default defineConfig({
     allowedHosts: ['localtest.ngrok-free.app'],
     proxy: {
       '/api': {
-        target: 'https://chromous-unattributabley-yee.ngrok-free.dev',
+        target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false,
       },

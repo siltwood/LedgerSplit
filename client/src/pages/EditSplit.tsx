@@ -15,7 +15,6 @@ export default function EditSplit() {
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState<string>('');
   const [event, setEvent] = useState<Event | null>(null);
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -69,7 +68,6 @@ export default function EditSplit() {
       if (splitToEdit) {
         setTitle(splitToEdit.title);
         setAmount(splitToEdit.amount.toString());
-        setCategory(splitToEdit.category || '');
 
         // Set selected participants from split_participants
         if (splitToEdit.split_participants && splitToEdit.split_participants.length > 0) {
@@ -108,7 +106,6 @@ export default function EditSplit() {
       await splitsAPI.update(splitId, {
         title,
         amount: parseFloat(amount),
-        category: category || undefined,
         participant_ids: selectedParticipants,
       });
 
@@ -208,69 +205,6 @@ export default function EditSplit() {
               color: colors.text
             }}
           />
-        </div>
-
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
-            Category (optional)
-          </label>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr',
-            gap: '8px'
-          }}>
-            {[
-              { value: 'food', label: 'Food' },
-              { value: 'transportation', label: 'Transport' },
-              { value: 'lodging', label: 'Lodging' },
-              { value: 'entertainment', label: 'Fun' },
-              { value: 'groceries', label: 'Groceries' },
-              { value: 'other', label: 'Other' }
-            ].map(cat => (
-              <div
-                key={cat.value}
-                onClick={() => setCategory(category === cat.value ? '' : cat.value)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 10px',
-                  background: colors.surface,
-                  borderRadius: '6px',
-                  border: `2px solid ${category === cat.value ? colors.purple : colors.border}`,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <div style={{
-                  width: '16px',
-                  height: '16px',
-                  borderRadius: '50%',
-                  border: `2px solid ${category === cat.value ? colors.purple : colors.border}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}>
-                  {category === cat.value && (
-                    <div style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      background: colors.purple
-                    }} />
-                  )}
-                </div>
-                <span style={{
-                  fontSize: typography.getFontSize('bodySmall', isMobile),
-                  color: colors.text,
-                  fontWeight: category === cat.value ? '600' : '500'
-                }}>
-                  {cat.label}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div style={{ marginBottom: '20px' }}>

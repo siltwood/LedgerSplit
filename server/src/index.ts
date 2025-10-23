@@ -117,7 +117,10 @@ app.use(
 );
 
 // API Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', (req, res, next) => {
+  console.log('🟢 Request to /api/auth:', req.method, req.path);
+  next();
+}, authRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/splits', splitsRoutes);
 app.use('/api/payments', paymentsRoutes);
