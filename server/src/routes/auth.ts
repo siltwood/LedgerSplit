@@ -20,9 +20,9 @@ router.post('/register', register);
 router.post('/login', login);
 
 // Google OAuth
-router.get('/google', (req, res, next) => {
+router.get('/google', (req, res) => {
   console.log('🔵 HIT /google route');
-  getGoogleAuthUrl(req, res, next);
+  getGoogleAuthUrl(req, res);
 });
 router.get('/google/callback', handleGoogleCallback);
 
