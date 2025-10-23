@@ -733,7 +733,7 @@ export default function EventDetail() {
                     if (peopleWhoOweYou.length === 1) {
                       return `${peopleWhoOweYou[0].fromName} owes you $${currentUserBalance.toFixed(2)}`;
                     } else if (peopleWhoOweYou.length > 1) {
-                      return `${peopleWhoOweYou.length} people owe you $${currentUserBalance.toFixed(2)}`;
+                      return `${peopleWhoOweYou.length} people owe you a total of $${currentUserBalance.toFixed(2)}`;
                     }
                     return `People owe you $${currentUserBalance.toFixed(2)}`;
                   } else if (currentUserBalance < -0.01) {
@@ -741,7 +741,7 @@ export default function EventDetail() {
                     if (peopleYouOwe.length === 1) {
                       return `You owe ${peopleYouOwe[0].toName} $${Math.abs(currentUserBalance).toFixed(2)}`;
                     } else if (peopleYouOwe.length > 1) {
-                      return `You owe ${peopleYouOwe.length} people $${Math.abs(currentUserBalance).toFixed(2)}`;
+                      return `You owe ${peopleYouOwe.length} people a total of $${Math.abs(currentUserBalance).toFixed(2)}`;
                     }
                     return `You owe $${Math.abs(currentUserBalance).toFixed(2)}`;
                   }
