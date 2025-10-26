@@ -169,7 +169,8 @@ export const getGoogleAuthUrl = (req: AuthRequest, res: Response) => {
   const crypto = require('crypto');
   const state = crypto.randomBytes(32).toString('hex');
 
-  // Store state in session
+  // Clear any old OAuth state and store new one
+  delete req.session.oauthState;
   req.session.oauthState = state;
 
   const url = googleClient.generateAuthUrl({
