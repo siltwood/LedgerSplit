@@ -183,7 +183,6 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       paid_by,
       date,
       notes,
-      category,
       participant_ids,
     } = req.body;
     const userId = req.user?.id;
@@ -296,7 +295,6 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
         created_by: userId,
         date: date || new Date().toISOString(),
         notes: notesValidation.sanitized,
-        category: category || null,
       })
       .select()
       .single();
@@ -343,7 +341,6 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
       participant_ids,
       date,
       notes,
-      category,
     } = req.body;
     const userId = req.user?.id;
 
@@ -388,7 +385,6 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
     }
     if (date !== undefined) updateData.date = date;
     if (notes !== undefined) updateData.notes = notes;
-    if (category !== undefined) updateData.category = category || null;
 
     // Update split
     const { data: updatedSplit, error: updateError } = await db
