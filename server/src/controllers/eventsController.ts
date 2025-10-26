@@ -429,7 +429,7 @@ export const removeParticipant = async (req: AuthRequest, res: Response) => {
 
     if (splitError) {
       console.error('Split deletion error:', splitError);
-      return res.status(500).json({ error: 'Failed to remove participant splits.' });
+      return res.status(500).json({ error: 'Failed to remove participant bills.' });
     }
 
     // Remove participant from all split_participants in this event
@@ -467,7 +467,7 @@ export const removeParticipant = async (req: AuthRequest, res: Response) => {
       return res.status(500).json({ error: 'Failed to remove participant.' });
     }
 
-    res.json({ message: 'Participant removed successfully (including their splits)' });
+    res.json({ message: 'Participant removed successfully (including their bills)' });
   } catch (error) {
     console.error('Remove participant error:', error);
     res.status(500).json({ error: 'Failed to remove participant.' });
@@ -518,7 +518,7 @@ export const leaveEvent = async (req: AuthRequest, res: Response) => {
 
     if (splitError) {
       console.error('Split deletion error:', splitError);
-      return res.status(500).json({ error: 'Failed to remove your splits.' });
+      return res.status(500).json({ error: 'Failed to remove your bills.' });
     }
 
     // Remove user from all split_participants in this event
@@ -556,7 +556,7 @@ export const leaveEvent = async (req: AuthRequest, res: Response) => {
       return res.status(500).json({ error: 'Failed to leave event.' });
     }
 
-    res.json({ message: 'Left event successfully (including your splits)' });
+    res.json({ message: 'Left event successfully (including your bills)' });
   } catch (error) {
     console.error('Leave event error:', error);
     res.status(500).json({ error: 'Failed to leave event.' });

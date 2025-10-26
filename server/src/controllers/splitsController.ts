@@ -58,7 +58,7 @@ export const getSplits = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to fetch splits.' });
+      return res.status(500).json({ error: 'Failed to fetch bills.' });
     }
 
     // Auto-fix any splits that are missing split_participants
@@ -99,7 +99,7 @@ export const getSplits = async (req: AuthRequest, res: Response) => {
     res.json({ splits });
   } catch (error) {
     console.error('Get splits error:', error);
-    res.status(500).json({ error: 'Failed to fetch splits.' });
+    res.status(500).json({ error: 'Failed to fetch bills.' });
   }
 };
 
@@ -135,7 +135,7 @@ export const getSplitById = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (splitError || !split) {
-      return res.status(404).json({ error: 'Split not found.' });
+      return res.status(404).json({ error: 'Bill not found.' });
     }
 
     // Check if user is participant of the event
@@ -168,7 +168,7 @@ export const getSplitById = async (req: AuthRequest, res: Response) => {
     res.json({ split, participants });
   } catch (error) {
     console.error('Get split error:', error);
-    res.status(500).json({ error: 'Failed to fetch split.' });
+    res.status(500).json({ error: 'Failed to fetch bill.' });
   }
 };
 
@@ -303,7 +303,7 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
 
     if (splitError) {
       console.error('Database error:', splitError);
-      return res.status(500).json({ error: 'Failed to create split.' });
+      return res.status(500).json({ error: 'Failed to create bill.' });
     }
 
     // Add split participants
@@ -321,13 +321,13 @@ export const createSplit = async (req: AuthRequest, res: Response) => {
       console.error('Database error:', participantError);
       // Rollback: delete the split
       await db.from('splits').delete().eq('split_id', split.split_id);
-      return res.status(500).json({ error: 'Failed to add split participants.' });
+      return res.status(500).json({ error: 'Failed to add bill participants.' });
     }
 
     res.status(201).json({ split });
   } catch (error) {
     console.error('Create split error:', error);
-    res.status(500).json({ error: 'Failed to create split.' });
+    res.status(500).json({ error: 'Failed to create bill.' });
   }
 };
 
@@ -356,12 +356,12 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (fetchError || !existingSplit) {
-      return res.status(404).json({ error: 'Split not found.' });
+      return res.status(404).json({ error: 'Bill not found.' });
     }
 
     // Check if user is creator of the split
     if (existingSplit.created_by !== userId) {
-      return res.status(403).json({ error: 'Only split creator can update.' });
+      return res.status(403).json({ error: 'Only bill creator can update.' });
     }
 
     // Build update object with only provided fields
@@ -400,7 +400,7 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
 
     if (updateError) {
       console.error('Database error:', updateError);
-      return res.status(500).json({ error: 'Failed to update split.' });
+      return res.status(500).json({ error: 'Failed to update bill.' });
     }
 
     // If participant_ids or amount changed, update split_participants
@@ -443,7 +443,7 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
 
         if (participantError) {
           console.error('Database error:', participantError);
-          return res.status(500).json({ error: 'Failed to update split participants.' });
+          return res.status(500).json({ error: 'Failed to update bill participants.' });
         }
       }
     }
@@ -451,7 +451,7 @@ export const updateSplit = async (req: AuthRequest, res: Response) => {
     res.json({ split: updatedSplit });
   } catch (error) {
     console.error('Update split error:', error);
-    res.status(500).json({ error: 'Failed to update split.' });
+    res.status(500).json({ error: 'Failed to update bill.' });
   }
 };
 
@@ -470,12 +470,12 @@ export const deleteSplit = async (req: AuthRequest, res: Response) => {
       .single();
 
     if (!split) {
-      return res.status(404).json({ error: 'Split not found.' });
+      return res.status(404).json({ error: 'Bill not found.' });
     }
 
     // Check if user is creator
     if (split.created_by !== userId) {
-      return res.status(403).json({ error: 'Only split creator can delete.' });
+      return res.status(403).json({ error: 'Only bill creator can delete.' });
     }
 
     // Soft delete split
@@ -486,12 +486,12 @@ export const deleteSplit = async (req: AuthRequest, res: Response) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(500).json({ error: 'Failed to delete split.' });
+      return res.status(500).json({ error: 'Failed to delete bill.' });
     }
 
-    res.json({ message: 'Split deleted successfully' });
+    res.json({ message: 'Bill deleted successfully' });
   } catch (error) {
     console.error('Delete split error:', error);
-    res.status(500).json({ error: 'Failed to delete split.' });
+    res.status(500).json({ error: 'Failed to delete bill.' });
   }
 };

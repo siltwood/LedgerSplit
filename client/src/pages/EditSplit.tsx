@@ -209,7 +209,7 @@ export default function EditSplit() {
 
         <div style={{ marginBottom: '20px' }}>
           <label style={{ display: 'block', marginBottom: '10px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
-            Split between *
+            Bill shared between *
           </label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {event.participants?.sort((a: any, b: any) => {
