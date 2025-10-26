@@ -24,6 +24,10 @@ export default function Login() {
       setShowModal(true);
       // Clear the error from URL
       window.history.replaceState({}, '', '/login');
+    } else if (errorParam === 'oauth_expired') {
+      setError('Login session expired. Please try again.');
+      // Clear the error from URL
+      window.history.replaceState({}, '', '/login');
     }
   }, [searchParams]);
 

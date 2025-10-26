@@ -194,7 +194,11 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
 
   // Verify state parameter to prevent CSRF
   if (!state || state !== req.session.oauthState) {
-    return res.status(403).json({ error: 'Invalid state parameter.' });
+    // Redirect to login with error message instead of showing JSON error
+    const redirectUrl = process.env.NODE_ENV === 'production'
+      ? 'https://ledgersplit.com/login?error=oauth_expired'
+      : 'http://localhost:5173/login?error=oauth_expired';
+    return res.redirect(redirectUrl);
   }
 
   // Clear state from session
