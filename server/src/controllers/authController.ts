@@ -169,9 +169,9 @@ export const getGoogleAuthUrl = (req: AuthRequest, res: Response) => {
   const crypto = require('crypto');
   const state = crypto.randomBytes(32).toString('hex');
 
-  // Clear any old OAuth state and store new one
-  delete req.session.oauthState;
+  // Store state with timestamp - allows reuse for 5 minutes
   req.session.oauthState = state;
+  req.session.oauthStateCreated = Date.now();
 
   const url = googleClient.generateAuthUrl({
     access_type: 'offline',
@@ -193,16 +193,24 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
   }
 
   // Verify state parameter to prevent CSRF
-  if (!state || state !== req.session.oauthState) {
-    // Redirect to login with error message instead of showing JSON error
+  const stateCreatedAt = req.session.oauthStateCreated || 0;
+  const fiveMinutes = 5 * 60 * 1000;
+  const isStateExpired = Date.now() - stateCreatedAt > fiveMinutes;
+
+  if (!state || state !== req.session.oauthState || isStateExpired) {
+    // Clear expired state
+    delete req.session.oauthState;
+    delete req.session.oauthStateCreated;
+
+    // Redirect to login with error message
     const redirectUrl = process.env.NODE_ENV === 'production'
       ? 'https://ledgersplit.com/login?error=oauth_expired'
       : 'http://localhost:5173/login?error=oauth_expired';
     return res.redirect(redirectUrl);
   }
 
-  // Clear state from session
-  delete req.session.oauthState;
+  // Don't clear state yet - allow multiple attempts with the same state
+  // State will expire after 5 minutes or when session ends
 
   try {
     const { tokens } = await googleClient.getToken(code);
