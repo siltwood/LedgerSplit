@@ -10,6 +10,7 @@ declare module 'express-session' {
       google_id?: string;
     };
     oauthState?: string;
+    oauthStateCreated?: number;
   }
 }
 
