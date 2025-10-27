@@ -270,32 +270,28 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
       user = newUser;
     }
 
-    // Regenerate session to prevent fixation
-    req.session.regenerate((err) => {
-      if (err) {
-        console.error('Session regeneration error:', err);
+    // Set session (no regeneration needed for OAuth - Google already validates)
+    req.session.user = {
+      id: user.user_id,
+      email: user.email,
+      name: user.name,
+      google_id: user.google_id,
+    };
+
+    // Clear OAuth state after successful authentication
+    delete req.session.oauthState;
+    delete req.session.oauthStateCreated;
+
+    // Save session before redirect
+    req.session.save((saveErr) => {
+      if (saveErr) {
+        console.error('Session save error:', saveErr);
         return res.status(500).json({ error: 'Session error.' });
       }
 
-      // Set session
-      req.session.user = {
-        id: user.user_id,
-        email: user.email,
-        name: user.name,
-        google_id: user.google_id,
-      };
-
-      // Save session before redirect
-      req.session.save((saveErr) => {
-        if (saveErr) {
-          console.error('Session save error:', saveErr);
-          return res.status(500).json({ error: 'Session error.' });
-        }
-
-        // Redirect to client with success
-        const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-        res.redirect(`${clientUrl}/dashboard`);
-      });
+      // Redirect to client with success
+      const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+      res.redirect(`${clientUrl}/dashboard`);
     });
   } catch (error) {
     console.error('Google auth error:', error);
