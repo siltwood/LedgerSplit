@@ -398,6 +398,7 @@ describe('Auth Routes', () => {
       // Middleware to inject oauthState into session
       testApp.use((req, res, next) => {
         req.session.oauthState = mockState;
+        req.session.oauthStateCreated = Date.now();
         next();
       });
 
@@ -494,6 +495,7 @@ describe('Auth Routes', () => {
       );
       testApp.use((req, res, next) => {
         req.session.oauthState = mockState;
+        req.session.oauthStateCreated = Date.now();
         next();
       });
       testApp.use('/auth', authRoutes);
@@ -586,6 +588,7 @@ describe('Auth Routes', () => {
       );
       testApp.use((req, res, next) => {
         req.session.oauthState = mockState;
+        req.session.oauthStateCreated = Date.now();
         next();
       });
       testApp.use('/auth', authRoutes);

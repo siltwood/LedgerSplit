@@ -55,7 +55,6 @@ describe('Splits API - GET by ID', () => {
                       amount: 100.50,
                       paid_by: TEST_USER_ID,
                       date: '2025-01-01',
-                      category: 'food',
                       created_at: '2025-01-01T12:00:00Z',
                     },
                     error: null,
@@ -98,7 +97,6 @@ describe('Splits API - GET by ID', () => {
       expect(response.body.split).toHaveProperty('split_id', TEST_SPLIT_ID);
       expect(response.body.split).toHaveProperty('title', 'Restaurant Bill');
       expect(response.body.split).toHaveProperty('amount', 100.50);
-      expect(response.body.split).toHaveProperty('category', 'food');
     });
 
     it('should return 404 when split not found', async () => {

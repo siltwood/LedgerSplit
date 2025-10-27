@@ -553,7 +553,7 @@ describe('Events API', () => {
       const response = await request(app).delete('/events/event-123/participants/user-to-remove');
 
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe('Participant removed successfully (including their splits)');
+      expect(response.body.message).toBe('Participant removed successfully (including their bills)');
     });
 
     it('should fail if user not creator', async () => {
@@ -633,7 +633,7 @@ describe('Events API', () => {
       const response = await request(app).delete('/events/event-123/participants/user-to-remove');
 
       expect(response.status).toBe(500);
-      expect(response.body.error).toBe('Failed to remove participant splits.');
+      expect(response.body.error).toBe('Failed to remove participant bills.');
     });
   });
 
@@ -722,7 +722,7 @@ describe('Events API', () => {
       const response = await request(app).post('/events/event-123/leave');
 
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe('Left event successfully (including your splits)');
+      expect(response.body.message).toBe('Left event successfully (including your bills)');
     });
 
     it('should fail if creator tries to leave event', async () => {
@@ -886,7 +886,7 @@ describe('Events API', () => {
       const response = await request(app).post('/events/event-123/leave');
 
       expect(response.status).toBe(500);
-      expect(response.body.error).toBe('Failed to remove your splits.');
+      expect(response.body.error).toBe('Failed to remove your bills.');
     });
   });
 
