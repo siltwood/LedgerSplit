@@ -8,7 +8,58 @@ export const getSplits = async (req: AuthRequest, res: Response) => {
     const userId = req.user?.id;
     const { event_id } = req.query;
 
-    // Get all events user is part of
+    // If event_id is provided, optimize by querying only that event
+    if (event_id) {
+      // First verify user is participant of this specific event
+      const { data: participation } = await db
+        .from('event_participants')
+        .select('event_id')
+        .eq('event_id', event_id)
+        .eq('user_id', userId)
+        .single();
+
+      if (!participation) {
+        return res.json({ splits: [] });
+      }
+
+      // Fetch splits only for this event
+      const { data: splits, error } = await db
+        .from('splits')
+        .select(`
+          *,
+          event:events (
+            event_id,
+            name
+          ),
+          payer:users!splits_paid_by_fkey (
+            user_id,
+            name,
+            email,
+            avatar_url
+          ),
+          creator:users!splits_created_by_fkey (
+            user_id,
+            name,
+            email
+          ),
+          split_participants (
+            user_id,
+            amount_owed
+          )
+        `)
+        .eq('event_id', event_id)
+        .is('deleted_at', null)
+        .order('date', { ascending: false });
+
+      if (error) {
+        console.error('Database error:', error);
+        return res.status(500).json({ error: 'Failed to fetch bills.' });
+      }
+
+      return res.json({ splits });
+    }
+
+    // Otherwise, get all events user is part of
     const { data: eventParticipations } = await db
       .from('event_participants')
       .select('event_id')
@@ -20,8 +71,8 @@ export const getSplits = async (req: AuthRequest, res: Response) => {
 
     const eventIds = eventParticipations.map((ep: any) => ep.event_id);
 
-    // Build query
-    let query = db
+    // Fetch all splits from all user's events
+    const { data: splits, error } = await db
       .from('splits')
       .select(`
         *,
@@ -48,13 +99,6 @@ export const getSplits = async (req: AuthRequest, res: Response) => {
       .in('event_id', eventIds)
       .is('deleted_at', null)
       .order('date', { ascending: false });
-
-    // Apply event_id filter if provided
-    if (event_id) {
-      query = query.eq('event_id', event_id);
-    }
-
-    const { data: splits, error } = await query;
 
     if (error) {
       console.error('Database error:', error);

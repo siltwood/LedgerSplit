@@ -246,26 +246,28 @@ describe('Splits API', () => {
         if (table === 'event_participants') {
           return {
             select: jest.fn(() => ({
-              eq: jest.fn().mockResolvedValue({
-                data: [{ event_id: TEST_EVENT_ID }],
-                error: null,
-              }),
+              eq: jest.fn(() => ({
+                eq: jest.fn(() => ({
+                  single: jest.fn().mockResolvedValue({
+                    data: { event_id: TEST_EVENT_ID, user_id: TEST_USER_ID },
+                    error: null,
+                  }),
+                })),
+              })),
             })),
           };
         } else if (table === 'splits') {
           return {
             select: jest.fn(() => ({
-              in: jest.fn(() => ({
+              eq: jest.fn(() => ({
                 is: jest.fn(() => ({
-                  order: jest.fn(() => ({
-                    eq: jest.fn().mockResolvedValue({
-                      data: [
-                        { split_id: TEST_SPLIT_ID, title: 'Dinner', event_id: TEST_EVENT_ID },
-                        { split_id: '123e4567-e89b-12d3-a456-426614174005', title: 'Uber', event_id: TEST_EVENT_ID },
-                      ],
-                      error: null,
-                    }),
-                  })),
+                  order: jest.fn().mockResolvedValue({
+                    data: [
+                      { split_id: TEST_SPLIT_ID, title: 'Dinner', event_id: TEST_EVENT_ID },
+                      { split_id: '123e4567-e89b-12d3-a456-426614174005', title: 'Uber', event_id: TEST_EVENT_ID },
+                    ],
+                    error: null,
+                  }),
                 })),
               })),
             })),
