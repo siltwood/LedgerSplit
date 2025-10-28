@@ -329,6 +329,15 @@ export default function EventDetail() {
         }
       }
 
+      // Search by amount (e.g., "30", "30.00", "30.5")
+      const numericQuery = parseFloat(query);
+      if (!isNaN(numericQuery)) {
+        // Match if the amount equals the searched number
+        if (split.amount === numericQuery) return true;
+        // Also match if the amount string contains the query (e.g., "30" matches "30.00")
+        if (split.amount.toString().includes(query)) return true;
+      }
+
       // Search in title
       if (split.title.toLowerCase().includes(query)) return true;
 
