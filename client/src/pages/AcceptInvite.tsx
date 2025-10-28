@@ -59,15 +59,27 @@ export default function AcceptInvite() {
 
     try {
       const baseURL = import.meta.env.PROD ? 'https://api.ledgersplit.com/api' : '/api';
-      await axios.post(`${baseURL}/events/join/${token}`, {}, { withCredentials: true });
-      // Navigate to the event page
-      if (invite?.event_id) {
-        navigate(`/events/${invite.event_id}`);
-      } else {
-        navigate('/dashboard');
+      const response = await axios.post(`${baseURL}/events/join/${token}`, {}, { withCredentials: true });
+
+      // Only navigate if the request succeeded
+      if (response.status === 200) {
+        if (invite?.event_id) {
+          navigate(`/events/${invite.event_id}`);
+        } else {
+          navigate('/dashboard');
+        }
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to accept invite');
+      // Check if already a participant - if so, just navigate to the event
+      if (err.response?.data?.error === 'Already a participant of this event.') {
+        if (invite?.event_id) {
+          navigate(`/events/${invite.event_id}`);
+        } else {
+          navigate('/dashboard');
+        }
+      } else {
+        setError(err.response?.data?.error || 'Failed to accept invite');
+      }
     }
   };
 
