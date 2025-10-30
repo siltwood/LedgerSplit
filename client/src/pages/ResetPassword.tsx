@@ -88,7 +88,7 @@ export default function ResetPassword() {
       {error && (
         <div style={{
           padding: INPUT_PADDING,
-          background: colors.error,
+          background: colors.surface,
           color: colors.text,
           borderRadius: BORDER_RADIUS,
           marginBottom: '12px',
