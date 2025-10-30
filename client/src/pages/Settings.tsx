@@ -10,7 +10,6 @@ import { BORDER_RADIUS, LABEL_FONT_WEIGHT } from '../styles/constants';
 export default function Settings() {
   const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
-  const [status, setStatus] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   const [venmoUsername, setVenmoUsername] = useState(user?.venmo_username || '');
@@ -49,7 +48,7 @@ export default function Settings() {
       await authAPI.deleteAccount();
       navigate('/login');
     } catch (err: any) {
-      setStatus(err.response?.data?.error || 'Failed to delete account');
+      alert(err.response?.data?.error || 'Failed to delete account');
       setShowDeleteConfirm(false);
     }
   };
