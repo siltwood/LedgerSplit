@@ -207,7 +207,7 @@ export default function Register() {
                 color: colors.text
               }}
             />
-            {hasAttemptedSubmit && passwordError && (
+            {hasAttemptedSubmit && passwordError && passwordError !== 'Passwords do not match' && (
               <div style={{
                 color: colors.text,
                 fontSize: '16px',
@@ -244,6 +244,16 @@ export default function Register() {
                 color: colors.text
               }}
             />
+            {hasAttemptedSubmit && passwordError === 'Passwords do not match' && (
+              <div style={{
+                color: colors.text,
+                fontSize: '16px',
+                fontWeight: LABEL_FONT_WEIGHT,
+                marginTop: '4px'
+              }}>
+                {passwordError}
+              </div>
+            )}
           </div>
 
           <button
