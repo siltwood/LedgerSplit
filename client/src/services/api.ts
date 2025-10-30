@@ -19,6 +19,8 @@ export const authAPI = {
   resetPassword: (token: string, newPassword: string) =>
     api.post('/auth/reset-password', { token, newPassword }),
   requestPasswordChange: () => api.post('/auth/change-password'),
+  updateProfile: (data: { venmo_username?: string }) =>
+    api.put('/auth/profile', data),
   deleteAccount: () => api.delete('/auth/account'),
 };
 

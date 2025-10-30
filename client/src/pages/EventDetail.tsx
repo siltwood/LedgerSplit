@@ -840,6 +840,19 @@ export default function EventDetail() {
                     const isCurrentUserCreditor = settlement.to === user?.id;
                     const isCurrentUserInvolved = isCurrentUserDebtor || isCurrentUserCreditor;
 
+                    // Get creditor's venmo username
+                    const creditor = event.participants?.find(p => p.user_id === settlement.to);
+                    const creditorVenmo = creditor?.user?.venmo_username;
+                    const canPayViaVenmo = isCurrentUserDebtor && creditorVenmo;
+
+                    const handleVenmoPay = () => {
+                      if (!creditorVenmo) return;
+                      const amount = settlement.amount.toFixed(2);
+                      const note = encodeURIComponent(`${event.name}`);
+                      const venmoUrl = `venmo://paycharge?txn=pay&recipients=${creditorVenmo}&amount=${amount}&note=${note}`;
+                      window.location.href = venmoUrl;
+                    };
+
                     return (
                       <div key={idx} style={{
                         display: 'flex',
@@ -852,16 +865,56 @@ export default function EventDetail() {
                         gap: '8px',
                         border: isCurrentUserInvolved ? `2px solid ${colors.purple}` : 'none'
                       }}>
-                        <span style={{ fontSize: isMobile ? '16px' : '18px', color: colors.text, fontWeight: '500', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {isCurrentUserDebtor ? 'You' : settlement.fromName} → {isCurrentUserCreditor ? 'You' : settlement.toName}
-                        </span>
-                        <span style={{
-                          fontSize: isMobile ? '15px' : '16px',
-                          fontWeight: '600',
-                          color: isCurrentUserInvolved ? colors.purple : colors.text
-                        }}>
-                          ${settlement.amount.toFixed(2)}
-                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                          <span style={{ fontSize: isMobile ? '16px' : '18px', color: colors.text, fontWeight: '500', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {isCurrentUserDebtor ? 'You' : settlement.fromName} → {isCurrentUserCreditor ? 'You' : settlement.toName}
+                          </span>
+                          <span style={{
+                            fontSize: isMobile ? '15px' : '16px',
+                            fontWeight: '600',
+                            color: isCurrentUserInvolved ? colors.purple : colors.text
+                          }}>
+                            ${settlement.amount.toFixed(2)}
+                          </span>
+                        </div>
+                        {canPayViaVenmo && (
+                          <button
+                            onClick={handleVenmoPay}
+                            style={{
+                              padding: 0,
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center'
+                            }}
+                          >
+                            <img
+                              src="/venmo.png"
+                              alt="Pay with Venmo"
+                              style={{
+                                height: isMobile ? '28px' : '32px',
+                                width: 'auto'
+                              }}
+                            />
+                          </button>
+                        )}
+                        {isCurrentUserDebtor && !creditorVenmo && (
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            opacity: 0.3
+                          }}>
+                            <img
+                              src="/venmo.png"
+                              alt="Venmo not available"
+                              style={{
+                                height: isMobile ? '28px' : '32px',
+                                width: 'auto'
+                              }}
+                            />
+                          </div>
+                        )}
                       </div>
                     );
                   });

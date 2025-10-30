@@ -5,14 +5,17 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
-import { BORDER_RADIUS, LABEL_FONT_WEIGHT } from '../styles/constants';
+import { BORDER_RADIUS, LABEL_FONT_WEIGHT, INPUT_PADDING } from '../styles/constants';
 
 export default function Settings() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [status, setStatus] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+  const [venmoUsername, setVenmoUsername] = useState(user?.venmo_username || '');
+  const [savingVenmo, setSavingVenmo] = useState(false);
+  const [venmoError, setVenmoError] = useState('');
 
   useEffect(() => {
     const handleResize = () => {
@@ -21,6 +24,21 @@ export default function Settings() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const handleSaveVenmo = async () => {
+    setSavingVenmo(true);
+    setVenmoError('');
+    try {
+      await authAPI.updateProfile({ venmo_username: venmoUsername });
+      await refreshUser();
+      setStatus('Venmo username saved successfully');
+      setTimeout(() => setStatus(''), 3000);
+    } catch (err: any) {
+      setVenmoError(err.response?.data?.error || 'Failed to save Venmo username');
+    } finally {
+      setSavingVenmo(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     try {
@@ -57,12 +75,75 @@ export default function Settings() {
           </label>
           <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), color: colors.text }}>{user?.email}</div>
         </div>
+        <div style={{ marginBottom: '15px', maxWidth: isMobile ? '100%' : '600px' }}>
+          <label style={{ display: 'block', marginBottom: '4px', fontWeight: LABEL_FONT_WEIGHT, color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+            Venmo Username
+          </label>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'stretch', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', flex: '1', minWidth: '200px', border: `2px solid ${colors.border}`, borderRadius: '8px', overflow: 'hidden' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 12px',
+                background: colors.surfaceLight,
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: colors.text
+              }}>
+                @
+              </div>
+              <input
+                type="text"
+                value={venmoUsername}
+                onChange={(e) => setVenmoUsername(e.target.value)}
+                placeholder="your-venmo-username"
+                style={{
+                  flex: '1',
+                  padding: '8px 12px',
+                  fontSize: '16px',
+                  border: 'none',
+                  background: colors.surface,
+                  color: colors.text,
+                  outline: 'none'
+                }}
+              />
+            </div>
+            <button
+              onClick={handleSaveVenmo}
+              disabled={savingVenmo || !venmoUsername.trim() || venmoUsername === user?.venmo_username}
+              style={{
+                padding: '8px 16px',
+                background: colors.purple,
+                color: '#fff',
+                border: 'none',
+                borderRadius: BORDER_RADIUS,
+                cursor: (savingVenmo || !venmoUsername.trim() || venmoUsername === user?.venmo_username) ? 'not-allowed' : 'pointer',
+                fontSize: '18px',
+                fontWeight: '600',
+                width: 'auto',
+                opacity: (savingVenmo || !venmoUsername.trim() || venmoUsername === user?.venmo_username) ? 0.5 : 1
+              }}
+            >
+              Save
+            </button>
+          </div>
+          {venmoError ? (
+            <p style={{ fontSize: typography.getFontSize('bodySmall', isMobile), color: colors.error, marginTop: '5px', marginBottom: 0 }}>
+              {venmoError}
+            </p>
+          ) : (
+            <p style={{ fontSize: typography.getFontSize('bodySmall', isMobile), color: colors.textSecondary, marginTop: '5px', marginBottom: 0 }}>
+              Add your Venmo username to let others pay you directly via Venmo
+            </p>
+          )}
+        </div>
         {user?.google_id && (
           <div style={{
             padding: '10px',
             background: colors.surfaceLight,
             borderRadius: BORDER_RADIUS,
             marginTop: '15px',
+            maxWidth: isMobile ? '100%' : '600px',
             fontSize: typography.getFontSize('body', isMobile),
             color: colors.text
           }}>

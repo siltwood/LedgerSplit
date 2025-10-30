@@ -8,6 +8,7 @@ declare module 'express-session' {
       email: string;
       name: string;
       google_id?: string;
+      venmo_username?: string;
     };
     oauthState?: string;
     oauthStateCreated?: number;
@@ -19,6 +20,7 @@ export interface AuthRequest extends Request {
     id: string;
     email: string;
     name?: string;
+    venmo_username?: string;
   };
 }
 

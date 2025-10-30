@@ -10,6 +10,7 @@ import {
   resetPassword,
   requestPasswordChange,
   deleteAccount,
+  updateUserProfile,
 } from '../controllers/authController';
 import { requireAuth } from '../middleware/auth';
 
@@ -34,6 +35,7 @@ router.post('/change-password', requireAuth, requestPasswordChange);
 // User routes
 router.get('/me', getCurrentUser);
 router.post('/logout', logout);
+router.put('/profile', requireAuth, updateUserProfile);
 router.delete('/account', requireAuth, deleteAccount);
 
 export default router;

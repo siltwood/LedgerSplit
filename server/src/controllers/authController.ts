@@ -72,6 +72,7 @@ export const register = async (req: AuthRequest, res: Response) => {
         id: user.user_id,
         email: user.email,
         name: user.name,
+        venmo_username: user.venmo_username,
       };
 
       // Save session before continuing
@@ -142,6 +143,7 @@ export const login = async (req: AuthRequest, res: Response) => {
         id: user.user_id,
         email: user.email,
         name: user.name,
+        venmo_username: user.venmo_username,
       };
 
       // Save session
@@ -276,6 +278,7 @@ export const handleGoogleCallback = async (req: AuthRequest, res: Response) => {
       email: user.email,
       name: user.name,
       google_id: user.google_id,
+      venmo_username: user.venmo_username,
     };
 
     // Clear OAuth state after successful authentication
@@ -496,5 +499,50 @@ export const deleteAccount = async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error('Delete account error:', error);
     res.status(500).json({ error: 'Failed to delete account.' });
+  }
+};
+
+// Update user profile
+export const updateUserProfile = async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+  const { venmo_username } = req.body;
+
+  try {
+    // Validate venmo_username (optional, alphanumeric, hyphens, underscores, max 50 chars)
+    if (venmo_username && typeof venmo_username === 'string') {
+      const trimmed = venmo_username.trim();
+      if (trimmed.length > 50) {
+        return res.status(400).json({ error: 'Venmo username must be 50 characters or less.' });
+      }
+      // Venmo usernames can contain letters, numbers, hyphens, and underscores
+      if (trimmed && !/^[a-zA-Z0-9_-]+$/.test(trimmed)) {
+        return res.status(400).json({ error: 'Venmo username can only contain letters, numbers, hyphens, and underscores.' });
+      }
+    }
+
+    // Update user
+    const { data: user, error } = await db
+      .from('users')
+      .update({
+        venmo_username: venmo_username?.trim() || null,
+      })
+      .eq('user_id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Update error:', error);
+      return res.status(500).json({ error: 'Failed to update profile.' });
+    }
+
+    // Update session
+    if (req.session.user) {
+      req.session.user.venmo_username = user.venmo_username;
+    }
+
+    res.json({ message: 'Profile updated successfully', user: req.session.user });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'Failed to update profile.' });
   }
 };

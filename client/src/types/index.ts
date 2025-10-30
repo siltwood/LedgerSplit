@@ -5,6 +5,7 @@ export interface User {
   avatar_url?: string;
   deleted_at?: string;
   google_id?: string;
+  venmo_username?: string;
 }
 
 export interface Event {
