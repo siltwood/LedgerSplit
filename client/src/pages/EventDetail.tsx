@@ -920,7 +920,10 @@ export default function EventDetail() {
                         </div>
                         {showVenmoButton && (
                           <button
-                            onClick={handleVenmoPay}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleVenmoPay();
+                            }}
                             style={{
                               padding: '4px 8px',
                               background: '#008CFF',
