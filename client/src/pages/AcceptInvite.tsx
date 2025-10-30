@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
@@ -22,6 +22,7 @@ export default function AcceptInvite() {
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const hasAttemptedJoin = useRef(false);
 
   const token = searchParams.get('token');
 
@@ -36,11 +37,13 @@ export default function AcceptInvite() {
   }, [token]);
 
   useEffect(() => {
-    // If user is already logged in, try to accept the invite
-    if (user && invite) {
+    // If user is already logged in and invite is loaded, try to accept
+    // Only attempt once to avoid duplicate joins in React strict mode
+    if (user && invite && !loading && !hasAttemptedJoin.current) {
+      hasAttemptedJoin.current = true;
       handleAcceptInvite();
     }
-  }, [user, invite]);
+  }, [user, invite, loading]);
 
   const loadInvite = async () => {
     try {
@@ -55,14 +58,27 @@ export default function AcceptInvite() {
   };
 
   const handleAcceptInvite = async () => {
-    if (!token) return;
+    if (!token || !invite) return;
 
     try {
       const baseURL = import.meta.env.PROD ? 'https://api.ledgersplit.com/api' : '/api';
+
+      // Check if user is already a participant to avoid 400 error
+      const eventsResponse = await axios.get(`${baseURL}/events`, { withCredentials: true });
+      const userEvents = eventsResponse.data.events || [];
+      const isAlreadyParticipant = userEvents.some((e: any) => e.event_id === invite.event_id);
+
+      if (isAlreadyParticipant) {
+        // Already a participant, just navigate
+        navigate(`/events/${invite.event_id}`);
+        return;
+      }
+
+      // Not a participant yet, join the event
       const response = await axios.post(`${baseURL}/events/join/${token}`, {}, { withCredentials: true });
 
-      // Only navigate if the request succeeded
-      if (response.status === 200) {
+      // Only navigate if the request succeeded (200 OK or 201 Created)
+      if (response.status === 200 || response.status === 201) {
         if (invite?.event_id) {
           navigate(`/events/${invite.event_id}`);
         } else {
@@ -70,16 +86,7 @@ export default function AcceptInvite() {
         }
       }
     } catch (err: any) {
-      // Check if already a participant - if so, just navigate to the event
-      if (err.response?.data?.error === 'Already a participant of this event.') {
-        if (invite?.event_id) {
-          navigate(`/events/${invite.event_id}`);
-        } else {
-          navigate('/dashboard');
-        }
-      } else {
-        setError(err.response?.data?.error || 'Failed to accept invite');
-      }
+      setError(err.response?.data?.error || 'Failed to accept invite');
     }
   };
 

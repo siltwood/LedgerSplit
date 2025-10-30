@@ -156,7 +156,8 @@ export const getEventById = async (req: AuthRequest, res: Response) => {
           user_id,
           name,
           email,
-          avatar_url
+          avatar_url,
+          venmo_username
         )
       `)
       .eq('event_id', id);
@@ -265,7 +266,8 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
           user_id,
           name,
           email,
-          avatar_url
+          avatar_url,
+          venmo_username
         )
       `)
       .eq('event_id', event.event_id);

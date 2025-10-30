@@ -849,9 +849,14 @@ export default function EventDetail() {
                       if (!creditorVenmo) return;
                       const amount = settlement.amount.toFixed(2);
                       const note = encodeURIComponent(`${event.name}`);
+                      // Use deep link for mobile - works on mobile devices with Venmo app
                       const venmoUrl = `venmo://paycharge?txn=pay&recipients=${creditorVenmo}&amount=${amount}&note=${note}`;
                       window.location.href = venmoUrl;
                     };
+
+                    // Detect if on mobile device
+                    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    const showVenmoButton = canPayViaVenmo && isMobileDevice;
 
                     return (
                       <div key={idx} style={{
@@ -877,13 +882,14 @@ export default function EventDetail() {
                             ${settlement.amount.toFixed(2)}
                           </span>
                         </div>
-                        {canPayViaVenmo && (
+                        {showVenmoButton && (
                           <button
                             onClick={handleVenmoPay}
                             style={{
-                              padding: 0,
-                              background: 'transparent',
+                              padding: '6px 12px',
+                              background: '#008CFF',
                               border: 'none',
+                              borderRadius: '8px',
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center'
@@ -893,27 +899,11 @@ export default function EventDetail() {
                               src="/venmo.png"
                               alt="Pay with Venmo"
                               style={{
-                                height: isMobile ? '28px' : '32px',
+                                height: isMobile ? '24px' : '28px',
                                 width: 'auto'
                               }}
                             />
                           </button>
-                        )}
-                        {isCurrentUserDebtor && !creditorVenmo && (
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            opacity: 0.3
-                          }}>
-                            <img
-                              src="/venmo.png"
-                              alt="Venmo not available"
-                              style={{
-                                height: isMobile ? '28px' : '32px',
-                                width: 'auto'
-                              }}
-                            />
-                          </div>
                         )}
                       </div>
                     );

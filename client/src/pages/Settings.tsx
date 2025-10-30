@@ -16,6 +16,7 @@ export default function Settings() {
   const [venmoUsername, setVenmoUsername] = useState(user?.venmo_username || '');
   const [savingVenmo, setSavingVenmo] = useState(false);
   const [venmoError, setVenmoError] = useState('');
+  const [venmoSaved, setVenmoSaved] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -28,11 +29,12 @@ export default function Settings() {
   const handleSaveVenmo = async () => {
     setSavingVenmo(true);
     setVenmoError('');
+    setVenmoSaved(false);
     try {
       await authAPI.updateProfile({ venmo_username: venmoUsername });
       await refreshUser();
-      setStatus('Venmo username saved successfully');
-      setTimeout(() => setStatus(''), 3000);
+      setVenmoSaved(true);
+      setTimeout(() => setVenmoSaved(false), 2000);
     } catch (err: any) {
       setVenmoError(err.response?.data?.error || 'Failed to save Venmo username');
     } finally {
@@ -76,9 +78,27 @@ export default function Settings() {
           <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), color: colors.text }}>{user?.email}</div>
         </div>
         <div style={{ marginBottom: '15px', maxWidth: isMobile ? '100%' : '600px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontWeight: LABEL_FONT_WEIGHT, color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
-            Venmo Username
-          </label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <label style={{ fontWeight: LABEL_FONT_WEIGHT, color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+              Venmo Username
+            </label>
+            {venmoSaved && (
+              <div style={{
+                background: colors.purple,
+                borderRadius: '50%',
+                width: '20px',
+                height: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              }}>
+                ✓
+              </div>
+            )}
+          </div>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'stretch', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', flex: '1', minWidth: '200px', border: `2px solid ${colors.border}`, borderRadius: '8px', overflow: 'hidden' }}>
               <div style={{
@@ -128,7 +148,7 @@ export default function Settings() {
             </button>
           </div>
           {venmoError ? (
-            <p style={{ fontSize: typography.getFontSize('bodySmall', isMobile), color: colors.error, marginTop: '5px', marginBottom: 0 }}>
+            <p style={{ fontSize: typography.getFontSize('bodySmall', isMobile), color: colors.text, marginTop: '5px', marginBottom: 0 }}>
               {venmoError}
             </p>
           ) : (

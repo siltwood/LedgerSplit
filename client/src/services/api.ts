@@ -5,6 +5,21 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Add response interceptor to suppress console errors for expected 4xx errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Only suppress console errors for expected client errors (4xx)
+    // Still log server errors (5xx) and network errors
+    if (error.response && error.response.status >= 400 && error.response.status < 500) {
+      // Silently return the error without logging to console
+      return Promise.reject(error);
+    }
+    // For 5xx errors and network errors, let axios log them
+    return Promise.reject(error);
+  }
+);
+
 // Auth
 export const authAPI = {
   register: (data: { email: string; password: string; name: string }) =>
