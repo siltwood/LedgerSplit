@@ -35,7 +35,8 @@ export const sendPasswordResetEmail = async (
           .header h1 { margin: 0; color: #000000; font-size: 24px; }
           .content { padding: 30px 20px; }
           a { color: #000000; }
-          .button { display: inline-block; padding: 12px 30px; background: #a5ccd1; color: #000000 !important; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 20px 0; }
+          .button { display: inline-block; padding: 12px 30px; background: #c39bd3; color: #000000 !important; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; border: 2px solid #000000; }
+          .button:hover { background: #b088c0; }
           .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; background: #f9f9f9; }
         </style>
       </head>

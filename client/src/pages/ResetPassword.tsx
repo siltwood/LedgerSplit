@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
+import { buttonStyles } from '../styles/buttons';
 import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT } from '../styles/constants';
 
 export default function ResetPassword() {
@@ -12,6 +13,8 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   const token = searchParams.get('token');
@@ -33,14 +36,16 @@ export default function ResetPassword() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setPasswordError('');
+    setHasAttemptedSubmit(true);
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setPasswordError('Passwords do not match.');
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+    if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters.');
       return;
     }
 
@@ -95,60 +100,93 @@ export default function ResetPassword() {
 
       {token ? (
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '10px' }}>
+          <div style={{ marginBottom: isMobile ? '8px' : '10px' }}>
             <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
               New Password
             </label>
             <input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (e.target.value.length > 0 && e.target.value.length < 8) {
+                  setPasswordError('Password must be at least 8 characters');
+                } else if (confirmPassword && e.target.value !== confirmPassword) {
+                  setPasswordError('Passwords do not match');
+                } else {
+                  setPasswordError('');
+                }
+              }}
               required
-              minLength={6}
               style={{
                 width: '100%',
-                padding: '6px',
+                padding: isMobile ? '6px' : '8px',
                 fontSize: '16px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: BORDER_RADIUS,
                 color: colors.text
               }}
             />
+            {hasAttemptedSubmit && passwordError && passwordError !== 'Passwords do not match' && (
+              <div style={{
+                color: colors.text,
+                fontSize: '16px',
+                fontWeight: LABEL_FONT_WEIGHT,
+                marginTop: '4px'
+              }}>
+                {passwordError}
+              </div>
+            )}
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
+          <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
             <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>
               Confirm Password
             </label>
             <input
               type="password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                if (password && e.target.value !== password) {
+                  setPasswordError('Passwords do not match');
+                } else if (password.length > 0 && password.length < 8) {
+                  setPasswordError('Password must be at least 8 characters');
+                } else {
+                  setPasswordError('');
+                }
+              }}
               required
-              minLength={6}
               style={{
                 width: '100%',
-                padding: '6px',
+                padding: isMobile ? '6px' : '8px',
                 fontSize: '16px',
                 border: `1px solid ${colors.border}`,
                 borderRadius: BORDER_RADIUS,
                 color: colors.text
               }}
             />
+            {hasAttemptedSubmit && passwordError === 'Passwords do not match' && (
+              <div style={{
+                color: colors.text,
+                fontSize: '16px',
+                fontWeight: LABEL_FONT_WEIGHT,
+                marginTop: '4px'
+              }}>
+                {passwordError}
+              </div>
+            )}
           </div>
 
           <button
             type="submit"
             disabled={loading}
             style={{
-              width: '100%',
-              padding: INPUT_PADDING,
-              fontSize: typography.getFontSize('body', isMobile),
-              background: colors.primary,
-              color: colors.text,
-              border: 'none',
-              borderRadius: BORDER_RADIUS,
-              cursor: loading ? 'not-allowed' : 'pointer'
+              ...buttonStyles.primary,
+              padding: isMobile ? '8px' : '10px',
+              fontSize: isMobile ? '16px' : '18px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              marginTop: '20px'
             }}
           >
             {loading ? 'Resetting...' : 'Reset Password'}
