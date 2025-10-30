@@ -217,7 +217,7 @@ export default function Dashboard() {
   // Calculate stats
   const activeEvents = events.filter(e => !e.is_dismissed && !e.is_settled).length;
   const settledEvents = events.filter(e => e.is_settled).length;
-  const dismissedEvents = events.filter(e => e.is_dismissed && !e.is_settled).length;
+  const dismissedEvents = events.filter(e => e.is_dismissed).length;
 
   // Format number with k suffix for 1000+
   const formatCount = (num: number): string => {
