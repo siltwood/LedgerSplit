@@ -17,6 +17,8 @@ export default function Settings() {
   const [savingVenmo, setSavingVenmo] = useState(false);
   const [venmoError, setVenmoError] = useState('');
   const [venmoSaved, setVenmoSaved] = useState(false);
+  const [passwordEmailSent, setPasswordEmailSent] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
     const handleResize = () => {
@@ -172,14 +174,37 @@ export default function Settings() {
         )}
         {!user?.google_id && (
           <div style={{ marginTop: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <label style={{ fontWeight: LABEL_FONT_WEIGHT, color: colors.text, fontSize: typography.getFontSize('label', isMobile) }}>
+                Password
+              </label>
+              {passwordEmailSent && (
+                <div style={{
+                  background: colors.purple,
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              )}
+            </div>
             <button
               onClick={async () => {
+                setPasswordError('');
+                setPasswordEmailSent(false);
                 try {
                   await authAPI.requestPasswordChange();
-                  setStatus('Password change link sent to your email');
-                  setTimeout(() => setStatus(''), 5000);
+                  setPasswordEmailSent(true);
+                  setTimeout(() => setPasswordEmailSent(false), 3000);
                 } catch (err: any) {
-                  setStatus(err.response?.data?.error || 'Failed to send email');
+                  setPasswordError(err.response?.data?.error || 'Failed to send email');
                 }
               }}
               style={{
@@ -191,26 +216,24 @@ export default function Settings() {
             >
               Change Password
             </button>
-            <p style={{ fontSize: typography.getFontSize('body', isMobile), color: colors.text, marginTop: '5px' }}>
-              We'll send you an email with a secure link to change your password.
-            </p>
+            {passwordEmailSent ? (
+              <p style={{ fontSize: typography.getFontSize('body', isMobile), color: colors.text, marginTop: '5px', fontWeight: LABEL_FONT_WEIGHT }}>
+                Password reset email sent. Please check your spam folder.
+              </p>
+            ) : passwordError ? (
+              <p style={{ fontSize: typography.getFontSize('body', isMobile), color: colors.text, marginTop: '5px' }}>
+                {passwordError}
+              </p>
+            ) : (
+              <p style={{ fontSize: typography.getFontSize('body', isMobile), color: colors.textSecondary, marginTop: '5px' }}>
+                We'll send you an email with a secure link to change your password.
+              </p>
+            )}
           </div>
         )}
       </div>
 
       {/* Danger Zone */}
-      {status && (
-        <div style={{
-          padding: '10px',
-          marginBottom: '15px',
-          background: colors.success,
-          color: colors.text,
-          borderRadius: BORDER_RADIUS,
-          fontSize: '20px'
-        }}>
-          {status}
-        </div>
-      )}
       <div style={{
         background: colors.error,
         padding: '20px',
