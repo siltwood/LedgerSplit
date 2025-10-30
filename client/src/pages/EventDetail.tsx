@@ -31,6 +31,7 @@ export default function EventDetail() {
   const [sortBy] = useState<string>('payer');
   const [billsPage, setBillsPage] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+  const [showVenmoMobileWarning, setShowVenmoMobileWarning] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -847,6 +848,15 @@ export default function EventDetail() {
 
                     const handleVenmoPay = () => {
                       if (!creditorVenmo) return;
+
+                      // Check if actually on mobile device (not just small screen)
+                      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                      if (!isMobileDevice) {
+                        setShowVenmoMobileWarning(true);
+                        return;
+                      }
+
                       const amount = settlement.amount.toFixed(2);
                       const note = encodeURIComponent(`${event.name}`);
                       // Use deep link for mobile - works on mobile devices with Venmo app
@@ -854,9 +864,8 @@ export default function EventDetail() {
                       window.location.href = venmoUrl;
                     };
 
-                    // Detect if on mobile device
-                    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                    const showVenmoButton = canPayViaVenmo && isMobileDevice;
+                    // Show button on any screen size, but it will only work on actual mobile devices
+                    const showVenmoButton = canPayViaVenmo;
 
                     return (
                       <div key={idx} style={{
@@ -1436,6 +1445,44 @@ export default function EventDetail() {
                 style={buttonStyles.secondary}
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Venmo Mobile Warning Modal */}
+      {showVenmoMobileWarning && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: colors.surface,
+            padding: '24px',
+            borderRadius: '8px',
+            border: `1px solid ${colors.border}`,
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <h3 style={{ margin: '0 0 12px 0', color: colors.text, fontSize: '20px' }}>Mobile Device Required</h3>
+            <p style={{ margin: '0 0 24px 0', color: colors.text, fontSize: '20px', opacity: 0.9 }}>
+              Venmo button only works on mobile devices.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button
+                onClick={() => setShowVenmoMobileWarning(false)}
+                style={buttonStyles.secondary}
+              >
+                OK
               </button>
             </div>
           </div>
