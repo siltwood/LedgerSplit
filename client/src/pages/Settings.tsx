@@ -5,7 +5,7 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
-import { BORDER_RADIUS, LABEL_FONT_WEIGHT, INPUT_PADDING } from '../styles/constants';
+import { BORDER_RADIUS, LABEL_FONT_WEIGHT } from '../styles/constants';
 
 export default function Settings() {
   const { user, refreshUser } = useAuth();
