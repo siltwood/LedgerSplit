@@ -18,6 +18,7 @@ export default function Register() {
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -35,6 +36,7 @@ export default function Register() {
     e.preventDefault();
     setError('');
     setPasswordError('');
+    setHasAttemptedSubmit(true);
     setLoading(true);
 
     if (password !== confirmPassword) {
@@ -132,7 +134,7 @@ export default function Register() {
                 color: colors.text
               }}
             />
-            {nameError && (
+            {hasAttemptedSubmit && nameError && (
               <div style={{
                 color: colors.text,
                 fontSize: '16px',
@@ -168,7 +170,7 @@ export default function Register() {
                 color: colors.text
               }}
             />
-            {emailError && (
+            {hasAttemptedSubmit && emailError && (
               <div style={{
                 color: colors.text,
                 fontSize: '16px',
@@ -205,7 +207,7 @@ export default function Register() {
                 color: colors.text
               }}
             />
-            {passwordError && (
+            {hasAttemptedSubmit && passwordError && (
               <div style={{
                 color: colors.text,
                 fontSize: '16px',

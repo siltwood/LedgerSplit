@@ -886,10 +886,10 @@ export default function EventDetail() {
                           <button
                             onClick={handleVenmoPay}
                             style={{
-                              padding: '6px 12px',
+                              padding: '4px 8px',
                               background: '#008CFF',
                               border: 'none',
-                              borderRadius: '8px',
+                              borderRadius: '6px',
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center'
@@ -899,7 +899,7 @@ export default function EventDetail() {
                               src="/venmo.png"
                               alt="Pay with Venmo"
                               style={{
-                                height: isMobile ? '24px' : '28px',
+                                height: '20px',
                                 width: 'auto'
                               }}
                             />
