@@ -861,7 +861,34 @@ export default function EventDetail() {
                       const note = encodeURIComponent(`${event.name}`);
                       // Use deep link for mobile - works on mobile devices with Venmo app
                       const venmoUrl = `venmo://paycharge?txn=pay&recipients=${creditorVenmo}&amount=${amount}&note=${note}`;
-                      window.location.href = venmoUrl;
+
+                      // Set a flag before attempting to open
+                      let didNavigate = false;
+
+                      // Listen for blur event - if app opens, page will blur
+                      const onBlur = () => {
+                        didNavigate = true;
+                      };
+                      window.addEventListener('blur', onBlur);
+
+                      // Try to open Venmo
+                      try {
+                        window.location.href = venmoUrl;
+                      } catch (error) {
+                        // If there's an error, show the warning
+                        setShowVenmoMobileWarning(true);
+                        window.removeEventListener('blur', onBlur);
+                        return;
+                      }
+
+                      // Check after a short delay if the app opened
+                      setTimeout(() => {
+                        window.removeEventListener('blur', onBlur);
+                        // If page didn't blur and we're still here, the app didn't open
+                        if (!didNavigate && !document.hidden) {
+                          setShowVenmoMobileWarning(true);
+                        }
+                      }, 500);
                     };
 
                     // Show button on any screen size, but it will only work on actual mobile devices
