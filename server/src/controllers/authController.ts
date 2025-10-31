@@ -615,24 +615,6 @@ export const exportUserData = async (req: AuthRequest, res: Response) => {
       }
     }
 
-    // Get payments made by or to user
-    const { data: payments, error: paymentsError } = await db
-      .from('payments')
-      .select(`
-        payment_id,
-        amount,
-        date,
-        created_at,
-        events!inner (
-          event_id,
-          name
-        )
-      `)
-      .or(`from_user_id.eq.${userId},to_user_id.eq.${userId}`);
-
-    if (paymentsError) {
-      console.error('Payments export error:', paymentsError);
-    }
 
     // Compile all data
     const exportData = {
@@ -641,8 +623,7 @@ export const exportUserData = async (req: AuthRequest, res: Response) => {
         description: 'Complete export of your LedgerSplit data',
         data_explanation: {
           events: 'All events you have participated in',
-          bills: 'All bills/expenses from your events',
-          payments: 'Records of payments made between users (settling up)'
+          bills: 'All bills/expenses from your events'
         }
       },
       user_profile: {
@@ -659,11 +640,9 @@ export const exportUserData = async (req: AuthRequest, res: Response) => {
         created_at: ep.events.created_at
       })) || [],
       bills: splits || [],
-      payments: payments || [],
       summary: {
         total_events: eventParticipations?.length || 0,
-        total_bills: splits?.length || 0,
-        total_payments: payments?.length || 0
+        total_bills: splits?.length || 0
       }
     };
 

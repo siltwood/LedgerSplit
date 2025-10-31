@@ -390,10 +390,9 @@ export default function Settings() {
             What's included:
           </h3>
           <ul style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), marginBottom: 0, paddingLeft: '24px' }}>
-            <li>Your profile information (name, email, preferences)</li>
+            <li>Your profile information (name, email, Venmo username)</li>
             <li>All events you've participated in</li>
             <li>All bills you've created or been part of</li>
-            <li>All payment records involving you</li>
           </ul>
         </div>
 
