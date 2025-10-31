@@ -52,7 +52,6 @@ describe('Data Export Tests', () => {
                     email: 'test@example.com',
                     name: 'Test User',
                     venmo_username: 'test-venmo',
-                    currency_preference: 'USD',
                     created_at: '2024-01-01T00:00:00Z',
                   },
                   error: null,

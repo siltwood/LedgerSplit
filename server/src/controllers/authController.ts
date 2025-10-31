@@ -555,7 +555,7 @@ export const exportUserData = async (req: AuthRequest, res: Response) => {
     // Get user profile
     const { data: user, error: userError } = await db
       .from('users')
-      .select('user_id, email, name, venmo_username, currency_preference, created_at')
+      .select('user_id, email, name, venmo_username, created_at')
       .eq('user_id', userId)
       .single();
 
@@ -580,28 +580,37 @@ export const exportUserData = async (req: AuthRequest, res: Response) => {
       console.error('Event export error:', eventError);
     }
 
-    // Get splits (bills) created by user or where user is a participant
-    const { data: splits, error: splitsError } = await db
-      .from('splits')
-      .select(`
-        split_id,
-        title,
-        amount,
-        notes,
-        date,
-        created_at,
-        events!inner (
-          event_id,
-          name
-        ),
-        split_participants!inner (
-          user_id
-        )
-      `)
-      .or(`created_by.eq.${userId},split_participants.user_id.eq.${userId}`);
+    // Get all splits from events the user is participating in
+    const eventIds = eventParticipations?.map((ep: any) => ep.events.event_id) || [];
 
-    if (splitsError) {
-      console.error('Splits export error:', splitsError);
+    let splits: any[] = [];
+    if (eventIds.length > 0) {
+      const { data: splitsData, error: splitsError } = await db
+        .from('splits')
+        .select(`
+          split_id,
+          title,
+          amount,
+          notes,
+          date,
+          created_at,
+          paid_by,
+          event_id,
+          events!inner (
+            event_id,
+            name
+          ),
+          split_participants (
+            user_id
+          )
+        `)
+        .in('event_id', eventIds);
+
+      if (splitsError) {
+        console.error('Splits export error:', splitsError);
+      } else {
+        splits = splitsData || [];
+      }
     }
 
     // Get payments made by or to user
@@ -625,13 +634,20 @@ export const exportUserData = async (req: AuthRequest, res: Response) => {
 
     // Compile all data
     const exportData = {
-      export_date: new Date().toISOString(),
+      _metadata: {
+        export_date: new Date().toISOString(),
+        description: 'Complete export of your LedgerSplit data',
+        data_explanation: {
+          events: 'All events you have participated in',
+          bills: 'All bills/expenses from your events',
+          payments: 'Records of payments made between users (settling up)'
+        }
+      },
       user_profile: {
         user_id: user.user_id,
         email: user.email,
         name: user.name,
         venmo_username: user.venmo_username,
-        currency_preference: user.currency_preference,
         account_created: user.created_at
       },
       events: eventParticipations?.map((ep: any) => ep.events) || [],
