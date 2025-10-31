@@ -479,7 +479,7 @@ export default function EventDetail() {
         )}
 
         {/* Settle Event and Action Buttons Container */}
-        {event.participants && event.participants.length > 0 && splits.length > 0 && (
+        {event.participants && event.participants.length > 0 && (
           <div style={{
             marginTop: isMobile ? '8px' : '12px',
             paddingTop: isMobile ? '8px' : '12px',
@@ -489,60 +489,62 @@ export default function EventDetail() {
             justifyContent: 'space-between',
             gap: isMobile ? '8px' : '16px'
           }}>
-            {/* Settle Event Section */}
-            <div style={{ flex: isMobile ? 'none' : '1' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                <h3 style={{ margin: 0, color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
-                  Settle Event
-                </h3>
-              </div>
-              <div style={{ fontSize: isMobile ? '13px' : '14px', color: colors.text, marginBottom: '8px', opacity: 0.8 }}>
-                {settledConfirmations.length} of {event.participants.length} confirmed
-              </div>
-              {/* Current User Checkbox Only */}
-              {user && (
-                <div
-                  onClick={handleToggleSettledConfirmation}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: isMobile ? '6px 10px' : '8px 12px',
-                    background: settledConfirmations.some(c => c.user_id === user.id) ? colors.purple : colors.background,
-                    borderRadius: '6px',
-                    border: `1px solid ${settledConfirmations.some(c => c.user_id === user.id) ? colors.purple : colors.border}`,
-                    cursor: 'pointer',
-                    fontSize: isMobile ? '14px' : '16px',
-                    maxWidth: '100%'
-                  }}
-                >
-                  <div style={{
-                    width: isMobile ? '16px' : '18px',
-                    height: isMobile ? '16px' : '18px',
-                    borderRadius: '3px',
-                    border: `2px solid ${settledConfirmations.some(c => c.user_id === user.id) ? '#fff' : colors.border}`,
-                    background: settledConfirmations.some(c => c.user_id === user.id) ? colors.purple : 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
-                  }}>
-                    {settledConfirmations.some(c => c.user_id === user.id) && (
-                      <span style={{ color: '#fff', fontSize: isMobile ? '13px' : '14px', fontWeight: 'bold' }}>✓</span>
-                    )}
-                  </div>
-                  <span style={{
-                    color: settledConfirmations.some(c => c.user_id === user.id) ? '#fff' : colors.text,
-                    fontWeight: settledConfirmations.some(c => c.user_id === user.id) ? '600' : '500',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}>
-                    {settledConfirmations.some(c => c.user_id === user.id) ? 'Confirmed settled' : 'Confirm settled'}
-                  </span>
+            {/* Settle Event Section - only show if there are bills */}
+            {splits.length > 0 && (
+              <div style={{ flex: isMobile ? 'none' : '1' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                  <h3 style={{ margin: 0, color: colors.text, fontSize: isMobile ? '16px' : '18px' }}>
+                    Settle Event
+                  </h3>
                 </div>
-              )}
-            </div>
+                <div style={{ fontSize: isMobile ? '13px' : '14px', color: colors.text, marginBottom: '8px', opacity: 0.8 }}>
+                  {settledConfirmations.length} of {event.participants.length} confirmed
+                </div>
+                {/* Current User Checkbox Only */}
+                {user && (
+                  <div
+                    onClick={handleToggleSettledConfirmation}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: isMobile ? '6px 10px' : '8px 12px',
+                      background: settledConfirmations.some(c => c.user_id === user.id) ? colors.purple : colors.background,
+                      borderRadius: '6px',
+                      border: `1px solid ${settledConfirmations.some(c => c.user_id === user.id) ? colors.purple : colors.border}`,
+                      cursor: 'pointer',
+                      fontSize: isMobile ? '14px' : '16px',
+                      maxWidth: '100%'
+                    }}
+                  >
+                    <div style={{
+                      width: isMobile ? '16px' : '18px',
+                      height: isMobile ? '16px' : '18px',
+                      borderRadius: '3px',
+                      border: `2px solid ${settledConfirmations.some(c => c.user_id === user.id) ? '#fff' : colors.border}`,
+                      background: settledConfirmations.some(c => c.user_id === user.id) ? colors.purple : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      {settledConfirmations.some(c => c.user_id === user.id) && (
+                        <span style={{ color: '#fff', fontSize: isMobile ? '13px' : '14px', fontWeight: 'bold' }}>✓</span>
+                      )}
+                    </div>
+                    <span style={{
+                      color: settledConfirmations.some(c => c.user_id === user.id) ? '#fff' : colors.text,
+                      fontWeight: settledConfirmations.some(c => c.user_id === user.id) ? '600' : '500',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {settledConfirmations.some(c => c.user_id === user.id) ? 'Confirmed settled' : 'Confirm settled'}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Action Buttons (right side on desktop, below on mobile) */}
             <div style={{
@@ -550,7 +552,8 @@ export default function EventDetail() {
               flexDirection: isMobile ? 'row' : 'column',
               gap: isMobile ? '8px' : '10px',
               alignItems: isMobile ? 'stretch' : 'flex-end',
-              minWidth: isMobile ? '100%' : '200px'
+              minWidth: isMobile ? '100%' : '200px',
+              marginLeft: splits.length === 0 ? 'auto' : undefined
             }}>
               <button onClick={handleCopyShareLink} style={{
                 padding: isMobile ? '8px 16px' : '10px 20px',
@@ -595,61 +598,6 @@ export default function EventDetail() {
                 </button>
               )}
             </div>
-          </div>
-        )}
-
-        {/* Separator for mobile only (when there are no bills/settle event) */}
-        {isMobile && (!event.participants || event.participants.length === 0 || splits.length === 0) && (
-          <div style={{
-            marginTop: '8px',
-            paddingTop: '8px',
-            borderTop: `1px solid ${colors.border}`,
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '8px'
-          }}>
-            <button onClick={handleCopyShareLink} style={{
-              padding: '8px 16px',
-              fontSize: '16px',
-              background: colors.purple,
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: '600',
-              width: '50%',
-              flex: '1'
-            }}>
-              Invite to Event
-            </button>
-            {event.created_by !== user?.id && (
-              <button
-                onClick={() => setShowLeaveEventModal(true)}
-                style={{
-                  ...buttonStyles.secondary,
-                  padding: '8px 16px',
-                  fontSize: '16px',
-                  width: '50%',
-                  flex: '1'
-                }}
-              >
-                Leave Event
-              </button>
-            )}
-            {event.created_by === user?.id && (
-              <button
-                onClick={() => setShowDeleteEventModal(true)}
-                style={{
-                  ...buttonStyles.secondary,
-                  padding: '8px 16px',
-                  fontSize: '16px',
-                  width: '50%',
-                  flex: '1'
-                }}
-              >
-                Delete Event
-              </button>
-            )}
           </div>
         )}
       </div>
