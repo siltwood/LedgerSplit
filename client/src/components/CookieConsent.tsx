@@ -31,6 +31,8 @@ export default function CookieConsent() {
   const handleDecline = () => {
     localStorage.setItem('cookie-consent', 'declined');
     setShowBanner(false);
+    // Dispatch custom event to notify GoogleAnalytics component
+    window.dispatchEvent(new CustomEvent('cookie-consent-declined'));
   };
 
   if (!showBanner) return null;

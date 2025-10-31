@@ -18,6 +18,8 @@ export default function Settings() {
   const [venmoSaved, setVenmoSaved] = useState(false);
   const [passwordEmailSent, setPasswordEmailSent] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const [cookieConsent, setCookieConsent] = useState<string | null>(null);
+  const [exportingData, setExportingData] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,6 +27,12 @@ export default function Settings() {
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    // Load cookie consent preference
+    const consent = localStorage.getItem('cookie-consent');
+    setCookieConsent(consent);
   }, []);
 
   const handleSaveVenmo = async () => {
@@ -50,6 +58,36 @@ export default function Settings() {
     } catch (err: any) {
       alert(err.response?.data?.error || 'Failed to delete account');
       setShowDeleteConfirm(false);
+    }
+  };
+
+  const handleUpdateCookieConsent = (accepted: boolean) => {
+    const consentValue = accepted ? 'accepted' : 'declined';
+    localStorage.setItem('cookie-consent', consentValue);
+    setCookieConsent(consentValue);
+    // Dispatch event to notify GoogleAnalytics component
+    window.dispatchEvent(new CustomEvent(accepted ? 'cookie-consent-accepted' : 'cookie-consent-declined'));
+  };
+
+  const handleExportData = async () => {
+    setExportingData(true);
+    try {
+      const response = await authAPI.exportData();
+
+      // Create blob and download
+      const blob = new Blob([JSON.stringify(response.data, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ledgersplit-data-${Date.now()}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to export data');
+    } finally {
+      setExportingData(false);
     }
   };
 
@@ -230,6 +268,156 @@ export default function Settings() {
             )}
           </div>
         )}
+      </div>
+
+      {/* Cookie Preferences Section */}
+      <div style={{
+        background: colors.surface,
+        padding: '20px',
+        borderRadius: '8px',
+        border: `1px solid ${colors.border}`,
+        marginBottom: '30px'
+      }}>
+        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text, fontSize: typography.getFontSize('h2', isMobile) }}>Cookie Preferences</h2>
+
+        <p style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), marginBottom: '15px' }}>
+          Manage your cookie and analytics preferences. You can change these settings at any time.
+        </p>
+
+        <div style={{
+          background: colors.surfaceLight,
+          padding: '15px',
+          borderRadius: BORDER_RADIUS,
+          marginBottom: '20px'
+        }}>
+          <div style={{ marginBottom: '10px' }}>
+            <strong style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile) }}>
+              Current Status:
+            </strong>{' '}
+            <span style={{
+              color: cookieConsent === 'accepted' ? colors.purple : colors.text,
+              fontSize: typography.getFontSize('body', isMobile),
+              fontWeight: '600'
+            }}>
+              {cookieConsent === 'accepted' ? 'Analytics Enabled' : cookieConsent === 'declined' ? 'Analytics Disabled' : 'Not Set'}
+            </span>
+          </div>
+          {cookieConsent === 'accepted' && (
+            <p style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile), margin: 0 }}>
+              Google Analytics is collecting anonymized usage data to help improve the app.
+            </p>
+          )}
+          {cookieConsent === 'declined' && (
+            <p style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile), margin: 0 }}>
+              Only essential cookies are being used. No analytics data is collected.
+            </p>
+          )}
+        </div>
+
+        <div style={{ marginBottom: '15px' }}>
+          <h3 style={{ color: colors.text, fontSize: typography.getFontSize('h3', isMobile), marginBottom: '10px' }}>
+            Analytics Cookies (Optional)
+          </h3>
+          <p style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), marginBottom: '15px' }}>
+            We use Google Analytics to understand how people use our service. This data is anonymized and helps us improve the app.
+          </p>
+
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => handleUpdateCookieConsent(true)}
+              disabled={cookieConsent === 'accepted'}
+              style={{
+                padding: isMobile ? '10px 20px' : '12px 24px',
+                background: cookieConsent === 'accepted' ? colors.purple : colors.surface,
+                color: cookieConsent === 'accepted' ? '#fff' : colors.text,
+                border: `2px solid ${cookieConsent === 'accepted' ? colors.purple : colors.border}`,
+                borderRadius: BORDER_RADIUS,
+                cursor: cookieConsent === 'accepted' ? 'not-allowed' : 'pointer',
+                fontSize: typography.getFontSize('body', isMobile),
+                fontWeight: '600',
+                opacity: cookieConsent === 'accepted' ? 0.7 : 1
+              }}
+            >
+              {cookieConsent === 'accepted' ? '✓ Enabled' : 'Enable Analytics'}
+            </button>
+            <button
+              onClick={() => handleUpdateCookieConsent(false)}
+              disabled={cookieConsent === 'declined'}
+              style={{
+                padding: isMobile ? '10px 20px' : '12px 24px',
+                background: cookieConsent === 'declined' ? colors.textSecondary : colors.surface,
+                color: colors.text,
+                border: `2px solid ${cookieConsent === 'declined' ? colors.textSecondary : colors.border}`,
+                borderRadius: BORDER_RADIUS,
+                cursor: cookieConsent === 'declined' ? 'not-allowed' : 'pointer',
+                fontSize: typography.getFontSize('body', isMobile),
+                fontWeight: '600',
+                opacity: cookieConsent === 'declined' ? 0.7 : 1
+              }}
+            >
+              {cookieConsent === 'declined' ? '✓ Disabled' : 'Disable Analytics'}
+            </button>
+          </div>
+        </div>
+
+        <p style={{ color: colors.textSecondary, fontSize: typography.getFontSize('bodySmall', isMobile), marginTop: '15px', marginBottom: 0 }}>
+          Essential cookies (for login and session management) cannot be disabled as they are required for the app to function.
+          View our <a href="/privacy" style={{ color: colors.purple, textDecoration: 'underline' }}>Privacy Policy</a> for more details.
+        </p>
+      </div>
+
+      {/* Data Export Section */}
+      <div style={{
+        background: colors.surface,
+        padding: '20px',
+        borderRadius: '8px',
+        border: `1px solid ${colors.border}`,
+        marginBottom: '30px'
+      }}>
+        <h2 style={{ marginTop: 0, marginBottom: '20px', color: colors.text, fontSize: typography.getFontSize('h2', isMobile) }}>Export Your Data</h2>
+
+        <p style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), marginBottom: '15px' }}>
+          Download all your data in JSON format, including your profile, events, bills, and payments.
+        </p>
+
+        <div style={{
+          background: colors.surfaceLight,
+          padding: '15px',
+          borderRadius: BORDER_RADIUS,
+          marginBottom: '20px'
+        }}>
+          <h3 style={{ color: colors.text, fontSize: typography.getFontSize('h3', isMobile), marginBottom: '8px' }}>
+            What's included:
+          </h3>
+          <ul style={{ color: colors.text, fontSize: typography.getFontSize('body', isMobile), marginBottom: 0, paddingLeft: '24px' }}>
+            <li>Your profile information (name, email, preferences)</li>
+            <li>All events you've participated in</li>
+            <li>All bills you've created or been part of</li>
+            <li>All payment records involving you</li>
+          </ul>
+        </div>
+
+        <button
+          onClick={handleExportData}
+          disabled={exportingData}
+          style={{
+            padding: isMobile ? '10px 20px' : '12px 24px',
+            background: colors.purple,
+            color: '#fff',
+            border: 'none',
+            borderRadius: BORDER_RADIUS,
+            cursor: exportingData ? 'not-allowed' : 'pointer',
+            fontSize: typography.getFontSize('body', isMobile),
+            fontWeight: '600',
+            opacity: exportingData ? 0.6 : 1
+          }}
+        >
+          {exportingData ? 'Exporting...' : 'Download My Data'}
+        </button>
+
+        <p style={{ color: colors.textSecondary, fontSize: typography.getFontSize('bodySmall', isMobile), marginTop: '15px', marginBottom: 0 }}>
+          The exported file will contain all your data in a readable JSON format. This is part of your GDPR right to data portability.
+        </p>
       </div>
 
       {/* Danger Zone */}

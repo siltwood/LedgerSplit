@@ -546,3 +546,111 @@ export const updateUserProfile = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ error: 'Failed to update profile.' });
   }
 };
+
+// Export user data (GDPR right to data portability)
+export const exportUserData = async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+
+  try {
+    // Get user profile
+    const { data: user, error: userError } = await db
+      .from('users')
+      .select('user_id, email, name, venmo_username, currency_preference, created_at')
+      .eq('user_id', userId)
+      .single();
+
+    if (userError || !user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    // Get events where user is a participant
+    const { data: eventParticipations, error: eventError } = await db
+      .from('event_participants')
+      .select(`
+        events (
+          event_id,
+          name,
+          description,
+          created_at
+        )
+      `)
+      .eq('user_id', userId);
+
+    if (eventError) {
+      console.error('Event export error:', eventError);
+    }
+
+    // Get splits (bills) created by user or where user is a participant
+    const { data: splits, error: splitsError } = await db
+      .from('splits')
+      .select(`
+        split_id,
+        title,
+        amount,
+        notes,
+        date,
+        created_at,
+        events!inner (
+          event_id,
+          name
+        ),
+        split_participants!inner (
+          user_id
+        )
+      `)
+      .or(`created_by.eq.${userId},split_participants.user_id.eq.${userId}`);
+
+    if (splitsError) {
+      console.error('Splits export error:', splitsError);
+    }
+
+    // Get payments made by or to user
+    const { data: payments, error: paymentsError } = await db
+      .from('payments')
+      .select(`
+        payment_id,
+        amount,
+        date,
+        created_at,
+        events!inner (
+          event_id,
+          name
+        )
+      `)
+      .or(`from_user_id.eq.${userId},to_user_id.eq.${userId}`);
+
+    if (paymentsError) {
+      console.error('Payments export error:', paymentsError);
+    }
+
+    // Compile all data
+    const exportData = {
+      export_date: new Date().toISOString(),
+      user_profile: {
+        user_id: user.user_id,
+        email: user.email,
+        name: user.name,
+        venmo_username: user.venmo_username,
+        currency_preference: user.currency_preference,
+        account_created: user.created_at
+      },
+      events: eventParticipations?.map((ep: any) => ep.events) || [],
+      bills: splits || [],
+      payments: payments || [],
+      summary: {
+        total_events: eventParticipations?.length || 0,
+        total_bills: splits?.length || 0,
+        total_payments: payments?.length || 0
+      }
+    };
+
+    // Set headers for JSON download
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="ledgersplit-data-${userId}-${Date.now()}.json"`);
+
+    res.json(exportData);
+  } catch (error) {
+    console.error('Export data error:', error);
+    res.status(500).json({ error: 'Failed to export data.' });
+  }
+};

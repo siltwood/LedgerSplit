@@ -37,6 +37,7 @@ export const authAPI = {
   updateProfile: (data: { venmo_username?: string }) =>
     api.put('/auth/profile', data),
   deleteAccount: () => api.delete('/auth/account'),
+  exportData: () => api.get('/auth/export-data'),
 };
 
 // Events
