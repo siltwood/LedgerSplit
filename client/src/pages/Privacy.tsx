@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { colors } from '../styles/colors';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Privacy() {
+  const { user } = useAuth();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   useEffect(() => {
@@ -154,7 +156,7 @@ export default function Privacy() {
 
         <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: `1px solid ${colors.border}` }}>
           <Link
-            to="/"
+            to={user ? "/dashboard" : "/"}
             style={{
               color: colors.purple,
               fontSize: '18px',
@@ -162,7 +164,7 @@ export default function Privacy() {
               fontWeight: '600'
             }}
           >
-            ← Back to Home
+            ← Back to {user ? "Dashboard" : "Home"}
           </Link>
         </div>
       </div>
