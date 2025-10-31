@@ -563,18 +563,20 @@ export const exportUserData = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'User not found.' });
     }
 
-    // Get events where user is a participant
+    // Get events where user is a participant (excluding deleted events)
     const { data: eventParticipations, error: eventError } = await db
       .from('event_participants')
       .select(`
-        events (
+        events!inner (
           event_id,
           name,
           description,
-          created_at
+          created_at,
+          deleted_at
         )
       `)
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .is('events.deleted_at', null);
 
     if (eventError) {
       console.error('Event export error:', eventError);
@@ -650,7 +652,12 @@ export const exportUserData = async (req: AuthRequest, res: Response) => {
         venmo_username: user.venmo_username,
         account_created: user.created_at
       },
-      events: eventParticipations?.map((ep: any) => ep.events) || [],
+      events: eventParticipations?.map((ep: any) => ({
+        event_id: ep.events.event_id,
+        name: ep.events.name,
+        description: ep.events.description,
+        created_at: ep.events.created_at
+      })) || [],
       bills: splits || [],
       payments: payments || [],
       summary: {
