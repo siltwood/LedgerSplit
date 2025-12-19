@@ -17,11 +17,13 @@ export const sendPasswordResetEmail = async (
 ) => {
   const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
 
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM || '"LedgerSplit" <noreply@ledgersplit.com>',
-    to,
-    subject: 'Reset Your Password - LedgerSplit',
-    html: `
+  try {
+    console.log(`📧 Attempting to send password reset email to: ${to}`);
+    const info = await transporter.sendMail({
+      from: process.env.SMTP_FROM || '"LedgerSplit" <noreply@ledgersplit.com>',
+      to,
+      subject: 'Reset Your Password - LedgerSplit',
+      html: `
       <!DOCTYPE html>
       <html>
       <head>
@@ -63,7 +65,12 @@ export const sendPasswordResetEmail = async (
       </body>
       </html>
     `,
-  });
+    });
+    console.log(`✅ Password reset email sent successfully to: ${to}`, info.response);
+  } catch (error) {
+    console.error(`❌ Failed to send password reset email to: ${to}`, error);
+    throw error;
+  }
 };
 
 // Unused - friend invites not implemented
