@@ -68,7 +68,7 @@ export default function ForgotPassword() {
           fontSize: typography.getFontSize('body', isMobile)
         }}>
           <div>{message}</div>
-          <div style={{ marginTop: '8px', fontSize: typography.getFontSize('bodySmall', isMobile), opacity: 0.9 }}>
+          <div style={{ marginTop: '8px' }}>
             Check your spam folder if you don't see it.
           </div>
         </div>
