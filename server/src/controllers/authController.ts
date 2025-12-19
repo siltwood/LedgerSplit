@@ -331,12 +331,12 @@ export const requestPasswordReset = async (req: AuthRequest, res: Response) => {
 
     // Always return success to prevent email enumeration
     if (error || !user) {
-      return res.json({ message: 'If that email exists, a reset link has been sent' });
+      return res.json({ message: 'If that email exists, a reset link has been sent.' });
     }
 
     // Don't allow password reset for Google auth users
     if (user.google_id && !user.password_hash) {
-      return res.json({ message: 'If that email exists, a reset link has been sent' });
+      return res.json({ message: 'If that email exists, a reset link has been sent.' });
     }
 
     // Create reset token
@@ -362,7 +362,7 @@ export const requestPasswordReset = async (req: AuthRequest, res: Response) => {
     const { sendPasswordResetEmail } = await import('../services/email');
     await sendPasswordResetEmail(email, token.token);
 
-    res.json({ message: 'If that email exists, a reset link has been sent' });
+    res.json({ message: 'If that email exists, a reset link has been sent.' });
   } catch (error) {
     console.error('Password reset request error:', error);
     res.status(500).json({ error: 'Failed to process request.' });
