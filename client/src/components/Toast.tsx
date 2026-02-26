@@ -47,7 +47,7 @@ export default function Toast({ message, onDismiss, persistent, settingsLink, on
         zIndex: 1000,
         whiteSpace: 'pre-line',
         maxWidth: 'calc(100vw - 40px)',
-        width: 'auto',
+        width: window.innerWidth < 600 ? '80vw' : 'auto',
         wordBreak: 'break-word',
         textAlign: 'left' as const,
         animation: exiting ? 'toastOut 0.3s ease-in forwards' : 'toastIn 0.3s ease-out',
