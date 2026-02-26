@@ -9,7 +9,7 @@ interface ToastProps {
 
 export default function Toast({ message, onDismiss, duration = 3500 }: ToastProps) {
   const [exiting, setExiting] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const isError = message.includes('✗');
 
@@ -22,7 +22,7 @@ export default function Toast({ message, onDismiss, duration = 3500 }: ToastProp
   // Auto-dismiss after duration
   useEffect(() => {
     timerRef.current = setTimeout(triggerExit, duration);
-    return () => clearTimeout(timerRef.current);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [message, duration]);
 
   return (
