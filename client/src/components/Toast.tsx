@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { colors } from '../styles/colors';
 
 interface ToastProps {
   message: string;
   onDismiss: () => void;
+  persistent?: boolean;
   settingsLink?: boolean;
   onDontShowAgain?: () => void;
 }
 
-export default function Toast({ message, onDismiss, settingsLink, onDontShowAgain }: ToastProps) {
+export default function Toast({ message, onDismiss, persistent, settingsLink, onDontShowAgain }: ToastProps) {
   const [exiting, setExiting] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const isError = message.includes('✗');
 
@@ -19,6 +21,13 @@ export default function Toast({ message, onDismiss, settingsLink, onDontShowAgai
     setExiting(true);
     setTimeout(onDismiss, 300);
   };
+
+  // Auto-dismiss after 3.5s for non-persistent toasts
+  useEffect(() => {
+    if (persistent) return;
+    timerRef.current = setTimeout(triggerExit, 3500);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [message, persistent]);
 
   return (
     <div
@@ -44,25 +53,27 @@ export default function Toast({ message, onDismiss, settingsLink, onDontShowAgai
         animation: exiting ? 'toastOut 0.3s ease-in forwards' : 'toastIn 0.3s ease-out',
       }}
     >
-      <button
-        onClick={triggerExit}
-        style={{
-          position: 'absolute',
-          top: '6px',
-          right: '10px',
-          background: 'none',
-          border: 'none',
-          color: '#fff',
-          fontSize: '20px',
-          fontWeight: '900',
-          cursor: 'pointer',
-          lineHeight: 1,
-          padding: '2px 4px',
-        }}
-      >
-        ✕
-      </button>
-      <div style={{ paddingRight: '20px' }}>
+      {persistent && (
+        <button
+          onClick={triggerExit}
+          style={{
+            position: 'absolute',
+            top: '6px',
+            right: '10px',
+            background: 'none',
+            border: 'none',
+            color: '#fff',
+            fontSize: '20px',
+            fontWeight: '900',
+            cursor: 'pointer',
+            lineHeight: 1,
+            padding: '2px 4px',
+          }}
+        >
+          ✕
+        </button>
+      )}
+      <div style={persistent ? { paddingRight: '20px' } : undefined}>
         {message}
       </div>
       {settingsLink && (

@@ -618,6 +618,7 @@ export default function EventDetail() {
         <Toast
           message={copyStatus}
           onDismiss={() => { setCopyStatus(''); setIsVenmoNudge(false); }}
+          persistent={isVenmoNudge}
           settingsLink={isVenmoNudge}
           onDontShowAgain={isVenmoNudge ? () => localStorage.setItem('hideVenmoNudge', 'true') : undefined}
         />
