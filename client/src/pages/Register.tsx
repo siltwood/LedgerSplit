@@ -5,7 +5,7 @@ import { authAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
 import { typography } from '../styles/typography';
-import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT } from '../styles/constants';
+import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT, INPUT_HINT_STYLE } from '../styles/constants';
 import Footer from '../components/Footer';
 
 export default function Register() {
@@ -118,8 +118,8 @@ export default function Register() {
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
-                if (e.target.value.length > 20) {
-                  setNameError('Max name length is 20');
+                if (e.target.value.length > 40) {
+                  setNameError('Max name length is 40');
                 } else {
                   setNameError('');
                 }
@@ -134,6 +134,7 @@ export default function Register() {
                 color: colors.text
               }}
             />
+            <div style={INPUT_HINT_STYLE}>Max 40 characters</div>
             {hasAttemptedSubmit && nameError && (
               <div style={{
                 color: colors.text,

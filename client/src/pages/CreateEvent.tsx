@@ -4,7 +4,7 @@ import { eventsAPI } from '../services/api';
 import { colors } from '../styles/colors';
 import { buttonStyles, getResponsiveButtonWidth } from '../styles/buttons';
 import { typography } from '../styles/typography';
-import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT } from '../styles/constants';
+import { BORDER_RADIUS, INPUT_PADDING, LABEL_FONT_WEIGHT, INPUT_HINT_STYLE } from '../styles/constants';
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ export default function CreateEvent() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            maxLength={20}
+            maxLength={40}
             style={{
               width: '100%',
               padding: INPUT_PADDING,
@@ -82,6 +82,7 @@ export default function CreateEvent() {
               color: colors.text
             }}
           />
+          <div style={INPUT_HINT_STYLE}>Max 40 characters</div>
         </div>
 
         <div style={{ marginBottom: '12px' }}>
