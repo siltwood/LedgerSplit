@@ -36,7 +36,7 @@ export default function Landing() {
           maxWidth: '600px',
           padding: '0 10px'
         }}>
-          Track expenses and split bills with friends
+          Track expenses and split bills with friends.
         </p>
         <div style={{
           display: 'flex',

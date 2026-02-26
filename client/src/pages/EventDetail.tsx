@@ -8,6 +8,7 @@ import { BORDER_RADIUS, INPUT_PADDING, INPUT_HINT_STYLE } from '../styles/consta
 import { useAuth } from '../context/AuthContext';
 import Caret from '../components/Caret';
 import SearchInput from '../components/SearchInput';
+import Toast from '../components/Toast';
 
 const BILLS_PER_PAGE = 5;
 
@@ -49,8 +50,7 @@ export default function EventDetail() {
     if (!user || user.venmo_username) return;
     if (splits.length === 0) return;
     venmoNudgeShown.current = true;
-    setCopyStatus('Add your Venmo username in Settings so others can pay you directly');
-    setTimeout(() => setCopyStatus(''), 4000);
+    setCopyStatus('Add your Venmo username in Settings so others can pay you directly.');
   }, [user, splits]);
 
   const loadData = async () => {
@@ -87,12 +87,12 @@ export default function EventDetail() {
 
       // Handle 403 (kicked from event) or 404 (event deleted)
       if (error?.response?.status === 403) {
-        setCopyStatus('✗ You were removed from this event');
+        setCopyStatus('✗ You were removed from this event.');
         setTimeout(() => {
           navigate('/dashboard');
         }, 2000);
       } else if (error?.response?.status === 404) {
-        setCopyStatus('✗ This event was deleted');
+        setCopyStatus('✗ This event was deleted.');
         setTimeout(() => {
           navigate('/dashboard');
         }, 2000);
@@ -115,18 +115,17 @@ export default function EventDetail() {
 
       // Handle 403 (kicked from event) or 404 (event deleted)
       if (error?.response?.status === 403) {
-        setCopyStatus('✗ You were removed from this event');
+        setCopyStatus('✗ You were removed from this event.');
         setTimeout(() => {
           navigate('/dashboard');
         }, 2000);
       } else if (error?.response?.status === 404) {
-        setCopyStatus('✗ This event was deleted');
+        setCopyStatus('✗ This event was deleted.');
         setTimeout(() => {
           navigate('/dashboard');
         }, 2000);
       } else {
-        setCopyStatus('✗ Failed to delete bill');
-        setTimeout(() => setCopyStatus(''), 2500);
+        setCopyStatus('✗ Failed to delete bill.');
       }
     }
   };
@@ -138,10 +137,8 @@ export default function EventDetail() {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopyStatus(`✓ Link copied!\n${shareUrl}`);
-      setTimeout(() => setCopyStatus(''), 3500);
     } catch (error) {
-      setCopyStatus('✗ Failed to copy link');
-      setTimeout(() => setCopyStatus(''), 2500);
+      setCopyStatus('✗ Failed to copy link.');
     }
   };
 
@@ -176,12 +173,12 @@ export default function EventDetail() {
 
       // Handle 403 (kicked from event) or 404 (event deleted)
       if (error?.response?.status === 403) {
-        setCopyStatus('✗ You were removed from this event');
+        setCopyStatus('✗ You were removed from this event.');
         setTimeout(() => {
           navigate('/dashboard');
         }, 2000);
       } else if (error?.response?.status === 404) {
-        setCopyStatus('✗ This event was deleted');
+        setCopyStatus('✗ This event was deleted.');
         setTimeout(() => {
           navigate('/dashboard');
         }, 2000);
@@ -615,25 +612,7 @@ export default function EventDetail() {
 
       {/* Toast Notification for Copy Status */}
       {copyStatus && (
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          padding: '16px 24px',
-          background: copyStatus.includes('✗') ? colors.error : colors.purple,
-          color: '#fff',
-          borderRadius: '8px',
-          fontSize: '20px',
-          fontWeight: '600',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          zIndex: 1000,
-          animation: 'slideIn 0.3s ease-out',
-          whiteSpace: 'pre-line',
-          maxWidth: '90%',
-          wordBreak: 'break-all'
-        }}>
-          {copyStatus}
-        </div>
+        <Toast message={copyStatus} onDismiss={() => setCopyStatus('')} />
       )}
 
       {/* All Balances Section - Collapsible */}
@@ -903,7 +882,7 @@ export default function EventDetail() {
                             />
                           </button>
                         ) : isCurrentUserDebtor && !creditorVenmo ? (
-                          <span style={INPUT_HINT_STYLE}>Venmo not set up</span>
+                          <span style={INPUT_HINT_STYLE}>Venmo not set up.</span>
                         ) : null}
                       </div>
                     );

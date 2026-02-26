@@ -216,9 +216,12 @@ export default function Settings() {
             </p>
           ) : (
             <p style={{ fontSize: typography.getFontSize('bodySmall', isMobile), color: colors.text, marginTop: '5px', marginBottom: 0 }}>
-              Add your Venmo username to let others pay you directly via Venmo
+              Add your Venmo username to let others pay you directly via Venmo.
             </p>
           )}
+          <p style={{ fontSize: typography.getFontSize('bodySmall', isMobile), color: colors.text, marginTop: '5px', marginBottom: 0 }}>
+            Venmo links only work on mobile devices.
+          </p>
         </div>
         {user?.google_id && (
           <div style={{
@@ -230,7 +233,7 @@ export default function Settings() {
             fontSize: typography.getFontSize('body', isMobile),
             color: colors.text
           }}>
-            Connected with Google Account
+            Connected with Google Account.
           </div>
         )}
         {!user?.google_id && (

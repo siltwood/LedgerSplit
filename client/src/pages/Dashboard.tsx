@@ -383,7 +383,7 @@ export default function Dashboard() {
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>📅</div>
             <div style={{ fontSize: typography.getFontSize('h2', isMobile), fontWeight: 'bold', marginBottom: '12px' }}>No events yet</div>
             <div style={{ fontSize: typography.getFontSize('bodyLarge', isMobile), opacity: 0.7 }}>
-              Create your first event to start tracking shared expenses with friends and family
+              Create your first event to start tracking shared expenses with friends and family.
             </div>
           </div>
         ) : filteredEvents.length === 0 ? (
@@ -401,7 +401,7 @@ export default function Dashboard() {
             {searchQuery ? (
               <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>No events match "{searchQuery}"</div>
             ) : (
-              <div>Try changing your filter settings</div>
+              <div>Try changing your filter settings.</div>
             )}
           </div>
         ) : (
