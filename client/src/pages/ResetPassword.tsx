@@ -106,6 +106,7 @@ export default function ResetPassword() {
             </label>
             <input
               type="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -145,6 +146,7 @@ export default function ResetPassword() {
             </label>
             <input
               type="password"
+              autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => {
                 setConfirmPassword(e.target.value);

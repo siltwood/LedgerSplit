@@ -332,6 +332,7 @@ export default function AcceptInvite() {
                   </label>
                   <input
                     type="password"
+                    autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -431,6 +432,7 @@ export default function AcceptInvite() {
                   </label>
                   <input
                     type="password"
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required

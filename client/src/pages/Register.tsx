@@ -187,6 +187,7 @@ export default function Register() {
             <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>Password</label>
             <input
               type="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -224,6 +225,7 @@ export default function Register() {
             <label style={{ display: 'block', marginBottom: '4px', color: colors.text, fontSize: typography.getFontSize('label', isMobile), fontWeight: LABEL_FONT_WEIGHT }}>Confirm Password</label>
             <input
               type="password"
+              autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => {
                 setConfirmPassword(e.target.value);
