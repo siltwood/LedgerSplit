@@ -51,6 +51,20 @@ export default function Settings() {
     }
   };
 
+  const handleDeleteVenmo = async () => {
+    setSavingVenmo(true);
+    setVenmoError('');
+    try {
+      await authAPI.updateProfile({ venmo_username: '' });
+      setVenmoUsername('');
+      await refreshUser();
+    } catch (err: any) {
+      setVenmoError(err.response?.data?.error || 'Failed to delete Venmo username');
+    } finally {
+      setSavingVenmo(false);
+    }
+  };
+
   const handleDeleteAccount = async () => {
     try {
       await authAPI.deleteAccount();
@@ -169,29 +183,39 @@ export default function Settings() {
             </div>
             <button
               onClick={handleSaveVenmo}
-              disabled={savingVenmo || !venmoUsername.trim() || venmoUsername === user?.venmo_username}
+              disabled={savingVenmo || (!venmoUsername.trim() && !user?.venmo_username) || venmoUsername === user?.venmo_username}
               style={{
-                padding: '8px 16px',
-                background: colors.purple,
-                color: '#fff',
-                border: 'none',
-                borderRadius: BORDER_RADIUS,
-                cursor: (savingVenmo || !venmoUsername.trim() || venmoUsername === user?.venmo_username) ? 'not-allowed' : 'pointer',
-                fontSize: '18px',
-                fontWeight: '600',
+                ...buttonStyles.small,
                 width: 'auto',
-                opacity: (savingVenmo || !venmoUsername.trim() || venmoUsername === user?.venmo_username) ? 0.5 : 1
+                cursor: (savingVenmo || (!venmoUsername.trim() && !user?.venmo_username) || venmoUsername === user?.venmo_username) ? 'not-allowed' : 'pointer',
+                opacity: (savingVenmo || (!venmoUsername.trim() && !user?.venmo_username) || venmoUsername === user?.venmo_username) ? 0.5 : 1
               }}
             >
               Save
             </button>
+            {user?.venmo_username && (
+              <button
+                onClick={handleDeleteVenmo}
+                disabled={savingVenmo}
+                style={{
+                  ...buttonStyles.small,
+                  background: colors.error,
+                  color: colors.text,
+                  width: 'auto',
+                  cursor: savingVenmo ? 'not-allowed' : 'pointer',
+                  opacity: savingVenmo ? 0.5 : 1
+                }}
+              >
+                ✕
+              </button>
+            )}
           </div>
           {venmoError ? (
             <p style={{ fontSize: typography.getFontSize('bodySmall', isMobile), color: colors.text, marginTop: '5px', marginBottom: 0 }}>
               {venmoError}
             </p>
           ) : (
-            <p style={{ fontSize: typography.getFontSize('bodySmall', isMobile), color: colors.textSecondary, marginTop: '5px', marginBottom: 0 }}>
+            <p style={{ fontSize: typography.getFontSize('bodySmall', isMobile), color: colors.text, marginTop: '5px', marginBottom: 0 }}>
               Add your Venmo username to let others pay you directly via Venmo
             </p>
           )}
@@ -262,7 +286,7 @@ export default function Settings() {
                 {passwordError}
               </p>
             ) : (
-              <p style={{ fontSize: typography.getFontSize('body', isMobile), color: colors.textSecondary, marginTop: '5px' }}>
+              <p style={{ fontSize: typography.getFontSize('body', isMobile), color: colors.text, marginTop: '5px' }}>
                 We'll send you an email with a secure link to change your password.
               </p>
             )}
@@ -360,7 +384,7 @@ export default function Settings() {
           </div>
         </div>
 
-        <p style={{ color: colors.textSecondary, fontSize: typography.getFontSize('bodySmall', isMobile), marginTop: '15px', marginBottom: 0 }}>
+        <p style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile), marginTop: '15px', marginBottom: 0 }}>
           Essential cookies (for login and session management) cannot be disabled as they are required for the app to function.
           View our <a href="/privacy" style={{ color: colors.purple, textDecoration: 'underline' }}>Privacy Policy</a> for more details.
         </p>
@@ -414,7 +438,7 @@ export default function Settings() {
           {exportingData ? 'Exporting...' : 'Download My Data'}
         </button>
 
-        <p style={{ color: colors.textSecondary, fontSize: typography.getFontSize('bodySmall', isMobile), marginTop: '15px', marginBottom: 0 }}>
+        <p style={{ color: colors.text, fontSize: typography.getFontSize('bodySmall', isMobile), marginTop: '15px', marginBottom: 0 }}>
           The exported file will contain all your data in a readable JSON format. This is part of your GDPR right to data portability.
         </p>
       </div>

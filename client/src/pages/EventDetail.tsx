@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { eventsAPI, splitsAPI, paymentsAPI, settledAPI } from '../services/api';
 import type { Event, Split, EventSettledConfirmation } from '../types/index';
 import { colors } from '../styles/colors';
 import { buttonStyles } from '../styles/buttons';
-import { BORDER_RADIUS, INPUT_PADDING } from '../styles/constants';
+import { BORDER_RADIUS, INPUT_PADDING, INPUT_HINT_STYLE } from '../styles/constants';
 import { useAuth } from '../context/AuthContext';
 import Caret from '../components/Caret';
 import SearchInput from '../components/SearchInput';
@@ -32,6 +32,7 @@ export default function EventDetail() {
   const [billsPage, setBillsPage] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   const [showVenmoMobileWarning, setShowVenmoMobileWarning] = useState(false);
+  const venmoNudgeShown = useRef(false);
 
   useEffect(() => {
     loadData();
@@ -41,6 +42,16 @@ export default function EventDetail() {
   useEffect(() => {
     setBillsPage(1);
   }, [billSearchQuery, sortBy]);
+
+  // Nudge user to set up Venmo if they haven't
+  useEffect(() => {
+    if (venmoNudgeShown.current) return;
+    if (!user || user.venmo_username) return;
+    if (splits.length === 0) return;
+    venmoNudgeShown.current = true;
+    setCopyStatus('Add your Venmo username in Settings so others can pay you directly');
+    setTimeout(() => setCopyStatus(''), 4000);
+  }, [user, splits]);
 
   const loadData = async () => {
     if (!id) return;
@@ -866,7 +877,7 @@ export default function EventDetail() {
                             ${settlement.amount.toFixed(2)}
                           </span>
                         </div>
-                        {showVenmoButton && (
+                        {showVenmoButton ? (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -891,7 +902,9 @@ export default function EventDetail() {
                               }}
                             />
                           </button>
-                        )}
+                        ) : isCurrentUserDebtor && !creditorVenmo ? (
+                          <span style={INPUT_HINT_STYLE}>Venmo not set up</span>
+                        ) : null}
                       </div>
                     );
                   });
