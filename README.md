@@ -92,6 +92,7 @@ Create `.env` files in both `client/` and `server/` directories.
 # Database
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 # Google OAuth
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -101,9 +102,12 @@ GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
 # Session
 SESSION_SECRET=your_session_secret
 
-# Email (for password reset)
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASSWORD=your_app_password
+# SMTP (for password reset emails)
+SMTP_HOST=smtp.your-provider.com
+SMTP_PORT=587
+SMTP_USER=noreply@yourdomain.com
+SMTP_PASS=your_smtp_password
+SMTP_FROM="YourApp" <noreply@yourdomain.com>
 
 # Environment
 NODE_ENV=development
