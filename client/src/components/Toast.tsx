@@ -74,28 +74,16 @@ export default function Toast({ message, onDismiss, persistent, settingsLink, on
         </button>
       )}
       <div style={persistent ? { paddingRight: '20px' } : undefined}>
-        {message}
+        {settingsLink ? (
+          <>
+            Add your Venmo username in <Link to="/settings" onClick={triggerExit} style={{ color: '#fff', textDecoration: 'underline' }}>Settings</Link> so others can pay you directly.
+          </>
+        ) : message}
       </div>
       {settingsLink && (
-        <>
-          <Link
-            to="/settings"
-            onClick={triggerExit}
-            style={{
-              color: '#fff',
-              textDecoration: 'underline',
-              fontSize: '16px',
-              fontWeight: '600',
-              display: 'block',
-              marginTop: '8px',
-            }}
-          >
-            Go to Settings
-          </Link>
-          <div style={{ color: colors.textSecondary, fontSize: '11px', marginTop: '4px' }}>
-            Venmo links only work on mobile.
-          </div>
-        </>
+        <div style={{ color: colors.textSecondary, fontSize: '11px', marginTop: '6px' }}>
+          Venmo links only work on mobile.
+        </div>
       )}
       {onDontShowAgain && (
         <button
@@ -107,10 +95,11 @@ export default function Toast({ message, onDismiss, persistent, settingsLink, on
           style={{
             background: 'none',
             border: 'none',
-            color: colors.textSecondary,
+            color: '#fff',
+            textDecoration: 'underline',
             fontSize: '11px',
             cursor: 'pointer',
-            marginTop: '8px',
+            marginTop: '6px',
             padding: 0,
           }}
         >
