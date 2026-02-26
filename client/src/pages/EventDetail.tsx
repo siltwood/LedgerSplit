@@ -45,11 +45,14 @@ export default function EventDetail() {
   }, [billSearchQuery, sortBy]);
 
   // Nudge user to set up Venmo if they haven't
+  const [isVenmoNudge, setIsVenmoNudge] = useState(false);
   useEffect(() => {
     if (venmoNudgeShown.current) return;
     if (!user || user.venmo_username) return;
     if (splits.length === 0) return;
+    if (localStorage.getItem('hideVenmoNudge') === 'true') return;
     venmoNudgeShown.current = true;
+    setIsVenmoNudge(true);
     setCopyStatus('Add your Venmo username in Settings so others can pay you directly.');
   }, [user, splits]);
 
@@ -612,7 +615,12 @@ export default function EventDetail() {
 
       {/* Toast Notification for Copy Status */}
       {copyStatus && (
-        <Toast message={copyStatus} onDismiss={() => setCopyStatus('')} />
+        <Toast
+          message={copyStatus}
+          onDismiss={() => { setCopyStatus(''); setIsVenmoNudge(false); }}
+          settingsLink={isVenmoNudge}
+          onDontShowAgain={isVenmoNudge ? () => localStorage.setItem('hideVenmoNudge', 'true') : undefined}
+        />
       )}
 
       {/* All Balances Section - Collapsible */}

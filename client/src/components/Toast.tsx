@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { colors } from '../styles/colors';
 
 interface ToastProps {
   message: string;
   onDismiss: () => void;
-  duration?: number;
+  settingsLink?: boolean;
+  onDontShowAgain?: () => void;
 }
 
-export default function Toast({ message, onDismiss, duration = 3500 }: ToastProps) {
+export default function Toast({ message, onDismiss, settingsLink, onDontShowAgain }: ToastProps) {
   const [exiting, setExiting] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const isError = message.includes('✗');
 
@@ -19,15 +20,8 @@ export default function Toast({ message, onDismiss, duration = 3500 }: ToastProp
     setTimeout(onDismiss, 300);
   };
 
-  // Auto-dismiss after duration
-  useEffect(() => {
-    timerRef.current = setTimeout(triggerExit, duration);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [message, duration]);
-
   return (
     <div
-      onClick={triggerExit}
       style={{
         position: 'fixed',
         top: '20px',
@@ -46,12 +40,67 @@ export default function Toast({ message, onDismiss, duration = 3500 }: ToastProp
         maxWidth: 'calc(100vw - 40px)',
         width: 'auto',
         wordBreak: 'break-word',
-        cursor: 'pointer',
         textAlign: 'center',
         animation: exiting ? 'toastOut 0.3s ease-in forwards' : 'toastIn 0.3s ease-out',
       }}
     >
-      {message}
+      <button
+        onClick={triggerExit}
+        style={{
+          position: 'absolute',
+          top: '6px',
+          right: '10px',
+          background: 'none',
+          border: 'none',
+          color: '#fff',
+          fontSize: '20px',
+          fontWeight: '900',
+          cursor: 'pointer',
+          lineHeight: 1,
+          padding: '2px 4px',
+        }}
+      >
+        ✕
+      </button>
+      <div style={{ paddingRight: '20px' }}>
+        {message}
+      </div>
+      {settingsLink && (
+        <Link
+          to="/settings"
+          onClick={triggerExit}
+          style={{
+            color: '#fff',
+            textDecoration: 'underline',
+            fontSize: '16px',
+            fontWeight: '600',
+            display: 'block',
+            marginTop: '8px',
+          }}
+        >
+          Go to Settings
+        </Link>
+      )}
+      {onDontShowAgain && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDontShowAgain();
+            triggerExit();
+          }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: colors.textSecondary,
+            fontSize: '11px',
+            cursor: 'pointer',
+            marginTop: '8px',
+            padding: 0,
+          }}
+        >
+          Do not show me again.
+        </button>
+      )}
     </div>
   );
 }
