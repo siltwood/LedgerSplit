@@ -261,7 +261,7 @@ heroku config:set SUPABASE_ANON_KEY=your_key
 
 ## License
 
-This project is private and proprietary.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Support
 
