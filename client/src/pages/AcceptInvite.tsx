@@ -51,7 +51,7 @@ export default function AcceptInvite() {
       const response = await axios.get(`${baseURL}/events/join/${token}`);
       setInvite(response.data.event);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to load invite');
+      setError(err.response?.data?.error || 'Failed to load invite.');
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,7 @@ export default function AcceptInvite() {
         }
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to accept invite');
+      setError(err.response?.data?.error || 'Failed to accept invite.');
     }
   };
 
@@ -108,7 +108,7 @@ export default function AcceptInvite() {
 
       // Accept invite will happen automatically via useEffect
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
+      setError(err.response?.data?.error || 'Registration failed.');
     } finally {
       setSubmitting(false);
     }
@@ -123,7 +123,7 @@ export default function AcceptInvite() {
       await login(email, password);
       // Accept invite will happen automatically via useEffect
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(err.response?.data?.error || 'Login failed.');
     } finally {
       setSubmitting(false);
     }

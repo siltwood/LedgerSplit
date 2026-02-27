@@ -94,7 +94,7 @@ export default function CreateSplit() {
 
       navigate(`/events/${eventIdFromParams}`);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to create bill');
+      setError(err.response?.data?.error || 'Failed to create bill.');
     } finally {
       setLoading(false);
     }

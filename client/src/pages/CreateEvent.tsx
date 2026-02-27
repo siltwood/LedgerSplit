@@ -38,7 +38,7 @@ export default function CreateEvent() {
       const eventId = response.data.event.event_id;
       navigate(`/events/${eventId}`);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to create event');
+      setError(err.response?.data?.error || 'Failed to create event.');
     } finally {
       setLoading(false);
     }

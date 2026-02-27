@@ -61,7 +61,7 @@ export default function Dashboard() {
       loadData();
     } catch (error) {
       console.error('Failed to delete event:', error);
-      alert('Failed to delete event');
+      alert('Failed to delete event.');
     }
   };
 
@@ -74,7 +74,7 @@ export default function Dashboard() {
       loadData();
     } catch (error) {
       console.error('Failed to leave event:', error);
-      alert('Failed to leave event');
+      alert('Failed to leave event.');
     }
   };
 

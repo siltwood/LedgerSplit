@@ -201,7 +201,7 @@ export default function EventDetail() {
       navigate('/dashboard');
     } catch (error) {
       console.error('Failed to delete event:', error);
-      alert('Failed to delete event');
+      setCopyStatus('✗ Failed to delete event.');
     }
   };
 
@@ -213,7 +213,7 @@ export default function EventDetail() {
       navigate('/dashboard');
     } catch (error) {
       console.error('Failed to leave event:', error);
-      alert('Failed to leave event');
+      setCopyStatus('✗ Failed to leave event.');
     }
   };
 
@@ -226,7 +226,7 @@ export default function EventDetail() {
       loadData();
     } catch (error) {
       console.error('Failed to remove participant:', error);
-      alert('Failed to remove participant');
+      setCopyStatus('✗ Failed to remove participant.');
     }
   };
 

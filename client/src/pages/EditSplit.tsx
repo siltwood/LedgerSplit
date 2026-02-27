@@ -111,7 +111,7 @@ export default function EditSplit() {
 
       navigate(`/events/${eventIdFromParams}`);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to update bill');
+      setError(err.response?.data?.error || 'Failed to update bill.');
     } finally {
       setLoading(false);
     }

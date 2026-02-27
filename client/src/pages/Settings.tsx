@@ -45,7 +45,7 @@ export default function Settings() {
       setVenmoSaved(true);
       setTimeout(() => setVenmoSaved(false), 2000);
     } catch (err: any) {
-      setVenmoError(err.response?.data?.error || 'Failed to save Venmo username');
+      setVenmoError(err.response?.data?.error || 'Failed to save Venmo username.');
     } finally {
       setSavingVenmo(false);
     }
@@ -59,7 +59,7 @@ export default function Settings() {
       setVenmoUsername('');
       await refreshUser();
     } catch (err: any) {
-      setVenmoError(err.response?.data?.error || 'Failed to delete Venmo username');
+      setVenmoError(err.response?.data?.error || 'Failed to delete Venmo username.');
     } finally {
       setSavingVenmo(false);
     }
@@ -70,7 +70,7 @@ export default function Settings() {
       await authAPI.deleteAccount();
       navigate('/login');
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete account');
+      alert(err.response?.data?.error || 'Failed to delete account.');
       setShowDeleteConfirm(false);
     }
   };
@@ -99,7 +99,7 @@ export default function Settings() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to export data');
+      alert(err.response?.data?.error || 'Failed to export data.');
     } finally {
       setExportingData(false);
     }
@@ -268,7 +268,7 @@ export default function Settings() {
                   setPasswordEmailSent(true);
                   setTimeout(() => setPasswordEmailSent(false), 3000);
                 } catch (err: any) {
-                  setPasswordError(err.response?.data?.error || 'Failed to send email');
+                  setPasswordError(err.response?.data?.error || 'Failed to send email.');
                 }
               }}
               style={{

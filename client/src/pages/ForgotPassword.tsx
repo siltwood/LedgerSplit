@@ -32,7 +32,7 @@ export default function ForgotPassword() {
       setMessage(response.data.message);
       setEmail('');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to send reset email');
+      setError(err.response?.data?.error || 'Failed to send reset email.');
     } finally {
       setLoading(false);
     }

@@ -55,7 +55,7 @@ export default function Register() {
       await register(email, password, name);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
+      setError(err.response?.data?.error || 'Registration failed.');
     } finally {
       setLoading(false);
     }
@@ -193,9 +193,9 @@ export default function Register() {
               onChange={(e) => {
                 setPassword(e.target.value);
                 if (e.target.value.length > 0 && e.target.value.length < 8) {
-                  setPasswordError('Password must be at least 8 characters');
+                  setPasswordError('Password must be at least 8 characters.');
                 } else if (confirmPassword && e.target.value !== confirmPassword) {
-                  setPasswordError('Passwords do not match');
+                  setPasswordError('Passwords do not match.');
                 } else {
                   setPasswordError('');
                 }
@@ -210,7 +210,7 @@ export default function Register() {
                 color: colors.text
               }}
             />
-            {hasAttemptedSubmit && passwordError && passwordError !== 'Passwords do not match' && (
+            {hasAttemptedSubmit && passwordError && passwordError !== 'Passwords do not match.' && (
               <div style={{
                 color: colors.text,
                 fontSize: '16px',
@@ -231,9 +231,9 @@ export default function Register() {
               onChange={(e) => {
                 setConfirmPassword(e.target.value);
                 if (password && e.target.value !== password) {
-                  setPasswordError('Passwords do not match');
+                  setPasswordError('Passwords do not match.');
                 } else if (password.length > 0 && password.length < 8) {
-                  setPasswordError('Password must be at least 8 characters');
+                  setPasswordError('Password must be at least 8 characters.');
                 } else {
                   setPasswordError('');
                 }
@@ -248,7 +248,7 @@ export default function Register() {
                 color: colors.text
               }}
             />
-            {hasAttemptedSubmit && passwordError === 'Passwords do not match' && (
+            {hasAttemptedSubmit && passwordError === 'Passwords do not match.' && (
               <div style={{
                 color: colors.text,
                 fontSize: '16px',
